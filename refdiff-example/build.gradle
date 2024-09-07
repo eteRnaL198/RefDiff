@@ -13,6 +13,7 @@ dependencies {
     implementation project(':refdiff-js')
     implementation project(':refdiff-java')
     implementation project(':refdiff-c')
+    // implementation project(':refdiff-go')
 }
 
 task runExampleJs(type: JavaExec) {
