@@ -147,13 +147,14 @@ public class GoPlugin implements LanguagePlugin, Closeable {
 				sourceFolder = parent.getPath();
 			}
 
-			for (SourceFile file : sources.getFilesFromPath(Paths.get(sourceFolder))) {
-				if (!isValidGoFile(file.getPath())) {
-					continue;
-				}
+			// TODO: add support for additional files
+			// for (SourceFile file : sources.getFilesFromPath(Paths.get(sourceFolder))) {
+			// 	if (!isValidGoFile(file.getPath())) {
+			// 		continue;
+			// 	}
 
-				additionalFiles.add(file);
-			}
+			// 	additionalFiles.add(file);
+			// }
 		}
 
 		sources.getSourceFiles().addAll(additionalFiles);
