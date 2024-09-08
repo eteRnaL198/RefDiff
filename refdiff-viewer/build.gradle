@@ -13,5 +13,6 @@ dependencies {
     implementation project(':refdiff-js')
     implementation project(':refdiff-java')
     implementation project(':refdiff-c')
+    implementation project(':refdiff-go')
     testImplementation 'junit:junit:4.11'
 }
