@@ -12,10 +12,10 @@ dependencies {
     //implementation 'com.github.aserg-ufmg:refdiff-c:2.0.0'
     implementation project(':refdiff-java')
     implementation project(':refdiff-c')
-    implementation project(':refdiff-go')
+    // implementation project(':refdiff-go')
 }
 
-task runExampleJs(type: JavaExec) {
-    classpath sourceSets.main.runtimeClasspath
-    main = 'refdiff.examples.RefDiffExampleJs'
-}
+// task runExampleJs(type: JavaExec) {
+//     classpath sourceSets.main.runtimeClasspath
+//     main = 'refdiff.examples.RefDiffExampleJs'
+// }

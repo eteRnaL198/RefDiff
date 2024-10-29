@@ -4,6 +4,17 @@ plugins {
     id 'eclipse'
 }
 
+project(':') {
+    apply plugin: 'java'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(22)
+        }
+    }
+}
+
+
 allprojects {
     group = 'com.github.aserg-ufmg'
     version = '2.0.0'
@@ -16,7 +27,7 @@ subprojects {
 }
 
 wrapper {
-    gradleVersion = '6.4.1'
+    gradleVersion = '8.7'
 }
 
 
