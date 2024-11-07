@@ -1,0 +1,29 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+}
+
+
+repositories {
+    maven { 
+        url = uri("https://jitpack.io")
+    }
+    // mavenCentral()
+}
+dependencies {
+    // api project(':refdiff-core')
+    // implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.16.0'
+
+    implementation 'io.github.tree-sitter:jtreesitter:0.23.2'
+
+
+
+    // testImplementation 'junit:junit:4.11'
+    // testImplementation project(path: ':refdiff-core', configuration: 'testArtifacts')
+}
+
+task run(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    main = 'refdiff.parsers.universal.Ast'
+    jvmArgs = ['-Djava.library.path=../tree-sitter-java-0.20.2']
+}
