@@ -1,35 +1,45 @@
 package refdiff.parsers.universal;
 
-
-import java.lang.foreign.Arena;
-import java.lang.foreign.SymbolLookup;
-
-import io.github.treesitter.jtreesitter.InputEncoding;
-import io.github.treesitter.jtreesitter.Language;
-import io.github.treesitter.jtreesitter.Parser;
-import io.github.treesitter.jtreesitter.Tree;
-import io.github.treesitter.jtreesitter.Node;
+import org.treesitter.TSLanguage;
+import org.treesitter.TSParser;
+import org.treesitter.TSTree;
+import org.treesitter.TreeSitterJava;
+import org.treesitter.TSNode;
+import org.treesitter.TSQuery;
+import org.treesitter.TSQueryCursor;
+import org.treesitter.TSQueryMatch;
+import org.treesitter.TSRange;
 
 
 public class UniversalParser {
   public static void main(String[] args) {
-    // String libraryPath = "/Users/ikuya/Documents/TokyoTech/修論研究/Sandbox/tree-sitter-java/libtree-sitter-java.dylib";
-    // SymbolLookup symbols = SymbolLookup.libraryLookup(libraryPath, Arena.global());
+        TSParser parser = new TSParser();
+        TSLanguage java = new TreeSitterJava();
 
-    System.out.println(System.getProperty("java.library.path"));
+        parser.setLanguage(java);
+        String sourceCode = "public class Main { public static void main(String[] args) { String str = \"Hello World\"; System.out.println(str);  } }";
+        TSTree tree = parser.parseString(null, sourceCode);
+        
+        TSNode rootNode = tree.getRootNode();
+        System.out.println(rootNode.toString());
+        System.out.println(rootNode.getNamedChild(0).getNamedChild(0));
 
-    String library = System.mapLibraryName("tree-sitter-java");
-    SymbolLookup symbols = SymbolLookup.libraryLookup(library, Arena.global());
-    Language language = Language.load(symbols, "tree_sitter_java");
+        String query = "(method_declaration name: (identifier) @method)";
+        TSQuery tsQuery = new TSQuery(java, query);
+        TSQueryCursor cursor = new TSQueryCursor();
+        cursor.exec(tsQuery, rootNode);
+        TSQueryMatch match = new TSQueryMatch();
+        while (cursor.nextMatch(match)) {
+          // System.out.println(match.toString());
+        }
 
-    try (Parser parser = new Parser(language)) {
-      String sourceCode = "public class Main { public static void main(String[] args) {} }";
-      try (Tree tree = parser.parse(sourceCode, InputEncoding.UTF_8).orElseThrow()) {
-        Node rootNode = tree.getRootNode();
-        assert rootNode.getType().equals("program");
-        assert rootNode.getStartPoint().column() == 0;
-        assert rootNode.getEndPoint().column() == 14;
-      }
-    }
+        String newSourceCode = "public class Main { public static void main(String[] args) { System.out.println(\"Hello, World!\"); System.out.println(\"Hello, World!\"); } }";
+        TSTree newTree = parser.parseString(null, newSourceCode);
+        TSRange[] ranges = TSTree.getChangedRanges(tree, newTree);
+        for (TSRange range : ranges) {
+          System.out.println(range.getStartPoint().getColumn() + " " + range.getEndPoint().getColumn());
+          System.out.println(newSourceCode.substring(range.getStartPoint().getColumn(), range.getEndPoint().getColumn()));
+        }
+
   }
 }

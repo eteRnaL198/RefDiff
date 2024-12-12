@@ -3,44 +3,19 @@ plugins {
     id 'eclipse'
 }
 
-
-// allprojects {
-//     repositories {
-//         maven { 
-//             url 'https://jitpack.io'
-//         }
-//     }
-// }
-
-
-// java {
-//     toolchain {
-//         languageVersion = JavaLanguageVersion.of(19)
-//     }
-// }
-
-// application {
-//     applicationDefaultJvmArgs = ["--enable-preview"]
-// }
+repositories {
+    mavenCentral()
+}
 
 dependencies {
-    // api project(':refdiff-core')
-    // implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.16.0'
+    api project(':refdiff-core')
 
-    implementation 'io.github.tree-sitter:jtreesitter:0.24.0'
+    implementation("io.github.bonede:tree-sitter:0.22.6")
+    implementation("io.github.bonede:tree-sitter-java:0.21.0a")
 
-    // testImplementation 'junit:junit:4.11'
-    // testImplementation project(path: ':refdiff-core', configuration: 'testArtifacts')
 }
 
 task run(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     mainClass = 'refdiff.parsers.universal.UniversalParser'
-    // jvmArgs = ['-Djava.library.path=../tree-sitter-java-0.20.2']
-    // jvmArgs = ['-Djava.library.path=../libtree-sitter-java.dylib']
-    // jvmArgs = ['-Djava.library.path=/Users/ikuya/Documents/TokyoTech/修論研究/Sandbox/tree-sitter-java/libtree-sitter-java.dylib']
-    jvmArgs = [
-        "--enable-native-access=ALL-UNNAMED",
-        "-Djava.library.path=/Users/ikuya/Documents/TokyoTech/修論研究/Sandbox/tree-sitter-java/"
-    ]
 }
