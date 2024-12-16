@@ -34,7 +34,7 @@ public class RefDiffExample {
 		JavaPlugin javaPlugin = new JavaPlugin(tempFolder);
 		RefDiff refDiffJava = new RefDiff(javaPlugin);
 
-		File eclipseThemesRepo = refDiffC.cloneGitRepository(
+		File eclipseThemesRepo = refDiffJava.cloneGitRepository(
 				new File(tempFolder, "eclipse-themes"),
 				"https://github.com/icse18-refactorings/eclipse-themes.git");
 
