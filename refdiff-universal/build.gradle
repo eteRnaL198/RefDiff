@@ -15,7 +15,7 @@ dependencies {
 
 }
 
-task run(type: JavaExec) {
-    classpath sourceSets.main.runtimeClasspath
-    mainClass = 'refdiff.parsers.universal.UniversalParser'
-}
+// task run(type: JavaExec) {
+//     classpath sourceSets.main.runtimeClasspath
+//     mainClass = 'refdiff.parsers.universal.UniversalParser'
+// }

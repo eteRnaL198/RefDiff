@@ -1,12 +1,16 @@
 package refdiff.examples;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import refdiff.core.RefDiff;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
+import refdiff.core.io.SourceFolder;
 import refdiff.parsers.c.CPlugin;
 import refdiff.parsers.java.JavaPlugin;
+import refdiff.parsers.universal.UniversalPlugin;
 
 public class RefDiffExample {
 
@@ -41,6 +45,13 @@ public class RefDiffExample {
 		printRefactorings(
 				"Refactorings found in eclipse-themes 72f61ec",
 				refDiffJava.computeDiffForCommit(eclipseThemesRepo, "72f61ec"));
+
+		// Now, we use the plugin for universal.
+		System.out.println("\n\n----- Universal Plugin -----");
+		Path basePath = Paths.get("temp-for-universal");
+		SourceFolder sources = SourceFolder.from(basePath, Paths.get("Foo.java"), Paths.get("Bar.java"));
+		UniversalPlugin universalPlugin = new UniversalPlugin(basePath.toFile());
+		universalPlugin.parse(sources);
 	}
 
 	private static void printRefactorings(String headLine, CstDiff diff) {

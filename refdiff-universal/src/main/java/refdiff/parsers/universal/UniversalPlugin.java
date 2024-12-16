@@ -1,23 +1,36 @@
 package refdiff.parsers.universal;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import refdiff.core.io.FilePathFilter;
 import refdiff.core.io.SourceFile;
 import refdiff.core.io.SourceFileSet;
-import refdiff.core.cst.CstNode;
-import refdiff.core.cst.CstRoot;
-import refdiff.core.cst.Stereotype;
-import refdiff.parsers.LanguagePlugin;
 
-public class UniversalPlugin implements LanguagePlugin {
-  @Override
-  public CstRoot parse(SourceFileSet sources) throws Exception {
-    return null;
+public class UniversalPlugin {
+	private File tempDir = null;
+
+  public UniversalPlugin(File tempDir) {
+    this.tempDir = tempDir;
+  }
+
+  public void parse(SourceFileSet sources) throws Exception {
+    // TODO optBasePathの存在確認
+    List<String> javaFiles = new ArrayList<>();
+    Optional<Path> optBasePath = sources.getBasePath();
+    for (SourceFile sourceFile : sources.getSourceFiles()) {
+      javaFiles.add(sourceFile.getPath());
+    }
+    File rootFolder = optBasePath.get().toFile();
+    System.out.println(rootFolder);
+
   }
 
 
-  @Override
   public FilePathFilter getAllowedFilesFilter() {
     return new FilePathFilter(Arrays.asList(".java"));
   }
