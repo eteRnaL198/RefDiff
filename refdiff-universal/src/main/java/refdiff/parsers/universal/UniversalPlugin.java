@@ -19,14 +19,18 @@ public class UniversalPlugin {
   }
 
   public void parse(SourceFileSet sources) throws Exception {
-    // TODO optBasePathの存在確認
     List<String> javaFiles = new ArrayList<>();
     Optional<Path> optBasePath = sources.getBasePath();
+
+    // TODO optBasePathの存在確認
+
     for (SourceFile sourceFile : sources.getSourceFiles()) {
       javaFiles.add(sourceFile.getPath());
     }
     File rootFolder = optBasePath.get().toFile();
-    System.out.println(rootFolder);
+
+    SDModelBuilder mb = new SDModelBuilder();
+    mb.analyze(rootFolder, javaFiles);
 
   }
 
