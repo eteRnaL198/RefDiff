@@ -3,14 +3,23 @@ package refdiff.examples;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import refdiff.core.RefDiff;
+import refdiff.core.diff.CstComparator;
+import refdiff.core.diff.CstComparatorMonitor;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
+import refdiff.core.diff.CstComparator.DiffBuilder;
+import refdiff.core.diff.similarity.TfIdfSourceRepresentation;
+import refdiff.core.diff.similarity.TfIdfSourceRepresentationBuilder;
 import refdiff.core.io.SourceFolder;
+import refdiff.core.io.SourceFile;
+import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.c.CPlugin;
 import refdiff.parsers.java.JavaPlugin;
 import refdiff.parsers.universal.UniversalPlugin;
+import refdiff.parsers.universal.UniversalParser;
 
 public class RefDiffExample {
 
@@ -48,10 +57,24 @@ public class RefDiffExample {
 
 		// Now, we use the plugin for universal.
 		System.out.println("\n\n----- Universal Plugin -----");
-		Path basePath = Paths.get("temp-for-universal");
-		SourceFolder sources = SourceFolder.from(basePath, Paths.get("Foo.java"), Paths.get("Bar.java"));
-		UniversalPlugin universalPlugin = new UniversalPlugin(basePath.toFile());
-		universalPlugin.parse(sources);
+		UniversalPlugin universalPlugin = new UniversalPlugin();
+		CstComparator comparator = new CstComparator(universalPlugin);
+
+		String basePath = "temp-for-universal";
+		SourceFolder before = SourceFolder.from(Paths.get(basePath, "rename/v0"), ".java");
+		SourceFolder after = SourceFolder.from(Paths.get(basePath, "rename/v1"), ".java");
+		CstDiff diff = comparator.compare(before, after);
+		printRefactorings("rename", diff);
+
+		before = SourceFolder.from(Paths.get(basePath, "move-method/v0"), ".java");
+		after = SourceFolder.from(Paths.get(basePath, "move-method/v1"), ".java");
+		diff = comparator.compare(before, after);
+		printRefactorings("move method", diff);
+
+		before = SourceFolder.from(Paths.get(basePath, "move-class/v0"), ".java");
+		after = SourceFolder.from(Paths.get(basePath, "move-class/v1"), ".java");
+		diff = comparator.compare(before, after);
+		printRefactorings("move class", diff);
 	}
 
 	private static void printRefactorings(String headLine, CstDiff diff) {

@@ -11,6 +11,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.AST;
+
 import refdiff.core.cst.CstNode;
 
 public class SDModelBuilder {
@@ -33,7 +36,14 @@ public class SDModelBuilder {
       encodings[i] = encoding;
     }
     final String[] sourceFolders = this.inferSourceFolders(filesArray);
+    // final ASTParser parser = buildAstParser(sourceFolders);
   }
+
+  // private static ASTParser buildAstParser(String[] sourceFolders) { // TODO implement buildAstParser
+  //   @SuppressWarnings("deprecation")
+  //   ASTParser parser = ASTParser.newParser(AST.JLS8);
+  //   parser.setKind(0);
+  // }
 
   private String[] inferSourceFolders(String[] filesArray) {
     Set<String> sourceFolders = new TreeSet<String>();

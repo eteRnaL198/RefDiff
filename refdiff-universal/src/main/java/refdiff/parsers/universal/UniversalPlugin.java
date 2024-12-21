@@ -7,34 +7,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import refdiff.core.cst.CstRoot;
 import refdiff.core.io.FilePathFilter;
 import refdiff.core.io.SourceFile;
 import refdiff.core.io.SourceFileSet;
+import refdiff.parsers.LanguagePlugin;
 
-public class UniversalPlugin {
-	private File tempDir = null;
+public class UniversalPlugin implements LanguagePlugin {
 
-  public UniversalPlugin(File tempDir) {
-    this.tempDir = tempDir;
+  @Override
+  public CstRoot parse(SourceFileSet sources) throws Exception {
+    UniversalParser parser = new UniversalParser();
+    return parser.parse(sources);
   }
 
-  public void parse(SourceFileSet sources) throws Exception {
-    List<String> javaFiles = new ArrayList<>();
-    Optional<Path> optBasePath = sources.getBasePath();
-
-    // TODO optBasePathの存在確認
-
-    for (SourceFile sourceFile : sources.getSourceFiles()) {
-      javaFiles.add(sourceFile.getPath());
-    }
-    File rootFolder = optBasePath.get().toFile();
-
-    SDModelBuilder mb = new SDModelBuilder();
-    mb.analyze(rootFolder, javaFiles);
-
-  }
-
-
+  @Override
   public FilePathFilter getAllowedFilesFilter() {
     return new FilePathFilter(Arrays.asList(".java"));
   }

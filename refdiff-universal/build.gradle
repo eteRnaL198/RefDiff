@@ -9,10 +9,12 @@ repositories {
 
 dependencies {
     api project(':refdiff-core')
+    implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.16.0'
 
     implementation("io.github.bonede:tree-sitter:0.22.6")
     implementation("io.github.bonede:tree-sitter-java:0.21.0a")
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.4'
 }
 
 // task run(type: JavaExec) {
