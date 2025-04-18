@@ -57,7 +57,7 @@ public class UniversalParser {
 
       TSTree tree = parser.parseString(null, sourceCode);
       addNodes(tree, root, file.getPath(), sourceCode);
-      TokenizedSource tokenizedSource = tokenize(tree, file.getPath(), sourceCode);
+      TokenizedSource tokenizedSource = tokenize(tree, file.getPath(), sourceCode); // TODO tokenizeの引数にはrelative pathを渡す？
       root.addTokenizedFile(tokenizedSource);
     }
     return root;
