@@ -28,13 +28,6 @@ publishing {
     }
 }
 
-test {
-    testLogging {
-        events "passed", "skipped", "failed"
-        showStandardStreams = true
-    }
-}
-
 signing {
     sign publishing.publications.refdiffJava
 }
