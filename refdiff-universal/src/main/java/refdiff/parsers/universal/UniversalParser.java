@@ -65,7 +65,7 @@ public class UniversalParser {
     return root;
   }
 
-  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) { // TODO tokenizeとaddNodeでクエリ2回投げるのではなく1回にまとめた方が速い？
+  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
     // String query = "[(class_declaration) (method_declaration)] @node"; // for Java
     String query = "[(translation_unit) (function_definition)] @node"; // for C // TODO 言語切替
     TSQuery tsQuery = new TSQuery(tsLang, query);
@@ -132,7 +132,7 @@ public class UniversalParser {
             break; }
           case "translation_unit": { // for C
             CstNode cstNode = new CstNode(id++);
-            cstNode.setType("translation_unit");
+            cstNode.setType("file");
             cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), sourceCode)); // TODO beginとendをtokenizedと同じ、StringのSourceCodeでの値にする
             cstNode.setLocalName(path);
             cstNode.setSimpleName(path);
