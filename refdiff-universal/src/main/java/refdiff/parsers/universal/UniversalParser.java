@@ -89,7 +89,7 @@ public class UniversalParser {
             cstNode.setType("class");
 
             TSNode body = tsNode.getChild(3);
-            cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), body.getStartPoint().getRow(), body.getEndPoint().getRow(), sourceCode)); // TODO beginとendを tokenizedと同じ、StringのSourceCodeでの値にする
+            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode)); // TODO bodyと区別して計算
 
             TSNode identifier = tsNode.getChild(2);
             int idntfrLine = identifier.getStartPoint().getRow();
@@ -114,7 +114,7 @@ public class UniversalParser {
             cstNode.setType("method");
 
             TSNode block = tsNode.getChild(4);
-            cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), block.getStartPoint().getRow(), block.getEndPoint().getRow(), sourceCode)); // TODO beginとendを tokenizedと同じ、StringのSourceCodeでの値にする
+            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode)); // TODO bodyと区別して計算
 
             TSNode identifier = tsNode.getChild(2);
             int idntfrLine = identifier.getStartPoint().getRow();
@@ -133,7 +133,7 @@ public class UniversalParser {
           case "translation_unit": { // for C
             CstNode cstNode = new CstNode(id++);
             cstNode.setType("file");
-            cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), sourceCode)); // TODO beginとendをtokenizedと同じ、StringのSourceCodeでの値にする
+            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), tsNode.getStartByte(), tsNode.getEndByte(), sourceCode)); // TODO bodyと区別して計算
             cstNode.setLocalName(path);
             cstNode.setSimpleName(path);
             root.addNode(cstNode);
@@ -144,7 +144,7 @@ public class UniversalParser {
             cstNode.setType("function");
             
             TSNode block = tsNode.getChild(2);
-            cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), block.getStartPoint().getRow(), block.getEndPoint().getRow(), sourceCode)); // TODO beginとendをtokenizedと同じ、StringのSourceCodeでの値にする
+            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode)); // TODO bodyと区別して計算
 
             TSNode declarator = tsNode.getChild(1);
             TSNode identifier = declarator.getChild(0);
