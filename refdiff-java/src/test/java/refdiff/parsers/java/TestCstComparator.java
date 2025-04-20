@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import refdiff.core.diff.CstComparator;
 import refdiff.core.diff.CstDiff;
+import refdiff.core.diff.Relationship;
 import refdiff.core.diff.RelationshipType;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
@@ -194,6 +195,19 @@ public class TestCstComparator {
 		assertThat(diff("renameByMatchingChildren"), containsOnly(
 			relationship(RelationshipType.RENAME, node("p1.A"), node("p1.B")),
 			relationship(RelationshipType.SAME, node("p1.A", "m1()"), node("p1.B", "m1()"))
+		));
+	}
+
+	@Test
+	public void shouldMatchRenameMethod() throws Exception {
+		CstDiff result = diff("renameMethod");
+		for (Relationship rel : result.getRelationships()) {
+				System.out.println(rel.getStandardDescription());
+		}
+
+		assertThat(diff("renameMethod"), containsOnly(
+			relationship(RelationshipType.SAME, node("tmp.Hoge"), node("tmp.Hoge"))
+			// relationship(RelationshipType.RENAME, node("tmp.A", "m2(String)"), node("tmp.A", "m3(String)"))
 		));
 	}
 	
