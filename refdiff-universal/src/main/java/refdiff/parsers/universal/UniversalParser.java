@@ -43,8 +43,16 @@ import refdiff.core.io.SourceFile;
 public class UniversalParser {
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();
-    TSLanguage tsLang = new TreeSitterJava();
-    // TSLanguage tsLang = new TreeSitterC(); // TODO 言語切替
+
+    TSLanguage tsLang; // TODO 言語切替
+    String firstFilePath = folder.getSourceFiles().get(0).getPath();
+    if (firstFilePath.endsWith(".java")) {
+      tsLang = new TreeSitterJava();
+    } else if (firstFilePath.endsWith(".c")) {
+      tsLang = new TreeSitterC();
+    } else {
+      throw new IllegalArgumentException("Unsupported file type: " + firstFilePath);
+    }
     parser.setLanguage(tsLang);
 
     CstRoot root = new CstRoot();
@@ -66,8 +74,14 @@ public class UniversalParser {
   }
 
   private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
-    String query = "[(class_declaration) (method_declaration)] @node"; // for Java
-    // String query = "[(translation_unit) (function_definition)] @node"; // for C // TODO 言語切替
+    String query; // TODO 言語切替
+    if (path.endsWith(".java")) {
+      query = "[(class_declaration) (method_declaration)] @node";
+    } else if (path.endsWith(".c")) {
+      query = "[(translation_unit) (function_definition)] @node";
+    } else {
+      throw new IllegalArgumentException("Unsupported file type: " + path);
+    }
     TSQuery tsQuery = new TSQuery(tsLang, query);
 
     TSNode rootNode = tree.getRootNode();

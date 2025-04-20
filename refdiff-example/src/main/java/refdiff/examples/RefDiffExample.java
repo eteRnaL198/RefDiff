@@ -76,16 +76,12 @@ public class RefDiffExample {
 		diff = comparator.compare(before, after);
 		printRefactorings("rename method:", diff);
 
-		// System.out.println("\n\n----- Universal Plugin C -----");
-		// basePath = "temp-for-universal/c";
-		// SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameFunction/v0"), ".c");
-		// SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameFunction/v1"), ".c");
-		// CstDiff diff = comparator.compare(before, after);
-		// // printRefactorings("rename function:", diff);
-		// for (Relationship rel : diff.getRelationships()) {
-		// System.out.println(rel.getStandardDescription());
-		// }
-
+		System.out.println("\n\n----- Universal Plugin C -----");
+		basePath = "temp-for-universal/c";
+		before = SourceFolder.from(Paths.get(basePath, "renameFunction/v0"), ".c");
+		after = SourceFolder.from(Paths.get(basePath, "renameFunction/v1"), ".c");
+		diff = comparator.compare(before, after);
+		printRefactorings("rename function:", diff);
 	}
 
 	private static void printRefactorings(String headLine, CstDiff diff) {
