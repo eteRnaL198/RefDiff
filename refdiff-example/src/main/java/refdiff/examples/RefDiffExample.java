@@ -59,7 +59,7 @@ public class RefDiffExample {
 		System.out.println("\n\n----- Universal Plugin Java -----");
 		UniversalPlugin universalPlugin = new UniversalPlugin();
 		CstComparator comparator = new CstComparator(universalPlugin);
-		String basePath = "temp-for-universal/java";
+		String basePath = "example-for-universal/java";
 		
 		SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveMethod/v0"), ".java");
 		SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveMethod/v1"), ".java");
@@ -77,7 +77,7 @@ public class RefDiffExample {
 		printRefactorings("rename method:", diff);
 
 		System.out.println("\n\n----- Universal Plugin C -----");
-		basePath = "temp-for-universal/c";
+		basePath = "example-for-universal/c";
 		before = SourceFolder.from(Paths.get(basePath, "renameFunction/v0"), ".c");
 		after = SourceFolder.from(Paths.get(basePath, "renameFunction/v1"), ".c");
 		diff = comparator.compare(before, after);

@@ -1,6 +1,6 @@
-package tmp;
+package pkg;
 
-public class Hoge {
+public class Foo {
   public void greet() {
     System.out.println("Hello!");
   }
