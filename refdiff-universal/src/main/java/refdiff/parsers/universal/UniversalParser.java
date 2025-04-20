@@ -43,8 +43,8 @@ import refdiff.core.io.SourceFile;
 public class UniversalParser {
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();
-    // TSLanguage tsLang = new TreeSitterJava();
-    TSLanguage tsLang = new TreeSitterC(); // TODO 言語切替
+    TSLanguage tsLang = new TreeSitterJava();
+    // TSLanguage tsLang = new TreeSitterC(); // TODO 言語切替
     parser.setLanguage(tsLang);
 
     CstRoot root = new CstRoot();
@@ -66,8 +66,8 @@ public class UniversalParser {
   }
 
   private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
-    // String query = "[(class_declaration) (method_declaration)] @node"; // for Java
-    String query = "[(translation_unit) (function_definition)] @node"; // for C // TODO 言語切替
+    String query = "[(class_declaration) (method_declaration)] @node"; // for Java
+    // String query = "[(translation_unit) (function_definition)] @node"; // for C // TODO 言語切替
     TSQuery tsQuery = new TSQuery(tsLang, query);
 
     TSNode rootNode = tree.getRootNode();
