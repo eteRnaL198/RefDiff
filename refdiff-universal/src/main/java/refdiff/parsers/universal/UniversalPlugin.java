@@ -23,6 +23,7 @@ public class UniversalPlugin implements LanguagePlugin {
 
   @Override
   public FilePathFilter getAllowedFilesFilter() {
-    return new FilePathFilter(Arrays.asList(".java"));
+    // return new FilePathFilter(Arrays.asList(".java")); // TODO 言語切替
+    return new FilePathFilter(Arrays.asList(".c"));
   }
 }

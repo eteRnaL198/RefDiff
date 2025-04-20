@@ -4,6 +4,7 @@ import org.treesitter.TSLanguage;
 import org.treesitter.TSParser;
 import org.treesitter.TSTree;
 import org.treesitter.TreeSitterJava;
+import org.treesitter.TreeSitterC;
 import org.treesitter.TSNode;
 import org.treesitter.TSQuery;
 import org.treesitter.TSQueryCapture;
@@ -42,8 +43,9 @@ import refdiff.core.io.SourceFile;
 public class UniversalParser {
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();
-    TSLanguage java = new TreeSitterJava();
-    parser.setLanguage(java);
+    // TSLanguage tsLang = new TreeSitterJava();
+    TSLanguage tsLang = new TreeSitterC(); // TODO 言語切替
+    parser.setLanguage(tsLang);
 
     CstRoot root = new CstRoot();
     List<SourceFile> files = folder.getSourceFiles();
@@ -56,18 +58,19 @@ public class UniversalParser {
       }
 
       TSTree tree = parser.parseString(null, sourceCode);
-      addNodes(tree, root, file.getPath(), sourceCode);
-      TokenizedSource tokenizedSource = tokenize(tree, file.getPath(), sourceCode); // TODO tokenizeの引数にはrelative pathを渡す？
+      addNodes(tree, tsLang, root, file.toString(), sourceCode);
+      TokenizedSource tokenizedSource = tokenize(tree, tsLang, file.getPath(), sourceCode); // TODO tokenizeの引数にはrelative pathを渡す？
       root.addTokenizedFile(tokenizedSource);
     }
     return root;
   }
 
-  private void addNodes(TSTree tree, CstRoot root, String path, String sourceCode) { //TODO tokenizeとaddNodeでクエリ2回投げるのではなく1回にまとめた方が速い？
+  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) { // TODO tokenizeとaddNodeでクエリ2回投げるのではなく1回にまとめた方が速い？
+    // String query = "[(class_declaration) (method_declaration)] @node"; // for Java
+    String query = "[(translation_unit) (function_definition)] @node"; // for C // TODO 言語切替
+    TSQuery tsQuery = new TSQuery(tsLang, query);
+
     TSNode rootNode = tree.getRootNode();
-    TSLanguage java = new TreeSitterJava();
-    String query = "[(class_declaration) (method_declaration)] @node"; 
-    TSQuery tsQuery = new TSQuery(java, query); // TODO 引数に渡すのでもいいかも
     TSQueryCursor cursor = new TSQueryCursor();
     cursor.exec(tsQuery, rootNode);
     TSQueryMatch match = new TSQueryMatch();
@@ -81,7 +84,7 @@ public class UniversalParser {
         TSNode tsNode = capture.getNode();
         
         switch(tsNode.getType()) {
-          case "class_declaration": {
+          case "class_declaration": { // for Java
             CstNode cstNode = new CstNode(id++);
             cstNode.setType("class");
 
@@ -89,10 +92,10 @@ public class UniversalParser {
             cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), body.getStartPoint().getRow(), body.getEndPoint().getRow(), sourceCode)); // TODO beginとendを tokenizedと同じ、StringのSourceCodeでの値にする
 
             TSNode identifier = tsNode.getChild(2);
-            int idntfr_line = identifier.getStartPoint().getRow();
-            int idntfr_start = identifier.getStartPoint().getColumn();
-            int idntfr_end = identifier.getEndPoint().getColumn();
-            String className = splittedSourceCode[idntfr_line].substring(idntfr_start, idntfr_end);
+            int idntfrLine = identifier.getStartPoint().getRow();
+            int idntfrStart = identifier.getStartPoint().getColumn();
+            int idntfrEnd = identifier.getEndPoint().getColumn();
+            String className = splittedSourceCode[idntfrLine].substring(idntfrStart, idntfrEnd);
             cstNode.setLocalName(className);
             cstNode.setSimpleName(className);
 
@@ -106,7 +109,7 @@ public class UniversalParser {
             root.addNode(cstNode);
             parent = cstNode;
             break; }
-          case "method_declaration": {
+          case "method_declaration": { // for Java
             CstNode cstNode = new CstNode(id++);
             cstNode.setType("method");
 
@@ -114,13 +117,43 @@ public class UniversalParser {
             cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), block.getStartPoint().getRow(), block.getEndPoint().getRow(), sourceCode)); // TODO beginとendを tokenizedと同じ、StringのSourceCodeでの値にする
 
             TSNode identifier = tsNode.getChild(2);
-            int idntfr_line = identifier.getStartPoint().getRow();
-            int idntfr_start = identifier.getStartPoint().getColumn();
-            int idntfr_end = identifier.getEndPoint().getColumn();
-            String methodName = splittedSourceCode[idntfr_line].substring(idntfr_start, idntfr_end);
+            int idntfrLine = identifier.getStartPoint().getRow();
+            int idntfrStart = identifier.getStartPoint().getColumn();
+            int idntfrEnd = identifier.getEndPoint().getColumn();
+            String methodName = splittedSourceCode[idntfrLine].substring(idntfrStart, idntfrEnd);
             cstNode.setLocalName(methodName);
             cstNode.setSimpleName(methodName);
 
+            // TODO Parentをちゃんと取る
+            if (parent == null) {
+              System.out.println("Parent is null");
+            }
+            parent.addNode(cstNode);
+            break; }
+          case "translation_unit": { // for C
+            CstNode cstNode = new CstNode(id++);
+            cstNode.setType("translation_unit");
+            cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), sourceCode)); // TODO beginとendをtokenizedと同じ、StringのSourceCodeでの値にする
+            cstNode.setLocalName(path);
+            cstNode.setSimpleName(path);
+            root.addNode(cstNode);
+            parent = cstNode;
+            break; }
+          case "function_definition": { // for C
+            CstNode cstNode = new CstNode(id++);
+            cstNode.setType("function");
+            
+            TSNode block = tsNode.getChild(2);
+            cstNode.setLocation(Location.of(path, tsNode.getStartPoint().getRow(), tsNode.getEndPoint().getRow(), block.getStartPoint().getRow(), block.getEndPoint().getRow(), sourceCode)); // TODO beginとendをtokenizedと同じ、StringのSourceCodeでの値にする
+
+            TSNode declarator = tsNode.getChild(1);
+            TSNode identifier = declarator.getChild(0);
+            int idntfrLine = identifier.getStartPoint().getRow();
+            int idntfrStart = identifier.getStartPoint().getColumn();
+            int idntfrEnd = identifier.getEndPoint().getColumn();
+            String functionName = splittedSourceCode[idntfrLine].substring(idntfrStart, idntfrEnd);
+            cstNode.setLocalName(functionName);
+            cstNode.setSimpleName(functionName);
             // TODO Parentをちゃんと取る
             if (parent == null) {
               System.out.println("Parent is null");
@@ -134,12 +167,11 @@ public class UniversalParser {
     }
   }
 
-  private TokenizedSource tokenize(TSTree tree, String path, String sourceCode) {
-    TSNode rootNode = tree.getRootNode();
-    TSLanguage java = new TreeSitterJava();
+  private TokenizedSource tokenize(TSTree tree, TSLanguage tsLang, String path, String sourceCode) {
     String query = "_ @node";
-    TSQuery tsQuery = new TSQuery(java, query); // TODO 引数に渡すのでもいいかも
+    TSQuery tsQuery = new TSQuery(tsLang, query);
     TSQueryCursor cursor = new TSQueryCursor();
+    TSNode rootNode = tree.getRootNode();
     cursor.exec(tsQuery, rootNode);
     TSQueryMatch match = new TSQueryMatch();
     

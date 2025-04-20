@@ -56,32 +56,42 @@ public class RefDiffExample {
 				refDiffJava.computeDiffForCommit(eclipseThemesRepo, "72f61ec"));
 
 		// Now, we use the plugin for universal.
-		System.out.println("\n\n----- Universal Plugin -----");
+		System.out.println("\n\n----- Universal Plugin Java -----");
 		UniversalPlugin universalPlugin = new UniversalPlugin();
 		CstComparator comparator = new CstComparator(universalPlugin);
-		String basePath = "temp-for-universal";
+		String basePath = "temp-for-universal/java";
 		
-		SourceFolder before = SourceFolder.from(Paths.get(basePath, "move-method/v0"), ".java");
-		SourceFolder after = SourceFolder.from(Paths.get(basePath, "move-method/v1"), ".java");
+		// SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveMethod/v0"), ".java");
+		// SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveMethod/v1"), ".java");
+		// CstDiff diff = comparator.compare(before, after);
+		// printRefactorings("move method:", diff);
+
+		// before = SourceFolder.from(Paths.get(basePath, "moveClass/v0"), ".java");
+		// after = SourceFolder.from(Paths.get(basePath, "moveClass/v1"), ".java");
+		// diff = comparator.compare(before, after);
+		// printRefactorings("move class:", diff);
+
+		// before = SourceFolder.from(Paths.get(basePath, "renameMethod/v0"), ".java");
+		// after = SourceFolder.from(Paths.get(basePath, "renameMethod/v1"), ".java");
+		// diff = comparator.compare(before, after);
+		// printRefactorings("rename method:", diff);
+
+		// before = SourceFolder.from(Paths.get(basePath, "renameMethodNotWorking/v0"), ".java");
+		// after = SourceFolder.from(Paths.get(basePath, "renameMethodNotWorking/v1"), ".java");
+		// diff = comparator.compare(before, after);
+		// System.out.println("rename method not working:");
+		// for (Relationship rel : diff.getRelationships()) {
+		// 	System.out.println(rel.getStandardDescription());
+		// }
+
+		System.out.println("\n\n----- Universal Plugin C -----");
+		basePath = "temp-for-universal/c";
+		SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameFunction/v0"), ".c");
+		SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameFunction/v1"), ".c");
 		CstDiff diff = comparator.compare(before, after);
-		printRefactorings("move method:", diff);
-
-		before = SourceFolder.from(Paths.get(basePath, "move-class/v0"), ".java");
-		after = SourceFolder.from(Paths.get(basePath, "move-class/v1"), ".java");
-		diff = comparator.compare(before, after);
-		printRefactorings("move class:", diff);
-
-		before = SourceFolder.from(Paths.get(basePath, "rename-method/v0"), ".java");
-		after = SourceFolder.from(Paths.get(basePath, "rename-method/v1"), ".java");
-		diff = comparator.compare(before, after);
-		printRefactorings("rename method:", diff);
-
-		before = SourceFolder.from(Paths.get(basePath, "rename-method-not-working/v0"), ".java");
-		after = SourceFolder.from(Paths.get(basePath, "rename-method-not-working/v1"), ".java");
-		diff = comparator.compare(before, after);
-		System.out.println("rename method not working:");
+		// printRefactorings("rename function:", diff);
 		for (Relationship rel : diff.getRelationships()) {
-			System.out.println(rel.getStandardDescription());
+		System.out.println(rel.getStandardDescription());
 		}
 
 	}
