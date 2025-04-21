@@ -1,11 +1,11 @@
 #include <stdio.h>
 
 void f1() {
-	printf("Hello world 1\n");
+	printf("Hello\n");
 }
 
 void f3() {
-	printf("Hello world 2\n");
+	printf("World\n");
 }
 
 int main() {
