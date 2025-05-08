@@ -32,10 +32,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import refdiff.core.io.SourceFileSet;
 import refdiff.core.io.SourceFolder;
 import refdiff.core.cst.CstNode;
+import refdiff.core.cst.CstNodeRelationship;
+import refdiff.core.cst.CstNodeRelationshipType;
 import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.TokenizedSource;
 import refdiff.core.diff.CstDiff;
+import refdiff.core.diff.CstRootHelper;
 import refdiff.core.cst.TokenPosition;
 import refdiff.core.io.SourceFile;
 
@@ -57,6 +60,8 @@ public class UniversalParser {
 
     CstRoot root = new CstRoot();
     List<SourceFile> files = folder.getSourceFiles();
+
+    /* Create CstNode for each file */
     for (SourceFile file : files) {
       String sourceCode = "";
       try {
@@ -70,7 +75,56 @@ public class UniversalParser {
       TokenizedSource tokenizedSource = tokenize(tree, tsLang, file.getPath(), sourceCode); // TODO tokenizeの引数にはrelative pathを渡す？
       root.addTokenizedFile(tokenizedSource);
     }
+
+    /* Create call graph */
+    List<CstNode> callableNodes = new ArrayList<>();
+    for (CstNode node : root.getNodes()) {
+      callableNodes.addAll(getCallableNodes(node));
+    }
+    Map<String, CstNode> callableNodeMap = new HashMap<>(); 
+    for (CstNode callableNode : callableNodes) {
+      callableNodeMap.put(callableNode.getSimpleName(), callableNode); //TODO simplenameをhashmapに持たせてるので重複しやすく上書きされる。namespaceなどを使うといいかも
+    }
+    for (CstNode node : callableNodes) {
+      addReferences(node, root, folder, files, callableNodeMap);
+    }
+
     return root;
+  }
+
+  private List<CstNode> getCallableNodes(CstNode node) {
+    List<CstNode> callableNodes = new ArrayList<>();
+    for (CstNode child : node.getNodes()) {
+      callableNodes.addAll(getCallableNodes(child));
+    }
+    String nodeType = node.getType();
+    if (nodeType.equals("method") || nodeType.equals("function")) {
+      callableNodes.add(node);
+    }
+    return callableNodes;
+  }
+
+  private void addReferences(CstNode node, CstRoot root, SourceFileSet folder, List<SourceFile> files, Map<String, CstNode> callableNodeMap) {
+    String path = node.getLocation().getFile();
+    String sourceCode = "";
+    try {
+      Optional<SourceFile> sourceFile = files.stream().filter(f -> f.getPath().equals(path)).findFirst();
+      if (sourceFile.isPresent()) {
+        sourceCode = folder.readContent(sourceFile.get());
+      } else {
+        throw new IllegalArgumentException("Source file not found for path: " + path);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    List<String> tokens = CstRootHelper.retrieveTokens(root, sourceCode, node, true);
+    for (String token : tokens) {
+      if (callableNodeMap.containsKey(token)) {
+      CstNode callee = callableNodeMap.get(token);
+      root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.USE, node.getId(), callee.getId()));
+      }
+    }
   }
 
   private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
@@ -103,7 +157,7 @@ public class UniversalParser {
             cstNode.setType("class");
 
             TSNode body = tsNode.getChild(3);
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode)); // TODO bodyと区別して計算
+            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode));
 
             TSNode identifier = tsNode.getChild(2);
             int idntfrLine = identifier.getStartPoint().getRow();
@@ -128,7 +182,7 @@ public class UniversalParser {
             cstNode.setType("method");
 
             TSNode block = tsNode.getChild(4);
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode)); // TODO bodyと区別して計算
+            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode));
 
             TSNode identifier = tsNode.getChild(2);
             int idntfrLine = identifier.getStartPoint().getRow();

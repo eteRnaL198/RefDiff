@@ -76,6 +76,16 @@ public class RefDiffExample {
 		diff = comparator.compare(before, after);
 		printRefactorings("rename method:", diff);
 
+		before = SourceFolder.from(Paths.get(basePath, "extractMethod/v0"), ".java");
+		after = SourceFolder.from(Paths.get(basePath, "extractMethod/v1"), ".java");
+		diff = comparator.compare(before, after);
+		printRefactorings("extract method:", diff);
+
+		before = SourceFolder.from(Paths.get(basePath, "extractAndMoveMethod/v0"), ".java");
+		after = SourceFolder.from(Paths.get(basePath, "extractAndMoveMethod/v1"), ".java");
+		diff = comparator.compare(before, after);
+		printRefactorings("extract and move method:", diff);
+
 		System.out.println("\n\n----- Universal Plugin C -----");
 		basePath = "example-for-universal/c";
 		before = SourceFolder.from(Paths.get(basePath, "renameFunction/v0"), ".c");
