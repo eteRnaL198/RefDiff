@@ -56,6 +56,13 @@ public class RefDiffExample {
 		printRefactorings(
 				"Refactorings found in eclipse-themes 72f61ec",
 				refDiffJava.computeDiffForCommit(eclipseThemesRepo, "72f61ec"));
+
+		// Now, we use the plugin for Universal.
+		UniversalPlugin universalPlugin = new UniversalPlugin();
+		RefDiff refDiffUniversal = new RefDiff(universalPlugin);
+		printRefactorings(
+				"Refactorings found in universal 72f61ec",
+				refDiffUniversal.computeDiffForCommit(eclipseThemesRepo, "72f61ec"));
 	}
 
 	private static void printRefactorings(String headLine, CstDiff diff) {
