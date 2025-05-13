@@ -26,6 +26,7 @@ public class RefDiffExample {
 
 	public static void main(String[] args) throws Exception {
 		runExamples();
+		runExamplesForUniversalInLocal();
 	}
 
 	private static void runExamples() throws Exception {
@@ -55,8 +56,16 @@ public class RefDiffExample {
 		printRefactorings(
 				"Refactorings found in eclipse-themes 72f61ec",
 				refDiffJava.computeDiffForCommit(eclipseThemesRepo, "72f61ec"));
+	}
 
-		// Now, we use the plugin for universal.
+	private static void printRefactorings(String headLine, CstDiff diff) {
+		System.out.println(headLine);
+		for (Relationship rel : diff.getRefactoringRelationships()) {
+			System.out.println(rel.getStandardDescription());
+		}
+	}
+
+	private static void runExamplesForUniversalInLocal() throws Exception {
 		System.out.println("\n\n----- Universal Plugin Java -----");
 		UniversalPlugin universalPlugin = new UniversalPlugin();
 		CstComparator comparator = new CstComparator(universalPlugin);
@@ -80,11 +89,11 @@ public class RefDiffExample {
 			printRefactorings("\nMove and Rename Class:", diff);
 		}
 		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "RenameClass/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "RenameClass/v1"), ".java");
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameClass/v0"), ".java");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameClass/v1"), ".java");
 			CstDiff diff = comparator.compare(before, after);
 			printRefactorings("\nRename Class:", diff);
-		}		
+		}
 		{
 			SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameMethod/v0"), ".java");
 			SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameMethod/v1"), ".java");
@@ -111,7 +120,7 @@ public class RefDiffExample {
 			SourceFolder after = SourceFolder.from(Paths.get(basePath, "pushDownMethod/v1"), ".java");
 			CstDiff diff = comparator.compare(before, after);
 			printRefactorings("\nPush Down Method:", diff);
-		}		
+		}
 		{
 			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractMethod/v0"), ".java");
 			SourceFolder after = SourceFolder.from(Paths.get(basePath, "extractMethod/v1"), ".java");
@@ -131,7 +140,6 @@ public class RefDiffExample {
 			printRefactorings("\nInline Method:", diff);
 		}
 
-
 		System.out.println("\n\n----- Universal Plugin C -----");
 		basePath = "example-for-universal/c";
 		{
@@ -141,12 +149,4 @@ public class RefDiffExample {
 			printRefactorings("rename function:", diff);
 		}
 	}
-
-	private static void printRefactorings(String headLine, CstDiff diff) {
-		System.out.println(headLine);
-		for (Relationship rel : diff.getRefactoringRelationships()) {
-			System.out.println(rel.getStandardDescription());
-		}
-	}
-
 }

@@ -139,7 +139,7 @@ public class UniversalParser {
       callableNodes.addAll(getCallableNodes(child));
     }
     String nodeType = node.getType();
-    if (nodeType.equals("method") || nodeType.equals("function")) {
+    if (nodeType.equals(NodeTypes.METHOD_DECLARATION) || nodeType.equals(NodeTypes.FUNCTION_DECLARATION)) {
       callableNodes.add(node);
     }
     return callableNodes;
@@ -193,9 +193,9 @@ public class UniversalParser {
         switch(tsNode.getType()) {
           case "class_declaration": { // for Java
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType("class");
+            cstNode.setType(NodeTypes.CLASS_DECLARATION);
 
-            TSNode body = tsNode.getChild(3);
+            TSNode body = tsNode.getChildByFieldName("body");
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode));
 
             TSNode identifier = tsNode.getChildByFieldName("name");
@@ -203,16 +203,22 @@ public class UniversalParser {
             cstNode.setLocalName(className);
             cstNode.setSimpleName(className);
 
-            TSNode packageDecl = tsNode.getPrevSibling(); // package is declared before class
-            TSNode packageIdentifier = packageDecl.getChild(1);
-            String packageName = sourceCode.substring(packageIdentifier.getStartByte(), packageIdentifier.getEndByte());
+            String packageName = "";
+            TSNode program = tsNode.getParent();
+            for (int i = 0; i < program.getChildCount(); i++) { // package_declarationの他に block_comentやimport_declarationなどもある
+              TSNode child = program.getChild(i);
+              if (child.getType().equals("package_declaration")) {
+                TSNode scopedIdentifier = child.getChild(1);
+                packageName = sourceCode.substring(scopedIdentifier.getStartByte(), child.getEndByte());
+              }
+            }
             cstNode.setNamespace(packageName + ".");
             root.addNode(cstNode);
             parent = cstNode;
             break; }
           case "constructor_declaration": { // for Java
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType("method");
+            cstNode.setType(NodeTypes.METHOD_DECLARATION);
 
             TSNode block = tsNode.getChildByFieldName("body");
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode));
@@ -232,7 +238,7 @@ public class UniversalParser {
             break; }
           case "method_declaration": { // for Java
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType("method");
+            cstNode.setType(NodeTypes.METHOD_DECLARATION);
 
             TSNode block = tsNode.getChildByFieldName("body");
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode));
@@ -252,7 +258,7 @@ public class UniversalParser {
             break; }
           case "translation_unit": { // for C
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType("file");
+            cstNode.setType(NodeTypes.FILE);
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), tsNode.getStartByte(), tsNode.getEndByte(), sourceCode)); // TODO bodyと区別して計算
             cstNode.setLocalName(path);
             cstNode.setSimpleName(path);
@@ -261,7 +267,7 @@ public class UniversalParser {
             break; }
           case "function_definition": { // for C
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType("function");
+            cstNode.setType(NodeTypes.FUNCTION_DECLARATION);
             
             TSNode block = tsNode.getChildByFieldName("body");
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode)); // TODO bodyと区別して計算
@@ -335,6 +341,9 @@ public class UniversalParser {
         TSNode identifier = superclass.getParent().getChildByFieldName("name");
         String className = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
 
+        if (!classNodeMap.containsKey(superclassName)) { // 入力として与えられたフォルダにsuperclassの定義ファイルが含まれていなかった場合
+          continue;
+        }
         root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, classNodeMap.get(className).getId(), classNodeMap.get(superclassName).getId()));
       }
     }
@@ -347,7 +356,7 @@ public class UniversalParser {
       classNodes.addAll(getClassNodes(child));
     }
     String nodeType = node.getType();
-    if (nodeType.equals("class")) {
+    if (nodeType.equals(NodeTypes.CLASS_DECLARATION)) {
       classNodes.add(node);
     }
     return classNodes;
