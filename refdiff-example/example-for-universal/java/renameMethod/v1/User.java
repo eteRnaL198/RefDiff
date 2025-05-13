@@ -8,6 +8,7 @@ public class User {
   }
   
   public boolean isAdult() {
-    return age >= 18;
+    final int THRESHOLD = 18;
+    return age >= THRESHOLD;
   }
 }

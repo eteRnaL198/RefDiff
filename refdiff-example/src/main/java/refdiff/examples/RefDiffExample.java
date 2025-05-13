@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import refdiff.core.RefDiff;
 import refdiff.core.diff.CstComparator;
@@ -60,31 +61,36 @@ public class RefDiffExample {
 		UniversalPlugin universalPlugin = new UniversalPlugin();
 		CstComparator comparator = new CstComparator(universalPlugin);
 		String basePath = "example-for-universal/java";
-		
-		SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveMethod/v0"), ".java");
-		SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveMethod/v1"), ".java");
+
+		SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameMethod/v0"), ".java");
+		SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameMethod/v1"), ".java");
 		CstDiff diff = comparator.compare(before, after);
-		printRefactorings("move method:", diff);
+		printRefactorings("rename method:", diff);
+
+		before = SourceFolder.from(Paths.get(basePath, "moveMethod/v0"), ".java");
+		after = SourceFolder.from(Paths.get(basePath, "moveMethod/v1"), ".java");
+		diff = comparator.compare(before, after);
+		printRefactorings("\nmove method:", diff);
 
 		before = SourceFolder.from(Paths.get(basePath, "moveClass/v0"), ".java");
 		after = SourceFolder.from(Paths.get(basePath, "moveClass/v1"), ".java");
 		diff = comparator.compare(before, after);
-		printRefactorings("move class:", diff);
-
-		before = SourceFolder.from(Paths.get(basePath, "renameMethod/v0"), ".java");
-		after = SourceFolder.from(Paths.get(basePath, "renameMethod/v1"), ".java");
-		diff = comparator.compare(before, after);
-		printRefactorings("rename method:", diff);
+		printRefactorings("\nmove class:", diff);
 
 		before = SourceFolder.from(Paths.get(basePath, "extractMethod/v0"), ".java");
 		after = SourceFolder.from(Paths.get(basePath, "extractMethod/v1"), ".java");
 		diff = comparator.compare(before, after);
-		printRefactorings("extract method:", diff);
+		printRefactorings("\nextract method:", diff);
 
 		before = SourceFolder.from(Paths.get(basePath, "extractAndMoveMethod/v0"), ".java");
 		after = SourceFolder.from(Paths.get(basePath, "extractAndMoveMethod/v1"), ".java");
 		diff = comparator.compare(before, after);
-		printRefactorings("extract and move method:", diff);
+		printRefactorings("\nextract and move method:", diff);
+
+		before = SourceFolder.from(Paths.get(basePath, "pullUpMethod/v0"), ".java");
+		after = SourceFolder.from(Paths.get(basePath, "pullUpMethod/v1"), ".java");
+		diff = comparator.compare(before, after);
+		printRefactorings("\npull up method:", diff);
 
 		System.out.println("\n\n----- Universal Plugin C -----");
 		basePath = "example-for-universal/c";
