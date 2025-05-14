@@ -197,5 +197,14 @@ public class RefDiffExample {
 		printRefactorings(
 				"\nRefactorings found in eureka 5103ace802b2819438318dd53b5b07512aae0d25",
 				refDiffUniversal.computeDiffForCommit(eurekaRepo, "5103ace802b2819438318dd53b5b07512aae0d25"));
+
+		File springDataRestRepo = refDiffUniversal.cloneGitRepository(
+				new File(tempFolder, "spring-data-rest"),
+				"https://github.com/icse18-refactorings/spring-data-rest.git");
+
+		printRefactorings(
+				"\nRefactorings found in spring-data-rest b7cba6a700d8c5e456cdeffe9c5bf54563eab7d3",
+				refDiffUniversal.computeDiffForCommit(springDataRestRepo, "b7cba6a700d8c5e456cdeffe9c5bf54563eab7d3"));
+	
 	}
 }
