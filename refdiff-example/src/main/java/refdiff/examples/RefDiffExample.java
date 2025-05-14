@@ -26,7 +26,8 @@ public class RefDiffExample {
 
 	public static void main(String[] args) throws Exception {
 		runExamples();
-		runExamplesForUniversalInLocal();
+		runUniversalOnLocal();
+		runUniversalForRepo();
 	}
 
 	private static void runExamples() throws Exception {
@@ -72,7 +73,7 @@ public class RefDiffExample {
 		}
 	}
 
-	private static void runExamplesForUniversalInLocal() throws Exception {
+	private static void runUniversalOnLocal() throws Exception {
 		System.out.println("\n\n----- Universal Plugin Java -----");
 		UniversalPlugin universalPlugin = new UniversalPlugin();
 		CstComparator comparator = new CstComparator(universalPlugin);
@@ -155,5 +156,46 @@ public class RefDiffExample {
 			CstDiff diff = comparator.compare(before, after);
 			printRefactorings("rename function:", diff);
 		}
+	}
+
+	private static void runUniversalForRepo() throws Exception {
+		System.out.println("\n\n----- Universal Plugin Java on Repository -----");
+
+		File tempFolder = new File("temp");
+
+		UniversalPlugin universalPlugin = new UniversalPlugin();
+		RefDiff refDiffUniversal = new RefDiff(universalPlugin);
+
+		File seyrenRepo = refDiffUniversal.cloneGitRepository(
+				new File(tempFolder, "seyren"),
+				"https://github.com/icse18-refactorings/seyren.git");
+
+		printRefactorings(
+				"Refactorings found in seyren 5fb36a321af7df470d4c845cb18da8f85be31c38",
+				refDiffUniversal.computeDiffForCommit(seyrenRepo, "5fb36a321af7df470d4c845cb18da8f85be31c38"));
+
+		File clojureRepo = refDiffUniversal.cloneGitRepository(
+				new File(tempFolder, "clojure"),
+				"https://github.com/icse18-refactorings/clojure.git");
+
+		printRefactorings(
+				"\nRefactorings found in clojure 309c03055b06525c275b278542c881019424760e",
+				refDiffUniversal.computeDiffForCommit(clojureRepo, "309c03055b06525c275b278542c881019424760e"));
+
+		File crashRepo = refDiffUniversal.cloneGitRepository(
+				new File(tempFolder, "crash"),
+				"https://github.com/icse18-refactorings/crash.git");
+
+		printRefactorings(
+				"\nRefactorings found in crash 2801269c7e47bd6e243612654a74cee809d20959",
+				refDiffUniversal.computeDiffForCommit(crashRepo, "2801269c7e47bd6e243612654a74cee809d20959"));
+
+		File eurekaRepo = refDiffUniversal.cloneGitRepository(
+				new File(tempFolder, "eureka"),
+				"https://github.com/icse18-refactorings/eureka.git");
+
+		printRefactorings(
+				"\nRefactorings found in eureka 5103ace802b2819438318dd53b5b07512aae0d25",
+				refDiffUniversal.computeDiffForCommit(eurekaRepo, "5103ace802b2819438318dd53b5b07512aae0d25"));
 	}
 }
