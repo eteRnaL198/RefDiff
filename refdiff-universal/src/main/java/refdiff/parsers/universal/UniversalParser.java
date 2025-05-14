@@ -237,11 +237,19 @@ public class UniversalParser {
             parent.addNode(cstNode);
             break; }
           case "method_declaration": { // for Java
+            if (tsNode.getParent().getType().equals("interface_body")) {
+              break; // TODO Interfaceも対応する
+            }
+
             CstNode cstNode = new CstNode(cstId++);
             cstNode.setType(NodeTypes.METHOD_DECLARATION);
 
             TSNode block = tsNode.getChildByFieldName("body");
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode));
+            if (block.isNull()) {
+              cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), tsNode.getEndByte(), tsNode.getEndByte(), sourceCode)); // Abstract method has no body
+            } else {
+              cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode));
+            }
 
             TSNode identifier = tsNode.getChildByFieldName("name");
             String methodName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
