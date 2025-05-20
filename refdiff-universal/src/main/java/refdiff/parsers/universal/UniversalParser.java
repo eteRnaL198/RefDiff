@@ -268,8 +268,14 @@ public class UniversalParser {
             CstNode cstNode = new CstNode(cstId++);
             cstNode.setType(NodeTypes.FILE);
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), tsNode.getStartByte(), tsNode.getEndByte(), sourceCode)); // TODO bodyと区別して計算
-            cstNode.setLocalName(path);
-            cstNode.setSimpleName(path);
+            
+            Path filePath = Paths.get(path);
+            Path parentPath = filePath.getParent();
+            cstNode.setNamespace(parentPath != null ? parentPath.toString() : "");
+
+            String fileName = filePath.getFileName().toString();
+            cstNode.setLocalName(fileName);
+            cstNode.setSimpleName(fileName);
             root.addNode(cstNode);
             parent = cstNode;
             break; }
