@@ -26,7 +26,8 @@ public class RefDiffExample {
 
 	public static void main(String[] args) throws Exception {
 		runExamples();
-		runUniversalOnLocal();
+		runUniversalJavaOnLocal();
+		runUniversalCOnLocal();
 		runUniversalForRepo();
 	}
 
@@ -73,7 +74,7 @@ public class RefDiffExample {
 		}
 	}
 
-	private static void runUniversalOnLocal() throws Exception {
+	private static void runUniversalJavaOnLocal() throws Exception {
 		System.out.println("\n\n----- Universal Plugin Java -----");
 		UniversalPlugin universalPlugin = new UniversalPlugin();
 		CstComparator comparator = new CstComparator(universalPlugin);
@@ -147,14 +148,63 @@ public class RefDiffExample {
 			CstDiff diff = comparator.compare(before, after);
 			printRefactorings("\nInline Method:", diff);
 		}
+	}
 
+	private static void runUniversalCOnLocal() throws Exception {
 		System.out.println("\n\n----- Universal Plugin C -----");
-		basePath = "example-for-universal/c";
+		UniversalPlugin universalPlugin = new UniversalPlugin();
+		CstComparator comparator = new CstComparator(universalPlugin);
+		String basePath = "example-for-universal/c";
+		{
+			// TODO change signature
+		}
+		{
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveFile/v0"), ".c");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveFile/v1"), ".c");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("Move File:", diff);
+		}
+		{
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveFunction/v0"), ".c");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveFunction/v1"), ".c");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("\nMove Function:", diff);
+		}		
+		{
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameFile/v0"), ".c");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameFile/v1"), ".c");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("\nRename File:", diff);
+		}
 		{
 			SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameFunction/v0"), ".c");
 			SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameFunction/v1"), ".c");
 			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("rename function:", diff);
+			printRefactorings("\nRename Function:", diff);
+		}		
+		{
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveAndRenameFile/v0"), ".c");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveAndRenameFile/v1"), ".c");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("\nMove and Rename File:", diff);
+		}
+		{
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveAndRenameFunction/v0"), ".c");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveAndRenameFunction/v1"), ".c");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("\nMove and Rename Function:", diff);
+		}
+		{
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractFunction/v0"), ".c");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "extractFunction/v1"), ".c");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("\nExtract Function:", diff);
+		}
+		{
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "inlineFunction/v0"), ".c");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "inlineFunction/v1"), ".c");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("\nInline Function:", diff);
 		}
 	}
 
