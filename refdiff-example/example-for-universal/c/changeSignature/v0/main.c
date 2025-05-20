@@ -1,11 +1,11 @@
 #include <stdio.h>
 
-void hello() {
-  printf("Hello World\n");
+void print() {
+  printf("Hello ");
+  printf("World\n");
   return;
 }
 
 int main() {
-  hello();
   return 0;
 }

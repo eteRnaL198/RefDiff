@@ -26,9 +26,9 @@ public class RefDiffExample {
 
 	public static void main(String[] args) throws Exception {
 		runExamples();
+		runUniversalForRepo();
 		runUniversalJavaOnLocal();
 		runUniversalCOnLocal();
-		runUniversalForRepo();
 	}
 
 	private static void runExamples() throws Exception {
@@ -156,13 +156,16 @@ public class RefDiffExample {
 		CstComparator comparator = new CstComparator(universalPlugin);
 		String basePath = "example-for-universal/c";
 		{
-			// TODO change signature
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "changeSignature/v0"), ".c");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "changeSignature/v1"), ".c");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("Change Signature:", diff);
 		}
 		{
 			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveFile/v0"), ".c");
 			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveFile/v1"), ".c");
 			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("Move File:", diff);
+			printRefactorings("\nMove File:", diff);
 		}
 		{
 			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveFunction/v0"), ".c");

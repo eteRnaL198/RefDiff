@@ -289,8 +289,30 @@ public class UniversalParser {
             TSNode declarator = tsNode.getChildByFieldName("declarator");
             TSNode identifier = declarator.getChild(0);
             String functionName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
-            cstNode.setLocalName(functionName);
             cstNode.setSimpleName(functionName);
+
+            TSNode parameters = declarator.getChildByFieldName("parameters");
+            StringBuilder localNameBuilder = new StringBuilder();
+            localNameBuilder.append("(");
+            if (parameters.getChildCount() != 2) { // Ignore the () case
+              for (int i = 1; i < parameters.getChildCount() - 1; i++) { // Ignore the first ( and last )
+                if (i > 2) {
+                  localNameBuilder.append(", ");
+                }
+                TSNode parameter = parameters.getChild(i);
+                if (parameter.getType().equals("variadic_parameter")) { // variable length arguments
+                  localNameBuilder.append("...");
+                } else if (parameter.getType().equals("parameter_declaration")) {
+                  TSNode type = parameter.getChildByFieldName("type");
+                  String typeName = sourceCode.substring(type.getStartByte(), type.getEndByte());
+                  localNameBuilder.append(typeName);
+                }
+              }
+            }
+            localNameBuilder.append(")");
+            String signature = functionName + localNameBuilder.toString();
+            cstNode.setLocalName(signature);
+
             // TODO Parentをちゃんと取る
             if (parent == null) {
               System.out.println("Parent is null");
