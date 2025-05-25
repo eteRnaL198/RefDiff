@@ -97,13 +97,13 @@ public class UniversalParser {
 
     /* Create Hierarchy Graph */
     if (this.language == Language.JAVA) {
-      List<CstNode> classNodes = new ArrayList<>();
+      List<CstNode> classOrInterfaceNodes = new ArrayList<>();
       for (CstNode node : root.getNodes()) {
-        classNodes.addAll(getClassNodes(node));
+        classOrInterfaceNodes.addAll(getClassOrInterfaceNodes(node));
       }
-      Map<String, CstNode> classNodeMap = new HashMap<>();
-      for (CstNode classNode : classNodes) {
-        classNodeMap.put(classNode.getSimpleName(), classNode); //TODO simplenameをhashmapに持たせてるので重複しやすく上書きされる。namespaceなどを使うといいかも
+      Map<String, CstNode> classOrInterfaceNodeMap = new HashMap<>();
+      for (CstNode classOrInterfaceNode : classOrInterfaceNodes) {
+        classOrInterfaceNodeMap.put(classOrInterfaceNode.getSimpleName(), classOrInterfaceNode); //TODO simplenameをhashmapに持たせてるので重複しやすく上書きされる。namespaceなどを使うといいかも
       }
       for (SourceFile file : files) {
         String sourceCode = "";
@@ -113,7 +113,7 @@ public class UniversalParser {
           e.printStackTrace();
         }
         TSTree tree = parser.parseString(null, sourceCode);
-        addInheritanceRelationship(root, classNodeMap, tree, tsLang, sourceCode);
+        addInheritanceRelationship(root, classOrInterfaceNodeMap, tree, tsLang, sourceCode);
       }
     }
 
@@ -171,7 +171,7 @@ public class UniversalParser {
   private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
     String query;
     if (this.language == Language.JAVA) {
-      query = "[(class_declaration) (constructor_declaration) (method_declaration)] @node";
+      query = "[(class_declaration) (interface_declaration) (constructor_declaration) (method_declaration)] @node";
     } else if (this.language == Language.C) {
       query = "[(translation_unit) (function_definition)] @node";
     } else {
@@ -205,7 +205,7 @@ public class UniversalParser {
 
             String packageName = "";
             TSNode program = tsNode.getParent();
-            for (int i = 0; i < program.getChildCount(); i++) { // package_declarationの他に block_comentやimport_declarationなどもある
+            for (int i = 0; i < program.getChildCount(); i++) { // package_declarationの他に block_commentやimport_declarationなどもあるのでフィルタリングしている
               TSNode child = program.getChild(i);
               if (child.getType().equals("package_declaration")) {
                 TSNode scopedIdentifier = child.getChild(1);
@@ -213,6 +213,32 @@ public class UniversalParser {
               }
             }
             cstNode.setNamespace(packageName + ".");
+            root.addNode(cstNode);
+            parent = cstNode;
+            break; }
+          case "interface_declaration": { // for Java
+            CstNode cstNode = new CstNode(cstId++);
+            cstNode.setType(NodeTypes.INTERFACE_DECLARATION);
+
+            TSNode body = tsNode.getChildByFieldName("body");
+            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode));
+
+            TSNode identifier = tsNode.getChildByFieldName("name");
+            String interfaceName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+            cstNode.setLocalName(interfaceName);
+            cstNode.setSimpleName(interfaceName);
+
+            String packageName = "";
+            TSNode program = tsNode.getParent();
+            for (int i = 0; i < program.getChildCount(); i++) { // package_declarationの他に block_commentやimport_declarationなどもあるのでフィルタリングしている
+              TSNode child = program.getChild(i);
+              if (child.getType().equals("package_declaration")) {
+                TSNode scopedIdentifier = child.getChild(1);
+                packageName = sourceCode.substring(scopedIdentifier.getStartByte(), child.getEndByte());
+              }
+            }
+            cstNode.setNamespace(packageName + ".");
+            cstNode.addStereotypes(Stereotype.ABSTRACT);
             root.addNode(cstNode);
             parent = cstNode;
             break; }
@@ -237,10 +263,6 @@ public class UniversalParser {
             parent.addNode(cstNode);
             break; }
           case "method_declaration": { // for Java
-            if (tsNode.getParent().getType().equals("interface_body")) {
-              break; // TODO Interfaceも対応する
-            }
-
             CstNode cstNode = new CstNode(cstId++);
             cstNode.setType(NodeTypes.METHOD_DECLARATION);
 
@@ -359,8 +381,8 @@ public class UniversalParser {
     return new TokenizedSource(path.toString(), tokens);
   }
 
-  private void addInheritanceRelationship(CstRoot root, Map<String, CstNode> classNodeMap, TSTree tree, TSLanguage tsLang, String sourceCode) {
-    String query = "[(superclass)] @node";
+  private void addInheritanceRelationship(CstRoot root, Map<String, CstNode> classOrInterfaceNodeMap, TSTree tree, TSLanguage tsLang, String sourceCode) {
+    String query = "[(superclass) (super_interfaces) (extends_interfaces)] @node";
     TSQuery tsQuery = new TSQuery(tsLang, query);
     TSQueryCursor cursor = new TSQueryCursor();
     TSNode rootNode = tree.getRootNode();
@@ -370,32 +392,70 @@ public class UniversalParser {
     while (cursor.nextMatch(match)) {
       TSQueryCapture[] captures = match.getCaptures();
       for (TSQueryCapture capture : captures) {
-        TSNode superclass = capture.getNode(); // (superclass (type_identifier)) は extends Bar の2つを含む
-        TSNode extendsToken = superclass.getChild(0); // type_identifier は extends のこと
-        String superclassName = sourceCode.substring(extendsToken.getEndByte(), superclass.getEndByte()).trim(); // 先頭の空白を削除
+        TSNode tsNode = capture.getNode();
+        switch (tsNode.getType()) {
+          case "superclass": {
+            TSNode superclass = tsNode; // (superclass (type_identifier)) は extends Bar の2つを含む
+            TSNode extendsToken = superclass.getChild(0); // type_identifier は extends のこと
+            String superclassName = sourceCode.substring(extendsToken.getEndByte(), superclass.getEndByte()).trim(); // 先頭の空白を削除
+    
+            TSNode identifier = superclass.getParent().getChildByFieldName("name");
+            String className = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+    
+            if (!classOrInterfaceNodeMap.containsKey(superclassName)) { // 入力として与えられたフォルダにsuperclassの定義ファイルが含まれていなかった場合
+              continue;
+            }
+            root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, classOrInterfaceNodeMap.get(className).getId(), classOrInterfaceNodeMap.get(superclassName).getId()));
+            break; }
+          case "super_interfaces": { // class implements interfaces
+            TSNode interfaces = tsNode;
+            TSNode subClass = interfaces.getParent().getChildByFieldName("name");
+            String subClassName = sourceCode.substring(subClass.getStartByte(), subClass.getEndByte());
 
-        TSNode identifier = superclass.getParent().getChildByFieldName("name");
-        String className = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+            TSNode implementsToken = interfaces.getChild(0); // (super_interfaces (type_identifier)) type_identifier は implements のこと
+            List<String> interfaceNames = java.util.Arrays.stream(
+              sourceCode.substring(implementsToken.getEndByte(), interfaces.getEndByte()).split(",")).map(String::trim).toList(); // "Foo, Bar, Baz" -> ["Foo", "Bar", "Baz"]
+            for (String name : interfaceNames) {
+              if (!classOrInterfaceNodeMap.containsKey(name)) { // 入力として与えられたフォルダにinterfaceの定義ファイルが含まれていなかった場合
+                continue;
+              }
+              root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, classOrInterfaceNodeMap.get(subClassName).getId(), classOrInterfaceNodeMap.get(name).getId()));
+            }
+            break; }
+          case "extends_interfaces": { // interface extends interfaces
+            TSNode extendsInterfaces = tsNode;
+            TSNode subInterface = extendsInterfaces.getParent().getChildByFieldName("name");
+            String subInterfaceName = sourceCode.substring(subInterface.getStartByte(), subInterface.getEndByte());
 
-        if (!classNodeMap.containsKey(superclassName)) { // 入力として与えられたフォルダにsuperclassの定義ファイルが含まれていなかった場合
-          continue;
+            TSNode extendsToken = extendsInterfaces.getChild(0); // (extends_interfaces (type_identifier)) type_identifier は extends のこと
+            List<String> extendedNames = java.util.Arrays.stream(
+              sourceCode.substring(extendsToken.getEndByte(), extendsInterfaces.getEndByte()).split(",")).map(String::trim).toList(); // "Foo, Bar, Baz" -> ["Foo", "Bar", "Baz"]
+            
+            for (String name : extendedNames) {
+              if (!classOrInterfaceNodeMap.containsKey(name)) { // 入力として与えられたフォルダにinterfaceの定義ファイルが含まれていなかった場合
+                continue;
+              }
+              root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, classOrInterfaceNodeMap.get(subInterfaceName).getId(), classOrInterfaceNodeMap.get(name).getId()));
+            }
+            break; }
+          default:
+            break;
         }
-        root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, classNodeMap.get(className).getId(), classNodeMap.get(superclassName).getId()));
       }
     }
     return;
   }
 
-  private List<CstNode> getClassNodes(CstNode node) { // TODO CstRoot.forEachNode()で取れるかも
-    List<CstNode> classNodes = new ArrayList<>();
+  private List<CstNode> getClassOrInterfaceNodes(CstNode node) { // TODO CstRoot.forEachNode()で取れるかも
+    List<CstNode> classOrInterfaceNodes = new ArrayList<>();
     for (CstNode child : node.getNodes()) {
-      classNodes.addAll(getClassNodes(child));
+      classOrInterfaceNodes.addAll(getClassOrInterfaceNodes(child));
     }
     String nodeType = node.getType();
-    if (nodeType.equals(NodeTypes.CLASS_DECLARATION)) {
-      classNodes.add(node);
+    if (nodeType.equals(NodeTypes.CLASS_DECLARATION) || nodeType.equals(NodeTypes.INTERFACE_DECLARATION)) {
+      classOrInterfaceNodes.add(node);
     }
-    return classNodes;
+    return classOrInterfaceNodes;
   }
 
   private void parseWithCtags(Path[] paths) {

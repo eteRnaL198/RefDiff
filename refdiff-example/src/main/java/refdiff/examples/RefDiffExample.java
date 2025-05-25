@@ -110,7 +110,10 @@ public class RefDiffExample {
 			printRefactorings("\nRename Method:", diff);
 		}
 		{
-			// TODO extract Interface
+			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractInterface/v0"), ".java");
+			SourceFolder after = SourceFolder.from(Paths.get(basePath, "extractInterface/v1"), ".java");
+			CstDiff diff = comparator.compare(before, after);
+			printRefactorings("\nExtract Interface:", diff);
 		}
 		{
 			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractSuperclass/v0"), ".java");
