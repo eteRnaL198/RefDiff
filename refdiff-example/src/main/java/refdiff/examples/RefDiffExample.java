@@ -20,7 +20,6 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.c.CPlugin;
 import refdiff.parsers.java.JavaPlugin;
 import refdiff.parsers.universal.UniversalPlugin;
-import refdiff.parsers.universal.UniversalParser;
 
 public class RefDiffExample {
 

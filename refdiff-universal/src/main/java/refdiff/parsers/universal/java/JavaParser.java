@@ -1,36 +1,24 @@
-package refdiff.parsers.universal;
+package refdiff.parsers.universal.java;
 
 import org.treesitter.TSLanguage;
 import org.treesitter.TSParser;
 import org.treesitter.TSTree;
 import org.treesitter.TreeSitterJava;
-import org.treesitter.TreeSitterC;
 import org.treesitter.TSNode;
 import org.treesitter.TSQuery;
 import org.treesitter.TSQueryCapture;
 import org.treesitter.TSQueryCursor;
 import org.treesitter.TSQueryMatch;
-import org.treesitter.TSRange;
 
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import refdiff.core.io.SourceFileSet;
-import refdiff.core.io.SourceFolder;
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstNodeRelationship;
 import refdiff.core.cst.CstNodeRelationshipType;
@@ -38,43 +26,19 @@ import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.Stereotype;
 import refdiff.core.cst.TokenizedSource;
-import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.CstRootHelper;
 import refdiff.core.cst.TokenPosition;
 import refdiff.core.io.SourceFile;
 
 
-public class UniversalParser {
+public class JavaParser {
 
-  private enum Language {
-    JAVA, C
-  }
-  private Language language;
   private int cstId = 0;
 
-  private void setLanguageByFileExtension(String filePath) {
-    if (filePath.endsWith(".java")) {
-      this.language = Language.JAVA;
-    } else if (filePath.endsWith(".c")) {
-      this.language = Language.C;
-    } else {
-      throw new IllegalArgumentException("Unsupported file type: " + filePath);
-    }
-  }
-
   public CstRoot parse(SourceFileSet folder) {
-    String firstFilePath = folder.getSourceFiles().get(0).getPath();
-    setLanguageByFileExtension(firstFilePath);
-
     TSParser parser = new TSParser();
     TSLanguage tsLang;
-    if (this.language == Language.JAVA) {
-      tsLang = new TreeSitterJava();
-    } else if (this.language == Language.C) {
-      tsLang = new TreeSitterC();
-    } else {
-      throw new IllegalArgumentException("Unsupported language: " + this.language);
-    }
+    tsLang = new TreeSitterJava();
     parser.setLanguage(tsLang);
 
     CstRoot root = new CstRoot();
@@ -96,25 +60,23 @@ public class UniversalParser {
     }
 
     /* Create Hierarchy Graph */
-    if (this.language == Language.JAVA) {
-      List<CstNode> classOrInterfaceNodes = new ArrayList<>();
-      for (CstNode node : root.getNodes()) {
-        classOrInterfaceNodes.addAll(getClassOrInterfaceNodes(node));
+    List<CstNode> classOrInterfaceNodes = new ArrayList<>();
+    for (CstNode node : root.getNodes()) {
+      classOrInterfaceNodes.addAll(getClassOrInterfaceNodes(node));
+    }
+    Map<String, CstNode> classOrInterfaceNodeMap = new HashMap<>();
+    for (CstNode classOrInterfaceNode : classOrInterfaceNodes) {
+      classOrInterfaceNodeMap.put(classOrInterfaceNode.getSimpleName(), classOrInterfaceNode); //TODO simplenameをhashmapに持たせてるので重複しやすく上書きされる。namespaceなどを使うといいかも
+    }
+    for (SourceFile file : files) {
+      String sourceCode = "";
+      try {
+        sourceCode = folder.readContent(file);
+      } catch (IOException e) {
+        e.printStackTrace();
       }
-      Map<String, CstNode> classOrInterfaceNodeMap = new HashMap<>();
-      for (CstNode classOrInterfaceNode : classOrInterfaceNodes) {
-        classOrInterfaceNodeMap.put(classOrInterfaceNode.getSimpleName(), classOrInterfaceNode); //TODO simplenameをhashmapに持たせてるので重複しやすく上書きされる。namespaceなどを使うといいかも
-      }
-      for (SourceFile file : files) {
-        String sourceCode = "";
-        try {
-          sourceCode = folder.readContent(file);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        TSTree tree = parser.parseString(null, sourceCode);
-        addInheritanceRelationship(root, classOrInterfaceNodeMap, tree, tsLang, sourceCode);
-      }
+      TSTree tree = parser.parseString(null, sourceCode);
+      addInheritanceRelationship(root, classOrInterfaceNodeMap, tree, tsLang, sourceCode);
     }
 
     /* Create call graph */
@@ -139,7 +101,7 @@ public class UniversalParser {
       callableNodes.addAll(getCallableNodes(child));
     }
     String nodeType = node.getType();
-    if (nodeType.equals(NodeTypes.METHOD_DECLARATION) || nodeType.equals(NodeTypes.FUNCTION_DECLARATION)) {
+    if (nodeType.equals(JavaNodeTypes.METHOD_DECLARATION)) {
       callableNodes.add(node);
     }
     return callableNodes;
@@ -170,13 +132,7 @@ public class UniversalParser {
 
   private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
     String query;
-    if (this.language == Language.JAVA) {
-      query = "[(class_declaration) (interface_declaration) (constructor_declaration) (method_declaration)] @node";
-    } else if (this.language == Language.C) {
-      query = "[(translation_unit) (function_definition)] @node";
-    } else {
-      throw new IllegalArgumentException("Unsupported language: " + this.language);
-    }
+    query = "[(class_declaration) (interface_declaration) (constructor_declaration) (method_declaration)] @node";
     TSQuery tsQuery = new TSQuery(tsLang, query);
 
     TSNode rootNode = tree.getRootNode();
@@ -191,9 +147,9 @@ public class UniversalParser {
         TSNode tsNode = capture.getNode();
         
         switch(tsNode.getType()) {
-          case "class_declaration": { // for Java
+          case "class_declaration": {
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType(NodeTypes.CLASS_DECLARATION);
+            cstNode.setType(JavaNodeTypes.CLASS_DECLARATION);
 
             TSNode body = tsNode.getChildByFieldName("body");
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode));
@@ -216,9 +172,9 @@ public class UniversalParser {
             root.addNode(cstNode);
             parent = cstNode;
             break; }
-          case "interface_declaration": { // for Java
+          case "interface_declaration": {
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType(NodeTypes.INTERFACE_DECLARATION);
+            cstNode.setType(JavaNodeTypes.INTERFACE_DECLARATION);
 
             TSNode body = tsNode.getChildByFieldName("body");
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode));
@@ -242,9 +198,9 @@ public class UniversalParser {
             root.addNode(cstNode);
             parent = cstNode;
             break; }
-          case "constructor_declaration": { // for Java
+          case "constructor_declaration": {
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType(NodeTypes.METHOD_DECLARATION);
+            cstNode.setType(JavaNodeTypes.METHOD_DECLARATION);
 
             TSNode block = tsNode.getChildByFieldName("body");
             cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode));
@@ -262,9 +218,9 @@ public class UniversalParser {
             }
             parent.addNode(cstNode);
             break; }
-          case "method_declaration": { // for Java
+          case "method_declaration": {
             CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType(NodeTypes.METHOD_DECLARATION);
+            cstNode.setType(JavaNodeTypes.METHOD_DECLARATION);
 
             TSNode block = tsNode.getChildByFieldName("body");
             if (block.isNull()) {
@@ -279,61 +235,6 @@ public class UniversalParser {
             cstNode.setSimpleName(methodName);
 
             cstNode.addStereotypes(Stereotype.TYPE_MEMBER);
-
-            // TODO Parentをちゃんと取る
-            if (parent == null) {
-              System.out.println("Parent is null");
-            }
-            parent.addNode(cstNode);
-            break; }
-          case "translation_unit": { // for C
-            CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType(NodeTypes.FILE);
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), tsNode.getStartByte(), tsNode.getEndByte(), sourceCode)); // TODO bodyと区別して計算
-            
-            Path filePath = Paths.get(path);
-            Path parentPath = filePath.getParent();
-            cstNode.setNamespace(parentPath != null ? parentPath.toString() : "");
-
-            String fileName = filePath.getFileName().toString();
-            cstNode.setLocalName(fileName);
-            cstNode.setSimpleName(fileName);
-            root.addNode(cstNode);
-            parent = cstNode;
-            break; }
-          case "function_definition": { // for C
-            CstNode cstNode = new CstNode(cstId++);
-            cstNode.setType(NodeTypes.FUNCTION_DECLARATION);
-            
-            TSNode block = tsNode.getChildByFieldName("body");
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode)); // TODO bodyと区別して計算
-
-            TSNode declarator = tsNode.getChildByFieldName("declarator");
-            TSNode identifier = declarator.getChild(0);
-            String functionName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
-            cstNode.setSimpleName(functionName);
-
-            TSNode parameters = declarator.getChildByFieldName("parameters");
-            StringBuilder localNameBuilder = new StringBuilder();
-            localNameBuilder.append("(");
-            if (parameters.getChildCount() != 2) { // Ignore the () case
-              for (int i = 1; i < parameters.getChildCount() - 1; i++) { // Ignore the first ( and last )
-                if (i > 2) {
-                  localNameBuilder.append(", ");
-                }
-                TSNode parameter = parameters.getChild(i);
-                if (parameter.getType().equals("variadic_parameter")) { // variable length arguments
-                  localNameBuilder.append("...");
-                } else if (parameter.getType().equals("parameter_declaration")) {
-                  TSNode type = parameter.getChildByFieldName("type");
-                  String typeName = sourceCode.substring(type.getStartByte(), type.getEndByte());
-                  localNameBuilder.append(typeName);
-                }
-              }
-            }
-            localNameBuilder.append(")");
-            String signature = functionName + localNameBuilder.toString();
-            cstNode.setLocalName(signature);
 
             // TODO Parentをちゃんと取る
             if (parent == null) {
@@ -452,7 +353,7 @@ public class UniversalParser {
       classOrInterfaceNodes.addAll(getClassOrInterfaceNodes(child));
     }
     String nodeType = node.getType();
-    if (nodeType.equals(NodeTypes.CLASS_DECLARATION) || nodeType.equals(NodeTypes.INTERFACE_DECLARATION)) {
+    if (nodeType.equals(JavaNodeTypes.CLASS_DECLARATION) || nodeType.equals(JavaNodeTypes.INTERFACE_DECLARATION)) {
       classOrInterfaceNodes.add(node);
     }
     return classOrInterfaceNodes;
