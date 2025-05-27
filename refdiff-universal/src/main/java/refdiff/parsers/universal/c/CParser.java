@@ -22,6 +22,7 @@ import java.util.HashMap;
 
 
 import refdiff.core.io.SourceFileSet;
+import refdiff.parsers.universal.common.Tokenizer;
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstNodeRelationship;
 import refdiff.core.cst.CstNodeRelationshipType;
@@ -57,7 +58,7 @@ public class CParser {
 
       TSTree tree = parser.parseString(null, sourceCode);
       addNodes(tree, tsLang, root, file.toString(), sourceCode);
-      TokenizedSource tokenizedSource = tokenize(tree, tsLang, file.getPath(), sourceCode); // TODO tokenizeの引数にはrelative pathを渡す？
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, file.getPath(), sourceCode);// TODO tokenizeの引数にはrelative pathを渡す？
       root.addTokenizedFile(tokenizedSource);
     }
 
@@ -189,39 +190,6 @@ public class CParser {
         }
       }
     }
-  }
-
-  private TokenizedSource tokenize(TSTree tree, TSLanguage tsLang, String path, String sourceCode) {
-    String query = "_ @node";
-    TSQuery tsQuery = new TSQuery(tsLang, query);
-    TSQueryCursor cursor = new TSQueryCursor();
-    TSNode rootNode = tree.getRootNode();
-    cursor.exec(tsQuery, rootNode);
-    TSQueryMatch match = new TSQueryMatch();
-    
-    String[] splittedSourceCode = sourceCode.split("\n");
-    int[] offsets = new int[splittedSourceCode.length]; // Used to calculate the start and end positions in the string source code.
-    int offset = 0;
-    for (int i = 0; i < splittedSourceCode.length; i++) {
-      offsets[i] = offset;
-      offset += splittedSourceCode[i].length() + 1;
-    }
-    List<TokenPosition> tokens = new ArrayList<>();
-    while (cursor.nextMatch(match)) {
-      TSQueryCapture[] captures = match.getCaptures();
-      for (TSQueryCapture capture : captures) {
-        TSNode node = capture.getNode();
-        if (node.getChildCount() == 0) { // Leaf node
-          int startRow = node.getStartPoint().getRow();
-          int startColumn = node.getStartPoint().getColumn();
-          int endColumn = node.getEndPoint().getColumn();
-          int start = offsets[startRow] + startColumn;
-          int end = offsets[startRow] + endColumn;
-          tokens.add(new TokenPosition(start, end));
-        }
-      }
-    }
-    return new TokenizedSource(path.toString(), tokens);
   }
 
 }
