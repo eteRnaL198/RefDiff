@@ -13,7 +13,6 @@ import org.treesitter.TSQueryMatch;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,8 +26,8 @@ import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.Stereotype;
 import refdiff.core.cst.TokenizedSource;
-import refdiff.core.diff.CstRootHelper;
 import refdiff.core.io.SourceFile;
+import refdiff.parsers.universal.common.CallGraphGenerator;
 
 
 public class JavaParser {
@@ -79,55 +78,10 @@ public class JavaParser {
       addInheritanceRelationship(root, classOrInterfaceNodeMap, tree, tsLang, sourceCode);
     }
 
-    /* Create call graph */
-    List<CstNode> callableNodes = new ArrayList<>();
-    for (CstNode node : root.getNodes()) {
-      callableNodes.addAll(getCallableNodes(node));
-    }
-    Map<String, CstNode> callableNodeMap = new HashMap<>(); 
-    for (CstNode callableNode : callableNodes) {
-      callableNodeMap.put(callableNode.getSimpleName(), callableNode); //TODO simplenameをhashmapに持たせてるので重複しやすく上書きされる。namespaceなどを使うといいかも
-    }
-    for (CstNode node : callableNodes) {
-      addCallRelationship(node, root, folder, files, callableNodeMap);
-    }
+    CallGraphGenerator callGraphGenerator = new CallGraphGenerator(JavaNodeTypes.METHOD_DECLARATION);
+    callGraphGenerator.generateCallGraph(root, folder, files);
 
     return root;
-  }
-
-  private List<CstNode> getCallableNodes(CstNode node) { // TODO CstRoot.forEachNode()で取れるかも
-    List<CstNode> callableNodes = new ArrayList<>();
-    for (CstNode child : node.getNodes()) {
-      callableNodes.addAll(getCallableNodes(child));
-    }
-    String nodeType = node.getType();
-    if (nodeType.equals(JavaNodeTypes.METHOD_DECLARATION)) {
-      callableNodes.add(node);
-    }
-    return callableNodes;
-  }
-
-  private void addCallRelationship(CstNode node, CstRoot root, SourceFileSet folder, List<SourceFile> files, Map<String, CstNode> callableNodeMap) {
-    String path = node.getLocation().getFile();
-    String sourceCode = "";
-    try {
-      Optional<SourceFile> sourceFile = files.stream().filter(f -> f.getPath().equals(path)).findFirst();
-      if (sourceFile.isPresent()) {
-        sourceCode = folder.readContent(sourceFile.get());
-      } else {
-        throw new IllegalArgumentException("Source file not found for path: " + path);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    List<String> tokens = CstRootHelper.retrieveTokens(root, sourceCode, node, true);
-    for (String token : tokens) {
-      if (callableNodeMap.containsKey(token)) {
-      CstNode callee = callableNodeMap.get(token);
-      root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.USE, node.getId(), callee.getId()));
-      }
-    }
   }
 
   private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
