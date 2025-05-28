@@ -10,7 +10,6 @@ import org.treesitter.TSQueryCapture;
 import org.treesitter.TSQueryCursor;
 import org.treesitter.TSQueryMatch;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import java.util.HashMap;
 
 import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.Tokenizer;
+import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstNodeRelationship;
 import refdiff.core.cst.CstNodeRelationshipType;
@@ -26,7 +26,6 @@ import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.Stereotype;
 import refdiff.core.cst.TokenizedSource;
-import refdiff.core.io.SourceFile;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 
 
@@ -36,25 +35,19 @@ public class JavaParser {
 
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();
-    TSLanguage tsLang;
-    tsLang = new TreeSitterJava();
+    TSLanguage tsLang = new TreeSitterJava();
     parser.setLanguage(tsLang);
 
     CstRoot root = new CstRoot();
-    List<SourceFile> files = folder.getSourceFiles();
+    Map<String, String> sourceCodeMap = SourceFileReader.readAllSourceFiles(folder);
 
-    /* Create CstNode for each file */
-    for (SourceFile file : files) {
-      String sourceCode = "";
-      try {
-        sourceCode = folder.readContent(file);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
+    for (Map.Entry<String, String> entry : sourceCodeMap.entrySet()) {
+      String filePath = entry.getKey();
+      String sourceCode = entry.getValue();
       TSTree tree = parser.parseString(null, sourceCode);
-      addNodes(tree, tsLang, root, file.toString(), sourceCode);
-      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, file.getPath(), sourceCode); // TODO tokenizeの引数にはrelative pathを渡す？
+      addNodes(tree, tsLang, root, filePath, sourceCode);
+
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode); // TODO: Should the argument for tokenize be a relative path?
       root.addTokenizedFile(tokenizedSource);
     }
 
@@ -67,19 +60,14 @@ public class JavaParser {
     for (CstNode classOrInterfaceNode : classOrInterfaceNodes) {
       classOrInterfaceNodeMap.put(classOrInterfaceNode.getSimpleName(), classOrInterfaceNode); //TODO simplenameをhashmapに持たせてるので重複しやすく上書きされる。namespaceなどを使うといいかも
     }
-    for (SourceFile file : files) {
-      String sourceCode = "";
-      try {
-        sourceCode = folder.readContent(file);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      TSTree tree = parser.parseString(null, sourceCode);
+    for (Map.Entry<String, String> entry : sourceCodeMap.entrySet()) {
+      String sourceCode = entry.getValue();
+      TSTree tree = parser.parseString(null, sourceCode); // TODO parse済みのtreeを使いたい
       addInheritanceRelationship(root, classOrInterfaceNodeMap, tree, tsLang, sourceCode);
     }
 
     CallGraphGenerator callGraphGenerator = new CallGraphGenerator(JavaNodeTypes.METHOD_DECLARATION);
-    callGraphGenerator.generateCallGraph(root, folder, files);
+    callGraphGenerator.generateCallGraph(root, sourceCodeMap);
 
     return root;
   }

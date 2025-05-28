@@ -5,15 +5,11 @@ import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.CstNodeRelationship;
 import refdiff.core.cst.CstNodeRelationshipType;
 import refdiff.core.diff.CstRootHelper;
-import refdiff.core.io.SourceFile;
-import refdiff.core.io.SourceFileSet;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class CallGraphGenerator {
 
@@ -23,7 +19,17 @@ public class CallGraphGenerator {
         this.callableNodeType = callableNodeType;
     }
 
-    public void generateCallGraph(CstRoot root, SourceFileSet folder, List<SourceFile> files) {
+    /**
+     * Generates call relationships (e.g., method calls) between callable nodes within the provided CST root.
+     * It first identifies all nodes of the specified {@code callableNodeType} (e.g., method declarations)
+     * and then analyzes the tokens within each callable node to find references to other callable nodes.
+     * <p>
+     * Note: This implementation assumes that the CST root contains tokens for each node,
+     * typically populated by {@link refdiff.core.diff.CstRootHelper#retrieveTokens(CstRoot, String, CstNode, boolean)}.
+     * @param root The CstRoot containing the nodes and to which relationships will be added.
+     * @param sourceCodeMap A map where keys are file paths and values are the source code content of those files.
+     */
+    public void generateCallGraph(CstRoot root, Map<String, String> sourceCodeMap) {
         List<CstNode> allCallableNodes = new ArrayList<>();
         // Iterate over top-level nodes (e.g., classes/interfaces) and collect all callable methods.
         for (CstNode topLevelNode : root.getNodes()) {
@@ -37,7 +43,7 @@ public class CallGraphGenerator {
         }
 
         for (CstNode callerNode : allCallableNodes) {
-            addCallRelationship(callerNode, root, folder, files, callableNodeMap);
+            addCallRelationship(callerNode, root, sourceCodeMap, callableNodeMap);
         }
     }
 
@@ -59,28 +65,20 @@ public class CallGraphGenerator {
         return collectedNodes;
     }
 
-    private void addCallRelationship(CstNode callerNode, CstRoot root, SourceFileSet folder, List<SourceFile> files, Map<String, CstNode> callableNodeMap) {
+    private void addCallRelationship(CstNode callerNode, CstRoot root, Map<String, String> sourceCodeMap, Map<String, CstNode> callableNodeMap) {
         String path = callerNode.getLocation().getFile();
-        String sourceCode = "";
-        try {
-            Optional<SourceFile> sourceFileOptional = files.stream().filter(f -> f.getPath().equals(path)).findFirst();
-            if (sourceFileOptional.isPresent()) {
-                sourceCode = folder.readContent(sourceFileOptional.get());
-            } else {
-                System.err.println("Warning: Source file not found for path: " + path +
-                                   " when processing CstNode: " + callerNode.getSimpleName() +
-                                   " (id: " + callerNode.getId() + "). No call relationships will be added for this node.");
-                // Original code would proceed with empty sourceCode, leading to no tokens found.
-            }
-        } catch (IOException e) {
-            System.err.println("Warning: IOException while reading source file: " + path +
+        String sourceCode = sourceCodeMap.get(path);
+
+        if (sourceCode == null) {
+            // This should ideally not happen if SourceFileReader.readAllSourceFiles ensures all files are read
+            // or throws an exception. This warning is a safeguard.
+            System.err.println("Warning: Source code not found in map for path: " + path +
                                " for CstNode: " + callerNode.getSimpleName() +
                                " (id: " + callerNode.getId() + "). No call relationships will be added for this node.");
-            e.printStackTrace(); // Maintain original behavior of printing stack trace.
-            // Original code would proceed with empty sourceCode.
+            sourceCode = ""; // Use empty string to prevent NullPointerException later
         }
-
-        List<String> tokens = CstRootHelper.retrieveTokens(root, sourceCode, callerNode, true);
+        
+        List<String> tokens = CstRootHelper.retrieveTokens(root, sourceCode, callerNode, true); // 
         for (String token : tokens) {
             if (callableNodeMap.containsKey(token)) {
                 CstNode callee = callableNodeMap.get(token);
