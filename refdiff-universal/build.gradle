@@ -16,6 +16,9 @@ dependencies {
     implementation("io.github.bonede:tree-sitter-c:0.23.2")
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.4'
+
+    testImplementation 'junit:junit:4.11'
+    testImplementation project(path: ':refdiff-core', configuration: 'testArtifacts')
 }
 
 // task run(type: JavaExec) {
