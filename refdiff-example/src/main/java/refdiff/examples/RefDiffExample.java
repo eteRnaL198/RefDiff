@@ -26,7 +26,6 @@ public class RefDiffExample {
 	public static void main(String[] args) throws Exception {
 		runExamples();
 		runUniversalForRepo();
-		runUniversalCOnLocal();
 	}
 
 	private static void runExamples() throws Exception {
@@ -69,67 +68,6 @@ public class RefDiffExample {
 		System.out.println(headLine);
 		for (Relationship rel : diff.getRefactoringRelationships()) {
 			System.out.println(rel.getStandardDescription());
-		}
-	}
-
-	private static void runUniversalCOnLocal() throws Exception {
-		System.out.println("\n\n----- Universal Plugin C -----");
-		UniversalPlugin universalPlugin = new UniversalPlugin();
-		CstComparator comparator = new CstComparator(universalPlugin);
-		String basePath = "example-for-universal/c";
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "changeSignature/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "changeSignature/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("Change Signature:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveFile/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveFile/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nMove File:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveFunction/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveFunction/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nMove Function:", diff);
-		}		
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameFile/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameFile/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nRename File:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameFunction/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameFunction/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nRename Function:", diff);
-		}		
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveAndRenameFile/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveAndRenameFile/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nMove and Rename File:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveAndRenameFunction/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveAndRenameFunction/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nMove and Rename Function:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractFunction/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "extractFunction/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nExtract Function:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "inlineFunction/v0"), ".c");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "inlineFunction/v1"), ".c");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nInline Function:", diff);
 		}
 	}
 

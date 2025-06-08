@@ -77,8 +77,8 @@ public class CParser {
             
             Path filePath = Paths.get(path);
             Path parentPath = filePath.getParent();
-            cstNode.setNamespace(parentPath != null ? parentPath.toString() : "");
-
+            cstNode.setNamespace(parentPath != null ? parentPath.toString() + "/" : "");
+            
             String fileName = filePath.getFileName().toString();
             cstNode.setLocalName(fileName);
             cstNode.setSimpleName(fileName);

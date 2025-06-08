@@ -21,7 +21,7 @@ import refdiff.parsers.universal.UniversalPlugin;
 public class TestCstComparator {
 
     private static final LanguagePlugin parser = new UniversalPlugin();
-    private static final String TEST_DATA_BASE_PATH = "src/test/resources/";
+    private static final String TEST_DATA_BASE_PATH = "src/test/resources/java/";
 
     private CstDiff diff(String folderName) throws Exception {
         Path baseFolderPath = Paths.get(TEST_DATA_BASE_PATH, folderName);
