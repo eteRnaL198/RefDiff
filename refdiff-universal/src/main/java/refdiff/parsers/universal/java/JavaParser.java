@@ -103,7 +103,7 @@ public class JavaParser {
               TSNode child = program.getChild(i);
               if (child.getType().equals("package_declaration")) {
                 TSNode scopedIdentifier = child.getChild(1);
-                packageName = sourceCode.substring(scopedIdentifier.getStartByte(), child.getEndByte());
+                packageName = sourceCode.substring(scopedIdentifier.getStartByte(), child.getEndByte() - 1); // -1は末尾の;を除去するため
               }
             }
             cstNode.setNamespace(packageName + ".");
@@ -128,7 +128,7 @@ public class JavaParser {
               TSNode child = program.getChild(i);
               if (child.getType().equals("package_declaration")) {
                 TSNode scopedIdentifier = child.getChild(1);
-                packageName = sourceCode.substring(scopedIdentifier.getStartByte(), child.getEndByte());
+                packageName = sourceCode.substring(scopedIdentifier.getStartByte(), child.getEndByte() - 1); // -1は末尾の;を除去するため
               }
             }
             cstNode.setNamespace(packageName + ".");
