@@ -26,7 +26,6 @@ public class RefDiffExample {
 	public static void main(String[] args) throws Exception {
 		runExamples();
 		runUniversalForRepo();
-		runUniversalJavaOnLocal();
 		runUniversalCOnLocal();
 	}
 
@@ -70,85 +69,6 @@ public class RefDiffExample {
 		System.out.println(headLine);
 		for (Relationship rel : diff.getRefactoringRelationships()) {
 			System.out.println(rel.getStandardDescription());
-		}
-	}
-
-	private static void runUniversalJavaOnLocal() throws Exception {
-		System.out.println("\n\n----- Universal Plugin Java -----");
-		UniversalPlugin universalPlugin = new UniversalPlugin();
-		CstComparator comparator = new CstComparator(universalPlugin);
-		String basePath = "example-for-universal/java";
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveClass/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveClass/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("Move Class:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveMethod/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveMethod/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nMove Method:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "moveAndRenameClass/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "moveAndRenameClass/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nMove and Rename Class:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameClass/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameClass/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nRename Class:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "renameMethod/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "renameMethod/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nRename Method:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractInterface/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "extractInterface/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nExtract Interface:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractSuperclass/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "extractSuperclass/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nExtract Superclass:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "pullUpMethod/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "pullUpMethod/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nPull Up Method:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "pushDownMethod/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "pushDownMethod/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nPush Down Method:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractMethod/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "extractMethod/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nExtract Method:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "extractAndMoveMethod/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "extractAndMoveMethod/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nExtract and Move Method:", diff);
-		}
-		{
-			SourceFolder before = SourceFolder.from(Paths.get(basePath, "InlineMethod/v0"), ".java");
-			SourceFolder after = SourceFolder.from(Paths.get(basePath, "InlineMethod/v1"), ".java");
-			CstDiff diff = comparator.compare(before, after);
-			printRefactorings("\nInline Method:", diff);
 		}
 	}
 
