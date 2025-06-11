@@ -13,6 +13,7 @@ import org.treesitter.TSQueryMatch;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -20,6 +21,7 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.Tokenizer;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.core.cst.CstNode;
+import refdiff.core.cst.CstNodeRelationshipType;
 import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.Stereotype;
@@ -66,6 +68,51 @@ public class JavaParser {
     callGraphGenerator.generateCallGraph(root, sourceCodeMap);
 
     return root;
+  }
+
+  /**
+   * Extracts parameter types from a parameters TSNode and builds a signature string.
+   * e.g., "(String, int[])"
+   * @param parametersNode The TSNode representing the parameters list (e.g., content of formal_parameters).
+   * @param sourceCode The source code string to extract type names.
+   * @return A string representing the parameter signature.
+   */
+  private String extractSignatureParameters(TSNode parametersNode, String sourceCode) {
+    StringBuilder paramsStr = new StringBuilder();
+    paramsStr.append("(");
+
+    List<String> paramTypes = new ArrayList<>();
+    for (int i = 0; i < parametersNode.getNamedChildCount(); i++) {
+        TSNode parameter = parametersNode.getNamedChild(i);
+        String paramTypeString = null;
+
+        if (parameter.getType().equals("formal_parameter")) {
+            TSNode typeNode = parameter.getChildByFieldName("type");
+            if (typeNode != null && !typeNode.isNull()) {
+                paramTypeString = sourceCode.substring(typeNode.getStartByte(), typeNode.getEndByte());
+            }
+        } else if (parameter.getType().equals("spread_parameter")) {
+            TSNode typeNode = parameter.getChild(0); // The first child is the type for spread parameters
+            if (typeNode != null && !typeNode.isNull()) {
+                paramTypeString = sourceCode.substring(typeNode.getStartByte(), typeNode.getEndByte()) + "..."; // For spread parameters, the type is followed by "..."
+            }
+        } else if (parameter.getType().equals("receiver_parameter")) {
+            // Receiver parameters (e.g., `Outer.this`) are generally not included in RefDiff's localName.
+            // If they need to be included, this part can be adjusted.
+            continue; // Skipping receiver parameters for localName.
+        }
+
+        if (paramTypeString != null) {
+            paramTypes.add(paramTypeString);
+        } else {
+            System.err.println("Warning: Could not determine type for parameter: " + parameter.getType() + 
+                               " at " + parameter.getStartByte() + "-" + parameter.getEndByte() + 
+                               " in source code: " + sourceCode);
+        }
+    }
+    paramsStr.append(String.join(", ", paramTypes));
+    paramsStr.append(")");
+    return paramsStr.toString();
   }
 
   private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
@@ -145,8 +192,11 @@ public class JavaParser {
 
             TSNode identifier = tsNode.getChildByFieldName("name");
             String constructorName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
-            cstNode.setLocalName(constructorName);
             cstNode.setSimpleName(constructorName);
+
+            TSNode parameters = tsNode.getChildByFieldName("parameters");
+            String paramsSignature = extractSignatureParameters(parameters, sourceCode);
+            cstNode.setLocalName(constructorName + paramsSignature);
 
             cstNode.addStereotypes(Stereotype.TYPE_CONSTRUCTOR);
 
@@ -169,8 +219,11 @@ public class JavaParser {
 
             TSNode identifier = tsNode.getChildByFieldName("name");
             String methodName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
-            cstNode.setLocalName(methodName);
             cstNode.setSimpleName(methodName);
+
+            TSNode parameters = tsNode.getChildByFieldName("parameters");
+            String paramsSignature = extractSignatureParameters(parameters, sourceCode);
+            cstNode.setLocalName(methodName + paramsSignature);
 
             cstNode.addStereotypes(Stereotype.TYPE_MEMBER);
 

@@ -30,20 +30,17 @@ public class CallGraphGenerator {
      * @param sourceCodeMap A map where keys are file paths and values are the source code content of those files.
      */
     public void generateCallGraph(CstRoot root, Map<String, String> sourceCodeMap) {
-        List<CstNode> allCallableNodes = new ArrayList<>();
-        // Iterate over top-level nodes (e.g., classes/interfaces) and collect all callable methods.
+        List<CstNode> callableNodes = new ArrayList<>();
         for (CstNode topLevelNode : root.getNodes()) {
-            allCallableNodes.addAll(collectCallableNodesRecursively(topLevelNode));
+            callableNodes.addAll(collectCallableNodesRecursively(topLevelNode));
         }
 
-        Map<String, CstNode> callableNodeMap = new HashMap<>();
-        for (CstNode callableNode : allCallableNodes) {
-            // TODO: simplenameをhashmapに持たせてるので重複しやすく上書きされる。namespaceなどを使うといいかも
-            callableNodeMap.put(callableNode.getSimpleName(), callableNode);
+        Map<String, List<CstNode>> calleeCandidatesMap = new HashMap<>(); // メソッドがオーバーロードされている場合、同名メソッドが複数存在するためValueはListにしている
+        for (CstNode callableNode : callableNodes) {
+            calleeCandidatesMap.computeIfAbsent(callableNode.getSimpleName(), _ -> new ArrayList<>()).add(callableNode);
         }
-
-        for (CstNode callerNode : allCallableNodes) {
-            addCallRelationship(callerNode, root, sourceCodeMap, callableNodeMap);
+        for (CstNode callerNode : callableNodes) {
+            addCallRelationship(callerNode, root, sourceCodeMap, calleeCandidatesMap);
         }
     }
 
@@ -65,7 +62,7 @@ public class CallGraphGenerator {
         return collectedNodes;
     }
 
-    private void addCallRelationship(CstNode callerNode, CstRoot root, Map<String, String> sourceCodeMap, Map<String, CstNode> callableNodeMap) {
+    private void addCallRelationship(CstNode callerNode, CstRoot root, Map<String, String> sourceCodeMap, Map<String, List<CstNode>> calleeCandidatesMap) {
         String path = callerNode.getLocation().getFile();
         String sourceCode = sourceCodeMap.get(path);
 
@@ -78,11 +75,12 @@ public class CallGraphGenerator {
             sourceCode = ""; // Use empty string to prevent NullPointerException later
         }
         
-        List<String> tokens = CstRootHelper.retrieveTokens(root, sourceCode, callerNode, true); // 
+        List<String> tokens = CstRootHelper.retrieveTokens(root, sourceCode, callerNode, true);
         for (String token : tokens) {
-            if (callableNodeMap.containsKey(token)) {
-                CstNode callee = callableNodeMap.get(token);
-                root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.USE, callerNode.getId(), callee.getId()));
+            if (calleeCandidatesMap.containsKey(token)) {
+                for (CstNode callee : calleeCandidatesMap.get(token)) {
+                     root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.USE, callerNode.getId(), callee.getId()));
+                }
             }
         }
     }
