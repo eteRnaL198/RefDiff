@@ -47,69 +47,98 @@ public class JsParser {
       TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode); // TODO: Should the argument for tokenize be a relative path?
       root.addTokenizedFile(tokenizedSource);
     }
-
     return root;
   }
 
-  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String filePath, String sourceCode) {
-    String query = """
+  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot cstRoot, String filePath, String sourceCode) {
+    TSNode fileTsNode = tree.getRootNode(); // This is the (program) node for JS
+    CstNode fileCstNode = new CstNode(cstId++);
+    fileCstNode.setType(JsNodeTypes.FILE);
+    fileCstNode.setLocation(refdiff.core.cst.Location.of(
+        filePath,
+        fileTsNode.getStartByte(), fileTsNode.getEndByte(),
+        fileTsNode.getStartByte(), fileTsNode.getEndByte(),
+        sourceCode));
+    String nameForFileNode = getFileNameFromFilePath(filePath);
+    fileCstNode.setSimpleName(nameForFileNode);
+    fileCstNode.setLocalName(nameForFileNode);
+    fileCstNode.setNamespace(getNamespaceFromFilePath(filePath));
+    cstRoot.addNode(fileCstNode);
+
+    // Determine the parent for elements within this file (classes, functions, etc.)
+    // If fileCstNode was created, it's the parent. Otherwise, fallback to globalRoot.
+    CstNode parentCstNode = fileCstNode;
+
+    String classQuerySrc = """
         (class_declaration
           name: (identifier) @class_name
           body: (class_body) @class_body) @class_node
         """;
-    TSQuery tsQuery = new TSQuery(tsLang, query);
+    TSQuery classTsQuery = new TSQuery(tsLang, classQuerySrc);
+    TSQueryCursor classCursor = new TSQueryCursor();
+    classCursor.exec(classTsQuery, fileTsNode);
+    TSQueryMatch classMatch = new TSQueryMatch();
 
-    TSNode rootNode = tree.getRootNode();
-    TSQueryCursor cursor = new TSQueryCursor();
-    cursor.exec(tsQuery, rootNode);
-    TSQueryMatch match = new TSQueryMatch();
-
-    while (cursor.nextMatch(match)) {
-      TSQueryCapture[] captures = match.getCaptures();
+    while (classCursor.nextMatch(classMatch)) {
+      TSQueryCapture[] captures = classMatch.getCaptures();
       TSNode classDeclarationNode = null;
       TSNode nameIdentifierNode = null;
       TSNode bodyNode = null;
 
       for (TSQueryCapture capture : captures) {
-        String captureName = tsQuery.getCaptureNameForId(capture.getIndex());
+        String captureName = classTsQuery.getCaptureNameForId(capture.getIndex());
         TSNode capturedNode = capture.getNode();
         if ("class_node".equals(captureName)) {
-            classDeclarationNode = capturedNode;
+          classDeclarationNode = capturedNode;
         } else if ("class_name".equals(captureName)) {
-            nameIdentifierNode = capturedNode;
+          nameIdentifierNode = capturedNode;
         } else if ("class_body".equals(captureName)) {
-            bodyNode = capturedNode;
+          bodyNode = capturedNode;
         }
       }
-
       if (classDeclarationNode == null || nameIdentifierNode == null || bodyNode == null) {
-          System.err.println("Warning: Could not capture all required parts (class_node, class_name, class_body) for a class declaration in " + filePath + " at match offset " + match.getId());
-          if (classDeclarationNode == null) System.err.println("  Missing @class_node");
-          if (nameIdentifierNode == null) System.err.println("  Missing @class_name");
-          if (bodyNode == null) System.err.println("  Missing @class_body");
+        System.err.println("Warning: Could not capture all required parts (class_node, class_name, class_body) for a class declaration in " + filePath + " at match offset " + classMatch.getId());
+        if (classDeclarationNode == null) System.err.println("  Missing @class_node");
+        if (nameIdentifierNode == null) System.err.println("  Missing @class_name");
+        if (bodyNode == null) System.err.println("  Missing @class_body");
         continue;
       }
 
-      CstNode cstNode = new CstNode(cstId++);
-      cstNode.setType(JsNodeTypes.CLASS);
-      cstNode.setLocation(refdiff.core.cst.Location.of(
+      CstNode classCstNode = new CstNode(cstId++);
+      classCstNode.setType(JsNodeTypes.CLASS);
+      classCstNode.setLocation(refdiff.core.cst.Location.of(
           filePath,
           classDeclarationNode.getStartByte(), classDeclarationNode.getEndByte(),
           bodyNode.getStartByte(), bodyNode.getEndByte(),
           sourceCode));
-
       String className = sourceCode.substring(nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte());
-      cstNode.setSimpleName(className);
-      cstNode.setLocalName(className);
-
-      String namespace = "";
-      int lastSeparatorIndex = filePath.lastIndexOf('/');
-      if (lastSeparatorIndex != -1) {
-        namespace = filePath.substring(0, lastSeparatorIndex + 1);
-      }
-      cstNode.setNamespace(namespace);
-
-      root.addNode(cstNode);
+      classCstNode.setSimpleName(className);
+      classCstNode.setLocalName(className);
+      classCstNode.setNamespace(getNamespaceFromFilePath(filePath));
+      parentCstNode.addNode(classCstNode); // Add class as child of the FILE node (or globalRoot as fallback)
     }
+  }
+
+  private String getNamespaceFromFilePath(String filePath) {
+    int lastSlash = filePath.lastIndexOf('/');
+    int lastBackslash = filePath.lastIndexOf('\\');
+    int lastSeparator = Math.max(lastSlash, lastBackslash);
+
+    if (lastSeparator != -1) {
+      return filePath.substring(0, lastSeparator + 1);
+    }
+    return ""; // No directory path found, likely just a filename
+  }
+
+  private String getFileNameFromFilePath(String filePath) {
+    int lastSlash = filePath.lastIndexOf('/');
+    int lastBackslash = filePath.lastIndexOf('\\');
+    int lastSeparator = Math.max(lastSlash, lastBackslash);
+
+    if (lastSeparator != -1) {
+      return filePath.substring(lastSeparator + 1);
+    }
+    // If no separator is found, the filePath itself is the filename
+    return filePath;
   }
 }
