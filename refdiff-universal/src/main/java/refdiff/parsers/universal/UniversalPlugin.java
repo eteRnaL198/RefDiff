@@ -1,24 +1,19 @@
 package refdiff.parsers.universal;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 import refdiff.core.cst.CstRoot;
 import refdiff.core.io.FilePathFilter;
-import refdiff.core.io.SourceFile;
 import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.c.CParser;
 import refdiff.parsers.universal.java.JavaParser;
+import refdiff.parsers.universal.js.JsParser;
 
 public class UniversalPlugin implements LanguagePlugin {
 
   private enum Language {
-    JAVA, C
+    JAVA, C, JAVASCRIPT
   }
 
   @Override
@@ -33,6 +28,9 @@ public class UniversalPlugin implements LanguagePlugin {
       case C:
         CParser cParser = new CParser();
         return cParser.parse(sources);
+      case JAVASCRIPT:
+        JsParser jsParser = new JsParser();
+        return jsParser.parse(sources);
       default:
         throw new IllegalArgumentException("Unsupported language: " + language);
     }
@@ -48,6 +46,8 @@ public class UniversalPlugin implements LanguagePlugin {
       return Language.JAVA;
     } else if (filePath.endsWith(".c")) {
       return Language.C;
+    } else if (filePath.endsWith(".js")) {
+      return Language.JAVASCRIPT;
     } else {
       throw new IllegalArgumentException("Unsupported file type: " + filePath);
     }
