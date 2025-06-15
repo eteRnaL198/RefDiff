@@ -116,7 +116,6 @@ public class TestParser {
     assertThat(classicFuncNode.getType(), is(equalTo(JsNodeTypes.FUNCTION)));
     assertThat(classicFuncNode.getSimpleName(), is(equalTo("classicFunction")));
     assertThat(classicFuncNode.getLocalName(), is(equalTo("classicFunction")));
-    assertThat(classicFuncNode.getNamespace(), is(equalTo(""))); // Relative to baseFolderPath
     assertThat(classicFuncNode.getLocation().getFile(), is(equalTo("function.js")));
     assertThat(classicFuncNode.getLocation().getLine(), is(equalTo(2)));
     List<String> classicFuncParamNames = classicFuncNode.getParameters().stream()
@@ -142,7 +141,6 @@ public class TestParser {
     assertThat(arrowFuncSimpleNode.getType(), is(equalTo(JsNodeTypes.FUNCTION)));
     assertThat(arrowFuncSimpleNode.getSimpleName(), is(equalTo("arrowFunctionSimple")));
     assertThat(arrowFuncSimpleNode.getLocalName(), is(equalTo("arrowFunctionSimple")));
-    assertThat(arrowFuncSimpleNode.getNamespace(), is(equalTo("")));
     assertThat(arrowFuncSimpleNode.getLocation().getFile(), is(equalTo("function.js")));
     assertThat(arrowFuncSimpleNode.getLocation().getLine(), is(equalTo(16)));
     List<String> arrowFuncSimpleParamNames = arrowFuncSimpleNode.getParameters().stream()

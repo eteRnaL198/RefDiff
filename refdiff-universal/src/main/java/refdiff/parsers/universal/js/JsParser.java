@@ -1,10 +1,12 @@
 package refdiff.parsers.universal.js;
 
 import refdiff.core.cst.CstNode;
+import refdiff.core.cst.CstNodeRelationship;
 import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.TokenizedSource;
 import refdiff.core.cst.Parameter;
 import refdiff.core.io.SourceFileSet;
+import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
 
@@ -50,6 +52,10 @@ public class JsParser {
       TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode); // TODO: Should the argument for tokenize be a relative path?
       root.addTokenizedFile(tokenizedSource);
     }
+
+    CallGraphGenerator callGraphGenerator = new CallGraphGenerator(JsNodeTypes.FUNCTION);
+    callGraphGenerator.generateCallGraph(root, sourceCodeMap);
+
     return root;
   }
 
@@ -208,7 +214,6 @@ public class JsParser {
       String funcName = sourceCode.substring(nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte());
       funcCstNode.setSimpleName(funcName);
       funcCstNode.setLocalName(funcName); // For JS, simple name is usually sufficient for local name
-      funcCstNode.setNamespace(getNamespaceFromFilePath(filePath));
       List<refdiff.core.cst.Parameter> cstParameters = new ArrayList<>();
       if (parametersHostNode != null) {
           extractParameters(parametersHostNode, sourceCode, cstParameters);
