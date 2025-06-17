@@ -1,4 +1,4 @@
-package java.pushDownMethod.v1;
+package pkg;
 
 public class Bar {
 }

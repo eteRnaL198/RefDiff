@@ -1,4 +1,4 @@
-package java.moveAndRenameClass.v1;
+package pkg.v1;
 
 public class Bar {
   public static void main(String[] args) {

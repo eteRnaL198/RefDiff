@@ -1,4 +1,4 @@
-package java.extractInterface.allKinds;
+package pkg;
 
 public interface Basic {
 

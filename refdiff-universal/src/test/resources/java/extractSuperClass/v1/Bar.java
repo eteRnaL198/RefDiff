@@ -1,4 +1,4 @@
-package java.extractSuperClass.v1;
+package pkg;
 
 public class Bar {
   private int x;

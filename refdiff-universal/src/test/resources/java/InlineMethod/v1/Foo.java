@@ -1,4 +1,4 @@
-package java.InlineMethod.v1;
+package pkg;
 
 public class Foo {
   public static void main(String[] args) {

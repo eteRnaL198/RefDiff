@@ -1,4 +1,4 @@
-package java.extractSuperClass.v0;
+package pkg;
 
 public class Foo {
   private int x;

@@ -1,4 +1,4 @@
-package java.moveMethod.v0;
+package tmp;
 
 public class Foo {
   public static void main(String[] args) {

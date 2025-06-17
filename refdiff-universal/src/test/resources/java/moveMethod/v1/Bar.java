@@ -1,4 +1,4 @@
-package java.moveMethod.v1;
+package tmp;
 
 public class Bar {
   public static void main(String[] args) {

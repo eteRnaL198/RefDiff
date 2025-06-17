@@ -1,4 +1,4 @@
-package java.extractInterface.v1;
+package pkg;
 
 public class Foo implements Bar {
   

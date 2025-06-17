@@ -1,4 +1,4 @@
-package java.pullUpMethod.v0;
+package pkg;
 
 public class Foo extends Bar {
   public void greet() {

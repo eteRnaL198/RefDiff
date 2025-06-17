@@ -1,5 +1,5 @@
-package java.extractInterface.allKinds;
+package pkg;
 
-public interface Extends extends Basic, Nested.Child, Functional, Marker {
+public interface Extends extends Basic, Sealed, Nested.Child, Functional, Marker {
   void doSomethingElse();
 }

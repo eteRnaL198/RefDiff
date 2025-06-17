@@ -1,4 +1,4 @@
-package java.pushDownMethod.v0;
+package pkg;
 
 public class Foo extends Bar {
 }

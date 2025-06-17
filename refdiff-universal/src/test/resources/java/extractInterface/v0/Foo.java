@@ -1,4 +1,4 @@
-package java.extractInterface.v0;
+package pkg;
 
 public class Foo {
 }

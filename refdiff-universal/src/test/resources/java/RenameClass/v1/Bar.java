@@ -1,4 +1,4 @@
-package java.RenameClass.v1;
+package pkg;
 
 public class Bar {
   public static void main(String[] args) {

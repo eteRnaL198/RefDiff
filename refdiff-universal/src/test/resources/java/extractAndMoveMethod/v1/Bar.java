@@ -1,7 +1,7 @@
-package java.extractAndMoveMethod.v1;
+package pkg;
 
 public class Bar {
-  public static void hello() {
+  public static void hello(String[] args) {
     System.out.println("Hello");
   }
 }

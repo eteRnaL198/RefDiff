@@ -1,4 +1,4 @@
-package java.extractSuperClass.v1;
+package pkg;
 
 public class Foo extends Bar {
 }
