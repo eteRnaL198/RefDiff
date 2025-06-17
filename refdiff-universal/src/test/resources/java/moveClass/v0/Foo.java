@@ -1,4 +1,4 @@
-package pkg.v0;
+package java.moveClass.v0;
 
 public class Foo {
   public static void main(String[] args) {

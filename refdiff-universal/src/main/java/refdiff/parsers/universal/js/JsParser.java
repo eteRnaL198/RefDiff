@@ -213,7 +213,7 @@ public class JsParser {
           sourceCode));
       String funcName = sourceCode.substring(nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte());
       funcCstNode.setSimpleName(funcName);
-      funcCstNode.setLocalName(funcName); // For JS, simple name is usually sufficient for local name
+      funcCstNode.setLocalName(funcName);
       List<refdiff.core.cst.Parameter> cstParameters = new ArrayList<>();
       if (parametersHostNode != null) {
           extractParameters(parametersHostNode, sourceCode, cstParameters);

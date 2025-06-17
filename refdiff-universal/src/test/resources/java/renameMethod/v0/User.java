@@ -1,4 +1,4 @@
-package pkg;
+package java.renameMethod.v0;
 
 public class User {
   private int age;

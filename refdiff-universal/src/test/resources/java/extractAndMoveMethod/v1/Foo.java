@@ -1,4 +1,4 @@
-package pkg;
+package java.extractAndMoveMethod.v1;
 
 public class Foo {
   public static void main(String[] args) {

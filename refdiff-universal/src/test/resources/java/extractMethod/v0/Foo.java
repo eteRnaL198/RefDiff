@@ -1,4 +1,4 @@
-package pkg;
+package java.extractMethod.v0;
 
 public class Foo {
   public static void main(String[] args) {
