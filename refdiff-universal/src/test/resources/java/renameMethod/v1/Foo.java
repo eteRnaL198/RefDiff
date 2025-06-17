@@ -1,4 +1,4 @@
-package java.renameMethod.v0;
+package java.renameMethod.v1;
 
 public class Foo {
   public void greet() {
