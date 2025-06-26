@@ -31,9 +31,11 @@ public class CallGraphGenerator {
      */
     public void generateCallGraph(CstRoot root, Map<String, String> sourceCodeMap) {
         List<CstNode> callableNodes = new ArrayList<>();
-        for (CstNode topLevelNode : root.getNodes()) {
-            callableNodes.addAll(collectCallableNodesRecursively(topLevelNode));
-        }
+        root.forEachNode((node, _) -> {
+            if (node.getType().equals(this.callableNodeType)) {
+                callableNodes.add(node);
+            }
+        });
 
         Map<String, List<CstNode>> calleeCandidatesMap = new HashMap<>(); // メソッドがオーバーロードされている場合、同名メソッドが複数存在するためValueはListにしている
         for (CstNode callableNode : callableNodes) {
@@ -42,24 +44,6 @@ public class CallGraphGenerator {
         for (CstNode callerNode : callableNodes) {
             addCallRelationship(callerNode, root, sourceCodeMap, calleeCandidatesMap);
         }
-    }
-
-    /**
-     * Recursively collects all callable nodes (method declarations) starting from the given CstNode.
-     * @param node The CstNode to start collection from.
-     * @return A list of CstNodes representing method declarations.
-     */
-    private List<CstNode> collectCallableNodesRecursively(CstNode node) {
-        // TODO: CstRoot.forEachNode()で取れるかも
-        List<CstNode> collectedNodes = new ArrayList<>();
-        for (CstNode child : node.getNodes()) {
-            collectedNodes.addAll(collectCallableNodesRecursively(child));
-        }
-        // Check the current node after processing children.
-        if (node.getType().equals(this.callableNodeType)) {
-            collectedNodes.add(node);
-        }
-        return collectedNodes;
     }
 
     private void addCallRelationship(CstNode callerNode, CstRoot root, Map<String, String> sourceCodeMap, Map<String, List<CstNode>> calleeCandidatesMap) {
