@@ -117,8 +117,8 @@ public class CstComparator {
 			//return srb.buildForFragment(Collections.emptyList());
 			List<String> tokens = new ArrayList<>();
 			tokens.add(node.getSimpleName());
-			tokens.add("(");
-			tokens.add(")");
+			// tokens.add("("); // parenthesis are not used in Ruby
+			// tokens.add(")");
 			if (node.getParameters() != null) {
 				for (int i = 1; i < node.getParameters().size(); i++) {
 					tokens.add(",");
@@ -380,7 +380,6 @@ public class CstComparator {
 //							if (n2.getSimpleName().equals("parseAndValidateMetadata") && n2.getLocation().getFile().equals("core/src/test/java/feign/DefaultContractTest.java")) {
 //								System.out.println("danilo"); 
 //							}
-							
 							boolean sameLocation = sameLocation(n1, n2);
 							double minScore = threshold.getIdeal();
 							if (score > minScore) {

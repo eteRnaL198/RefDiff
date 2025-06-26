@@ -9,11 +9,12 @@ import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.c.CParser;
 import refdiff.parsers.universal.java.JavaParser;
 import refdiff.parsers.universal.js.JsParser;
+import refdiff.parsers.universal.ruby.RubyParser;
 
 public class UniversalPlugin implements LanguagePlugin {
 
   private enum Language {
-    JAVA, C, JAVASCRIPT
+    JAVA, C, JAVASCRIPT, RUBY
   }
 
   @Override
@@ -31,6 +32,9 @@ public class UniversalPlugin implements LanguagePlugin {
       case JAVASCRIPT:
         JsParser jsParser = new JsParser();
         return jsParser.parse(sources);
+      case RUBY:
+        RubyParser rubyParser = new RubyParser();
+        return rubyParser.parse(sources);
       default:
         throw new IllegalArgumentException("Unsupported language: " + language);
     }
@@ -48,6 +52,8 @@ public class UniversalPlugin implements LanguagePlugin {
       return Language.C;
     } else if (filePath.endsWith(".js")) {
       return Language.JAVASCRIPT;
+    } else if (filePath.endsWith(".rb")) {
+      return Language.RUBY;
     } else {
       throw new IllegalArgumentException("Unsupported file type: " + filePath);
     }
