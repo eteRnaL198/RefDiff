@@ -24,8 +24,8 @@ import refdiff.parsers.universal.UniversalPlugin;
 public class RefDiffExample {
 
 	public static void main(String[] args) throws Exception {
-		runExamples();
-		runUniversalForRepo();
+		// runExamples();
+		// runUniversalForRepo();
 	}
 
 	private static void runExamples() throws Exception {

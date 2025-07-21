@@ -19,7 +19,7 @@ dependencies {
     implementation project(':refdiff-universal')
 }
 
-task runExampleJs(type: JavaExec) {
-    classpath sourceSets.main.runtimeClasspath
-    mainClass = 'refdiff.examples.RefDiffExampleJs'
-}
+// task runExampleJs(type: JavaExec) {
+//     classpath sourceSets.main.runtimeClasspath
+//     mainClass = 'refdiff.examples.RefDiffExampleJs'
+// }

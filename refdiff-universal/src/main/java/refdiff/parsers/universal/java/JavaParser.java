@@ -202,7 +202,7 @@ public class JavaParser {
 
             // TODO Parentをちゃんと取る
             if (parent == null) {
-              System.out.println("Parent is null");
+              System.out.println("Parent is null: " + path + " for constructor: " + constructorName + paramsSignature);
             }
             parent.addNode(cstNode);
             break; }
@@ -229,7 +229,7 @@ public class JavaParser {
 
             // TODO Parentをちゃんと取る
             if (parent == null) {
-              System.out.println("Parent is null");
+              System.out.println("Parent is null: " + path + " for method: " + methodName + paramsSignature);
             }
             parent.addNode(cstNode);
             break; }
