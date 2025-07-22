@@ -23,7 +23,7 @@ import refdiff.parsers.universal.UniversalPlugin;
 
 public class TestParser {
     private static final LanguagePlugin parser = new UniversalPlugin();
-    private static final String TEST_DATA_BASE_PATH = "src/test/resources/ruby/parse";
+    private static final String TEST_DATA_BASE_PATH = "src/test/resources/ruby/syntax";
 
     private CstNode findMethod(List<CstNode> nodes, String name, int line) {
         return nodes.stream()
@@ -34,7 +34,11 @@ public class TestParser {
 
     private record ExpectedMethod(
         String name,
+        String type,
         int line,
+        String localName,
+        String namespace,
+        String fileName,
         List<String> params
     ) {}
 
@@ -53,41 +57,41 @@ public class TestParser {
         assertThat("Should find 27 method nodes", methodNodes.size(), is(equalTo(27)));
 
         List<ExpectedMethod> expectedMethodsData = Arrays.asList(
-            new ExpectedMethod("instance_method_example", 7, List.of()),
-            new ExpectedMethod("class_method_example", 12, List.of()),
-            new ExpectedMethod("another_class_method_example", 21, List.of()),
-            new ExpectedMethod("greet", 40, List.of()),
-            new ExpectedMethod("class_specific_method", 52, List.of()),
-            new ExpectedMethod("initialize", 96,  List.of("name", "email", "age")), // User's initialize
-            new ExpectedMethod("display_age", 102,  List.of()),
-            new ExpectedMethod("hello", 125,  List.of()),
-            new ExpectedMethod("method_missing", 141,  List.of("method_name", "*args", "&block")),
-            new ExpectedMethod("respond_to_missing?", 151,  List.of("method_name", "include_private")),
-            new ExpectedMethod("initialize", 173, List.of()), // ProcRunner's initialize
-            new ExpectedMethod("run_proc", 177,  List.of("val")),
-            new ExpectedMethod("run_lambda", 181,  List.of("val")),
-            new ExpectedMethod("run_instance_lambda", 185,  List.of("val")),
-            new ExpectedMethod("run_class_proc", 189,  List.of("val")),
-            new ExpectedMethod("public_method", 205,  List.of()),
-            new ExpectedMethod("protected_method", 213,  List.of()),
-            new ExpectedMethod("protected_method_called_from_public", 217,  List.of()),
-            new ExpectedMethod("private_method", 223,List.of()),
-            new ExpectedMethod("private_method_called_from_public", 227, List.of()),
-            new ExpectedMethod("call_protected_from_subclass", 233,List.of("other")),
-            new ExpectedMethod("call_own_private", 237, List.of()),
-            new ExpectedMethod("top_level_method_example", 260, List.of("name")),
-            new ExpectedMethod("optional_param_method", 283, List.of("a")),
-            new ExpectedMethod("keyword_param_method", 287, List.of("a")),
-            new ExpectedMethod("hash_splat_param_method", 291, List.of("**options")),
-            new ExpectedMethod("all_param_types", 295, List.of("required", "optional", "*splat", "keyword_req", "keyword_opt", "**hash_splat", "&block"))
+            new ExpectedMethod("instance_method_example", RubyNodeTypes.METHOD, 7, "instance_method_example()", null, "method.rb", List.of()),
+            new ExpectedMethod("class_method_example", RubyNodeTypes.METHOD, 12, "class_method_example()", null, "method.rb", List.of()),
+            new ExpectedMethod("another_class_method_example", RubyNodeTypes.METHOD, 21, "another_class_method_example()", null, "method.rb", List.of()),
+            new ExpectedMethod("greet", RubyNodeTypes.METHOD, 40, "greet()", null, "method.rb", List.of()),
+            new ExpectedMethod("class_specific_method", RubyNodeTypes.METHOD, 52, "class_specific_method()", null, "method.rb", List.of()),
+            new ExpectedMethod("initialize", RubyNodeTypes.METHOD, 96, "initialize(name, email, age)", null, "method.rb", List.of("name", "email", "age")), // User's initialize
+            new ExpectedMethod("display_age", RubyNodeTypes.METHOD, 102, "display_age()", null, "method.rb",  List.of()),
+            new ExpectedMethod("hello", RubyNodeTypes.METHOD, 125, "hello()", null, "method.rb",  List.of()),
+            new ExpectedMethod("method_missing", RubyNodeTypes.METHOD, 141, "method_missing(method_name, *args, &block)", null, "method.rb", List.of("method_name", "*args", "&block")),
+            new ExpectedMethod("respond_to_missing?", RubyNodeTypes.METHOD, 151, "respond_to_missing?(method_name, include_private)", null, "method.rb", List.of("method_name", "include_private")),
+            new ExpectedMethod("initialize",  RubyNodeTypes.METHOD,173, "initialize()", null, "method.rb",  List.of()), // ProcRunner's initialize
+            new ExpectedMethod("run_proc",  RubyNodeTypes.METHOD,177, "run_proc(val)", null, "method.rb",  List.of("val")),
+            new ExpectedMethod("run_lambda",  RubyNodeTypes.METHOD,181, "run_lambda(val)", null, "method.rb",  List.of("val")),
+            new ExpectedMethod("run_instance_lambda",  RubyNodeTypes.METHOD,185, "run_instance_lambda(val)", null, "method.rb",  List.of("val")),
+            new ExpectedMethod("run_class_proc",  RubyNodeTypes.METHOD,189, "run_class_proc(val)", null, "method.rb",  List.of("val")),
+            new ExpectedMethod("public_method",  RubyNodeTypes.METHOD,205, "public_method()", null,  "method.rb",  List.of()),
+            new ExpectedMethod("protected_method",  RubyNodeTypes.METHOD,213, "protected_method()", null, "method.rb",  List.of()),
+            new ExpectedMethod("protected_method_called_from_public",  RubyNodeTypes.METHOD,217, "protected_method_called_from_public()", null, "method.rb",  List.of()),
+            new ExpectedMethod("private_method",  RubyNodeTypes.METHOD,223, "private_method()", null, "method.rb",List.of()),
+            new ExpectedMethod("private_method_called_from_public",  RubyNodeTypes.METHOD,227, "private_method_called_from_public()", null, "method.rb", List.of()),
+            new ExpectedMethod("call_protected_from_subclass",  RubyNodeTypes.METHOD,233, "call_protected_from_subclass(other)", null, "method.rb",List.of("other")),
+            new ExpectedMethod("call_own_private",  RubyNodeTypes.METHOD,237, "call_own_private()", null, "method.rb", List.of()),
+            new ExpectedMethod("top_level_method_example",  RubyNodeTypes.METHOD,260, "top_level_method_example(name)", null, "method.rb", List.of("name")),
+            new ExpectedMethod("optional_param_method",  RubyNodeTypes.METHOD,283, "optional_param_method(a)", null, "method.rb", List.of("a")),
+            new ExpectedMethod("keyword_param_method",  RubyNodeTypes.METHOD,287, "keyword_param_method(a)", null, "method.rb", List.of("a")),
+            new ExpectedMethod("hash_splat_param_method",  RubyNodeTypes.METHOD,291, "hash_splat_param_method(**options)", null, "method.rb", List.of("**options")),
+            new ExpectedMethod("all_param_types",  RubyNodeTypes.METHOD,295, "all_param_types(required, optional, *splat, keyword_req, keyword_opt, **hash_splat, &block)", null, "method.rb", List.of("required", "optional", "*splat", "keyword_req", "keyword_opt", "**hash_splat", "&block"))
         );
 
         for (ExpectedMethod expected : expectedMethodsData) {
             CstNode actualNode = findMethod(methodNodes, expected.name(), expected.line());
 
-            assertThat("Type for " + expected.name(), actualNode.getType(), is(equalTo(RubyNodeTypes.METHOD)));
+            assertThat("Type for " + expected.name(), actualNode.getType(), is(equalTo(expected.type())));
             assertThat("SimpleName for " + expected.name(), actualNode.getSimpleName(), is(equalTo(expected.name())));
-            assertThat("LocalName for " + expected.name(), actualNode.getLocalName(), is(equalTo(expected.name())));
+            assertThat("LocalName for " + expected.name(), actualNode.getLocalName(), is(equalTo(expected.localName())));
 
             Location actualLocation = actualNode.getLocation();
             assertThat("Location file for " + expected.name(), actualLocation.getFile(), is(equalTo("method.rb")));
