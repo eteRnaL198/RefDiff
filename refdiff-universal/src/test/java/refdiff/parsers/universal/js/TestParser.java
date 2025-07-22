@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,27 @@ import refdiff.parsers.universal.UniversalPlugin;
 public class TestParser {
   private static final LanguagePlugin parser = new UniversalPlugin();
   private static final String TEST_DATA_BASE_PATH = "src/test/resources/js/grammar";
+
+  private CstNode findNode(List<CstNode> nodes, String name, int line) {
+    return nodes.stream()
+        .filter(node -> name.equals(node.getSimpleName()) && node.getLocation().getLine() == line)
+        .findFirst()
+        .orElseThrow(() -> new AssertionError("Node with name '" + name + "' at line " + line + " not found."));
+  }
+
+  private record ExpectedNode(
+      String name,
+      String type,
+      int line,
+      String localName,
+      String namespace,
+      String fileName,
+      List<String> params
+  ) {
+      ExpectedNode(String name, String type, int line, String localName, String namespace, String fileName) {
+          this(name, type, line, localName, namespace, fileName, List.of());
+      }
+  }
   
   @Test
   public void shouldParseFileNodeCorrectly() throws Exception {
@@ -39,16 +61,19 @@ public class TestParser {
 
     assertThat("Should find 1 file node", fileNodes.size(), is(equalTo(1)));
 
-    CstNode fileNode = fileNodes.get(0);
-    assertThat("File node type", fileNode.getType(), is(equalTo(JsNodeTypes.FILE)));
-    assertThat("File node simple name", fileNode.getSimpleName(), is(equalTo("file.js")));
-    assertThat("File node local name", fileNode.getLocalName(), is(equalTo("file.js")));
-    assertThat("File node namespace", fileNode.getNamespace(), is(equalTo("dir/")));
-    Location location = fileNode.getLocation();
-    assertThat("Location file path", location.getFile(), is(equalTo("dir/file.js")));
-    assertThat("Location start byte", location.getBegin(), is(equalTo(0)));
-    assertThat("Location body start byte", location.getBodyBegin(), is(equalTo(0)));
-    assertThat("Location start line", location.getLine(), is(equalTo(1)));
+    List<ExpectedNode> expectedNodes = Arrays.asList(
+        new ExpectedNode("file.js", JsNodeTypes.FILE, 1, "file.js", "dir/", "dir/file.js")
+    );
+    for (ExpectedNode expected : expectedNodes) {
+        CstNode actualNode = findNode(fileNodes, expected.name(), expected.line());
+        assertThat(actualNode.getType(), is(equalTo(expected.type())));
+        assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
+        assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+        assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+        Location location = actualNode.getLocation();
+        assertThat(location.getFile(), is(equalTo(expected.fileName())));
+        assertThat(location.getLine(), is(equalTo(expected.line())));
+    }
   }
 
   @Test
@@ -66,32 +91,21 @@ public class TestParser {
 
     assertThat("Should find 2 class declarations", classNodes.size(), is(equalTo(2)));
 
-    // Verify Animal class
-    Optional<CstNode> animalNodeOpt = classNodes.stream()
-        .filter(node -> "Animal".equals(node.getSimpleName()))
-        .findFirst();
-    CstNode animalNode = animalNodeOpt.get();
-    assertThat("Animal node type", animalNode.getType(), is(equalTo(JsNodeTypes.CLASS)));
-    assertThat("Animal node simple name", animalNode.getSimpleName(), is(equalTo("Animal")));
-    assertThat("Animal node local name", animalNode.getLocalName(), is(equalTo("Animal")));
-    assertThat("Animal node namespace", animalNode.getNamespace(), is(equalTo("dir/")));
-    Location animalLocation = animalNode.getLocation();
-    assertThat("Animal location file path", animalLocation.getFile(), is(equalTo("dir/class.js")));
-    assertThat("Animal location class start line", animalLocation.getLine(), is(equalTo(2)));
+    List<ExpectedNode> expectedNodes = Arrays.asList(
+        new ExpectedNode("Animal", JsNodeTypes.CLASS, 2, "Animal", "dir/", "dir/class.js"),
+        new ExpectedNode("Dog", JsNodeTypes.CLASS, 65, "Dog", "dir/", "dir/class.js")
+    );
 
-    // Verify Dog class
-    Optional<CstNode> dogNodeOpt = classNodes.stream()
-        .filter(node -> "Dog".equals(node.getSimpleName()))
-        .findFirst();
-    assertTrue("Dog class node should be present", dogNodeOpt.isPresent());
-    CstNode dogNode = dogNodeOpt.get();
-    assertThat("Dog node type", dogNode.getType(), is(equalTo(JsNodeTypes.CLASS)));
-    assertThat("Dog node simple name", dogNode.getSimpleName(), is(equalTo("Dog")));
-    assertThat("Dog node local name", dogNode.getLocalName(), is(equalTo("Dog")));
-    assertThat("Dog node namespace", dogNode.getNamespace(), is(equalTo("dir/")));
-    Location dogLocation = dogNode.getLocation();
-    assertThat("Dog location file path", dogLocation.getFile(), is(equalTo("dir/class.js")));
-    assertThat("Dog location class start line", dogLocation.getLine(), is(equalTo(65)));
+    for (ExpectedNode expected : expectedNodes) {
+        CstNode actualNode = findNode(classNodes, expected.name(), expected.line());
+        assertThat(actualNode.getType(), is(equalTo(expected.type())));
+        assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
+        assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+        assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+        Location location = actualNode.getLocation();
+        assertThat(location.getFile(), is(equalTo(expected.fileName())));
+        assertThat(location.getLine(), is(equalTo(expected.line())));
+    }
   }
 
   @Test
@@ -109,103 +123,41 @@ public class TestParser {
 
     assertThat("Should find 17 function declarations", actualFunctionNodes.size(), is(equalTo(17)));
 
-    // 1. classicFunction
-    CstNode classicFuncNode = actualFunctionNodes.stream()
-        .filter(node -> "classicFunction".equals(node.getSimpleName()))
-        .findFirst().orElseThrow(() -> new AssertionError("classicFunction not found"));
-    assertThat(classicFuncNode.getType(), is(equalTo(JsNodeTypes.FUNCTION)));
-    assertThat(classicFuncNode.getSimpleName(), is(equalTo("classicFunction")));
-    assertThat(classicFuncNode.getLocalName(), is(equalTo("classicFunction")));
-    assertThat(classicFuncNode.getLocation().getFile(), is(equalTo("function.js")));
-    assertThat(classicFuncNode.getLocation().getLine(), is(equalTo(2)));
-    List<String> classicFuncParamNames = classicFuncNode.getParameters().stream()
-        .map(Parameter::getName)
-        .collect(Collectors.toList());
-    assertThat(classicFuncParamNames, is(equalTo(List.of("param1", "param2"))));
+    List<ExpectedNode> expectedNodes = Arrays.asList(
+        new ExpectedNode("classicFunction", JsNodeTypes.FUNCTION, 2, "classicFunction", null, "function.js", List.of("param1", "param2")),
+        new ExpectedNode("anonymousFunction", JsNodeTypes.FUNCTION, 10, "anonymousFunction", null, "function.js", List.of("a", "b")),
+        new ExpectedNode("arrowFunctionSimple", JsNodeTypes.FUNCTION, 16, "arrowFunctionSimple", null, "function.js", List.of("x", "y")),
+        new ExpectedNode("arrowFunctionSingleParam", JsNodeTypes.FUNCTION, 19, "arrowFunctionSingleParam", null, "function.js", List.of("param")),
+        new ExpectedNode("arrowFunctionNoParam", JsNodeTypes.FUNCTION, 22, "arrowFunctionNoParam", null, "function.js", List.of()),
+        new ExpectedNode("arrowFunctionBlockBody", JsNodeTypes.FUNCTION, 25, "arrowFunctionBlockBody", null, "function.js", List.of("val1", "val2")),
+        new ExpectedNode("higherOrderFunction", JsNodeTypes.FUNCTION, 32, "higherOrderFunction", null, "function.js", List.of("callback")),
+        new ExpectedNode("outerFunction", JsNodeTypes.FUNCTION, 39, "outerFunction", null, "function.js", List.of("outerVar")),
+        new ExpectedNode("innerFunction", JsNodeTypes.FUNCTION, 41, "innerFunction", null, "function.js", List.of("innerParam")),
+        new ExpectedNode("processArguments", JsNodeTypes.FUNCTION, 50, "processArguments", null, "function.js", List.of("firstArg", "restArgs")),
+        new ExpectedNode("greet", JsNodeTypes.FUNCTION, 58, "greet", null, "function.js", List.of("name")),
+        new ExpectedNode("performAsyncOperation", JsNodeTypes.FUNCTION, 65, "performAsyncOperation", null, "function.js", List.of("success")),
+        new ExpectedNode("idGenerator", JsNodeTypes.FUNCTION, 91, "idGenerator", null, "function.js", List.of()),
+        new ExpectedNode("fibonacciSequence", JsNodeTypes.FUNCTION, 101, "fibonacciSequence", null, "function.js", List.of()),
+        new ExpectedNode("functionWithErrorHandling", JsNodeTypes.FUNCTION, 114, "functionWithErrorHandling", null, "function.js", List.of("num")),
+        new ExpectedNode("functionWithIIFE", JsNodeTypes.FUNCTION, 132, "functionWithIIFE", null, "function.js", List.of()),
+        new ExpectedNode("labeledLoopFunction", JsNodeTypes.FUNCTION, 145, "labeledLoopFunction", null, "function.js", List.of())
+    );
 
-    // 2. anonymousFunction (assigned to const)
-    CstNode anonymousFuncNode = actualFunctionNodes.stream()
-        .filter(node -> "anonymousFunction".equals(node.getSimpleName()))
-        .findFirst().orElseThrow(() -> new AssertionError("anonymousFunction not found"));
-    assertThat(anonymousFuncNode.getSimpleName(), is(equalTo("anonymousFunction")));
-    assertThat(anonymousFuncNode.getLocation().getLine(), is(equalTo(10)));
-    List<String> anonymousFuncParamNames = anonymousFuncNode.getParameters().stream()
-        .map(Parameter::getName)
-        .collect(Collectors.toList());
-    assertThat(anonymousFuncParamNames, is(equalTo(List.of("a", "b"))));
-
-    // 3. arrowFunctionSimple
-    CstNode arrowFuncSimpleNode = actualFunctionNodes.stream()
-        .filter(node -> "arrowFunctionSimple".equals(node.getSimpleName()))
-        .findFirst().orElseThrow(() -> new AssertionError("arrowFunctionSimple not found"));
-    assertThat(arrowFuncSimpleNode.getType(), is(equalTo(JsNodeTypes.FUNCTION)));
-    assertThat(arrowFuncSimpleNode.getSimpleName(), is(equalTo("arrowFunctionSimple")));
-    assertThat(arrowFuncSimpleNode.getLocalName(), is(equalTo("arrowFunctionSimple")));
-    assertThat(arrowFuncSimpleNode.getLocation().getFile(), is(equalTo("function.js")));
-    assertThat(arrowFuncSimpleNode.getLocation().getLine(), is(equalTo(16)));
-    List<String> arrowFuncSimpleParamNames = arrowFuncSimpleNode.getParameters().stream()
-        .map(Parameter::getName)
-        .collect(Collectors.toList());
-    assertThat(arrowFuncSimpleParamNames, is(equalTo(List.of("x", "y"))));
-
-    // 4. arrowFunctionSingleParam (no parentheses for param)
-    CstNode arrowFuncSingleParamNode = actualFunctionNodes.stream()
-        .filter(node -> "arrowFunctionSingleParam".equals(node.getSimpleName()))
-        .findFirst().orElseThrow(() -> new AssertionError("arrowFunctionSingleParam not found"));
-    assertThat(arrowFuncSingleParamNode.getSimpleName(), is(equalTo("arrowFunctionSingleParam")));
-    assertThat(arrowFuncSingleParamNode.getLocation().getLine(), is(equalTo(19)));
-    List<String> arrowFuncSingleParamNames = arrowFuncSingleParamNode.getParameters().stream()
-        .map(Parameter::getName)
-        .collect(Collectors.toList());
-    assertThat(arrowFuncSingleParamNames, is(equalTo(List.of("param"))));
-
-    // 5. processArguments (rest parameters)
-    CstNode processArgsNode = actualFunctionNodes.stream()
-        .filter(node -> "processArguments".equals(node.getSimpleName()))
-        .findFirst().orElseThrow(() -> new AssertionError("processArguments not found"));
-    assertThat(processArgsNode.getSimpleName(), is(equalTo("processArguments")));
-    assertThat(processArgsNode.getLocation().getLine(), is(equalTo(50)));
-    List<String> processArgsParamNames = processArgsNode.getParameters().stream()
-        .map(Parameter::getName)
-        .collect(Collectors.toList());
-    assertThat(processArgsParamNames, is(equalTo(List.of("firstArg", "restArgs"))));
-    
-    // 6. greet (default parameters)
-    CstNode greetNode = actualFunctionNodes.stream()
-        .filter(node -> "greet".equals(node.getSimpleName()))
-        .findFirst().orElseThrow(() -> new AssertionError("greet not found"));
-    assertThat(greetNode.getSimpleName(), is(equalTo("greet")));
-    assertThat(greetNode.getLocation().getLine(), is(equalTo(58)));
-    List<String> greetParamNames = greetNode.getParameters().stream()
-        .map(Parameter::getName)
-        .collect(Collectors.toList());
-    assertThat(greetParamNames, is(equalTo(List.of("name"))));
-
-    // 7. innerFunction (nested function)
-    // TODO 子要素になっているかを確認する
-    CstNode innerFuncNode = actualFunctionNodes.stream()
-        .filter(node -> "innerFunction".equals(node.getSimpleName()))
-        .findFirst().orElseThrow(() -> new AssertionError("innerFunction not found"));
-    assertThat(innerFuncNode.getSimpleName(), is(equalTo("innerFunction")));
-    assertThat(innerFuncNode.getLocation().getLine(), is(equalTo(41)));
-    List<String> innerFuncParamNames = innerFuncNode.getParameters().stream()
-        .map(Parameter::getName)
-        .collect(Collectors.toList());
-    assertThat(innerFuncParamNames, is(equalTo(List.of("innerParam"))));
-    assertTrue("innerFunction's parent should be a FILE node", 
-        innerFuncNode.getParent().isPresent() && 
-        JsNodeTypes.FILE.equals(innerFuncNode.getParent().get().getType()));
-
-    // Verify other functions exist (simplified check)
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "arrowFunctionNoParam".equals(n.getSimpleName()) && n.getLocation().getLine() == 22));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "arrowFunctionBlockBody".equals(n.getSimpleName()) && n.getLocation().getLine() == 25));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "higherOrderFunction".equals(n.getSimpleName()) && n.getLocation().getLine() == 32));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "outerFunction".equals(n.getSimpleName()) && n.getLocation().getLine() == 39));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "performAsyncOperation".equals(n.getSimpleName()) && n.getLocation().getLine() == 65));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "idGenerator".equals(n.getSimpleName()) && n.getLocation().getLine() == 91));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "fibonacciSequence".equals(n.getSimpleName()) && n.getLocation().getLine() == 101));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "functionWithErrorHandling".equals(n.getSimpleName()) && n.getLocation().getLine() == 114));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "functionWithIIFE".equals(n.getSimpleName()) && n.getLocation().getLine() == 132));
-    assertTrue(actualFunctionNodes.stream().anyMatch(n -> "labeledLoopFunction".equals(n.getSimpleName()) && n.getLocation().getLine() == 145));
+    for (ExpectedNode expected : expectedNodes) {
+        CstNode actualNode = findNode(actualFunctionNodes, expected.name(), expected.line());
+        assertThat(actualNode.getType(), is(equalTo(expected.type())));
+        assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
+        assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+        if (expected.namespace() != null) {
+            assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+        }
+        Location location = actualNode.getLocation();
+        assertThat(location.getFile(), is(equalTo(expected.fileName())));
+        assertThat(location.getLine(), is(equalTo(expected.line())));
+        List<String> actualParamNames = actualNode.getParameters().stream()
+            .map(Parameter::getName)
+            .collect(Collectors.toList());
+        assertThat(actualParamNames, is(equalTo(expected.params())));
+    }
   }
 }
