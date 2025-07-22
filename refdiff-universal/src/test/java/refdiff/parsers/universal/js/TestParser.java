@@ -26,7 +26,7 @@ import refdiff.parsers.universal.UniversalPlugin;
 
 public class TestParser {
   private static final LanguagePlugin parser = new UniversalPlugin();
-  private static final String TEST_DATA_BASE_PATH = "src/test/resources/js/grammar";
+  private static final String TEST_DATA_BASE_PATH = "src/test/resources/js/syntax";
 
   private CstNode findNode(List<CstNode> nodes, String name, int line) {
     return nodes.stream()
