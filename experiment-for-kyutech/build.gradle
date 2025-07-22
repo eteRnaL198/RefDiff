@@ -12,8 +12,3 @@ dependencies {
     implementation project(':refdiff-universal')
     implementation project(':refdiff-java')
 }
-
-task runExperiment(type: JavaExec) {
-    classpath sourceSets.main.runtimeClasspath
-    mainClass = 'kyutech.experiment.ExperimentForKyutech'
-}

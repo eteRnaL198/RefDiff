@@ -12,10 +12,10 @@ import refdiff.core.diff.RelationshipType;
 import refdiff.parsers.universal.UniversalPlugin;
 import refdiff.parsers.java.JavaPlugin;
 
-public class ExperimentForKyutech {
+public class JavaPerformance {
 
 	public static void main(String[] args) throws Exception {
-		new ExperimentForKyutech().runUniversalForRepo();
+		new JavaPerformance().runUniversalForRepo();
 		// new ExperimentForKyutech().runRefdiffJava();
 	}
 
