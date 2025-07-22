@@ -1,0 +1,19 @@
+gguf	keyvalue.go	/^package gguf$/;"	p	line:1
+KeyValue	keyvalue.go	/^type KeyValue struct {$/;"	s	line:8	package:gguf
+Key	keyvalue.go	/^	Key string$/;"	m	line:9	struct:gguf.KeyValue	typeref:typename:string
+Value	keyvalue.go	/^	Value$/;"	M	line:10	struct:gguf.KeyValue	typeref:typename:Value
+Valid	keyvalue.go	/^func (kv KeyValue) Valid() bool {$/;"	f	line:13	struct:gguf.KeyValue	typeref:typename:bool
+Value	keyvalue.go	/^type Value struct {$/;"	s	line:17	package:gguf
+value	keyvalue.go	/^	value any$/;"	m	line:18	struct:gguf.Value	typeref:typename:any
+value	keyvalue.go	/^func value[T any](v Value, kinds ...reflect.Kind) (t T) {$/;"	f	line:21	package:gguf	typeref:typename:(v Value, kinds ...reflect.Kind) (
+values	keyvalue.go	/^func values[T any](v Value, kinds ...reflect.Kind) (ts []T) {$/;"	f	line:29	package:gguf	typeref:typename:(v Value, kinds ...reflect.Kind) (
+Int	keyvalue.go	/^func (v Value) Int() int64 {$/;"	f	line:43	struct:gguf.Value	typeref:typename:int64
+Ints	keyvalue.go	/^func (v Value) Ints() (i64s []int64) {$/;"	f	line:48	struct:gguf.Value	typeref:typename:(i64s []int64)
+Uint	keyvalue.go	/^func (v Value) Uint() uint64 {$/;"	f	line:53	struct:gguf.Value	typeref:typename:uint64
+Uints	keyvalue.go	/^func (v Value) Uints() (u64s []uint64) {$/;"	f	line:58	struct:gguf.Value	typeref:typename:(u64s []uint64)
+Float	keyvalue.go	/^func (v Value) Float() float64 {$/;"	f	line:63	struct:gguf.Value	typeref:typename:float64
+Floats	keyvalue.go	/^func (v Value) Floats() (f64s []float64) {$/;"	f	line:68	struct:gguf.Value	typeref:typename:(f64s []float64)
+Bool	keyvalue.go	/^func (v Value) Bool() bool {$/;"	f	line:73	struct:gguf.Value	typeref:typename:bool
+Bools	keyvalue.go	/^func (v Value) Bools() (bools []bool) {$/;"	f	line:78	struct:gguf.Value	typeref:typename:(bools []bool)
+String	keyvalue.go	/^func (v Value) String() string {$/;"	f	line:83	struct:gguf.Value	typeref:typename:string
+Strings	keyvalue.go	/^func (v Value) Strings() (strings []string) {$/;"	f	line:88	struct:gguf.Value	typeref:typename:(strings []string)

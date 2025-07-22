@@ -1,0 +1,2 @@
+lifecycle	updater_windows.go	/^package lifecycle$/;"	p	line:1
+DoUpgrade	updater_windows.go	/^func DoUpgrade(cancel context.CancelFunc, done chan int) error {$/;"	f	line:13	package:lifecycle	typeref:typename:error

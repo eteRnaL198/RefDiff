@@ -7,21 +7,24 @@ import refdiff.core.cst.CstNodeRelationshipType;
 import refdiff.core.diff.CstRootHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CallGraphGenerator {
 
-    private final String callableNodeType;
+    private final Set<String> callableNodeTypes;
 
-    public CallGraphGenerator(String callableNodeType) {
-        this.callableNodeType = callableNodeType;
+    public CallGraphGenerator(String... callableNodeTypes) {
+        this.callableNodeTypes = new HashSet<>(Arrays.asList(callableNodeTypes));
     }
 
     /**
      * Generates call relationships (e.g., method calls) between callable nodes within the provided CST root.
-     * It first identifies all nodes of the specified {@code callableNodeType} (e.g., method declarations)
+     * It first identifies all nodes of the specified {@code callableNodeTypes} (e.g., method declarations)
      * and then analyzes the tokens within each callable node to find references to other callable nodes.
      * <p>
      * Note: This implementation assumes that the CST root contains tokens for each node,
@@ -32,7 +35,7 @@ public class CallGraphGenerator {
     public void generateCallGraph(CstRoot root, Map<String, String> sourceCodeMap) {
         List<CstNode> callableNodes = new ArrayList<>();
         root.forEachNode((node, _) -> {
-            if (node.getType().equals(this.callableNodeType)) {
+            if (this.callableNodeTypes.contains(node.getType())) {
                 callableNodes.add(node);
             }
         });
