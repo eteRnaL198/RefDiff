@@ -16,7 +16,7 @@ public class JavaPerformance {
 
 	public static void main(String[] args) throws Exception {
 		new JavaPerformance().runUniversalForRepo();
-		// new ExperimentForKyutech().runRefdiffJava();
+		new JavaPerformance().runRefdiffJava();
 	}
 
 	private static void printExtractMethodOrExtractMove(String headLine, CstDiff diff) {
