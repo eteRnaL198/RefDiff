@@ -1,0 +1,365 @@
+Refactorings found in Stirling-PDF cc7f16308541eee3fc7b94285d5d290b3e6870e5
+RENAME	{Class FakeScanController at app/core/src/main/java/stirling/software/SPDF/controller/api/misc/FakeScanController.java:40}	{Class ScannerEffectController at app/core/src/main/java/stirling/software/SPDF/controller/api/misc/ScannerEffectController.java:40})
+RENAME	{Class FakeScanRequest at app/core/src/main/java/stirling/software/SPDF/model/api/misc/FakeScanRequest.java:12}	{Class ScannerEffectRequest at app/core/src/main/java/stirling/software/SPDF/model/api/misc/ScannerEffectRequest.java:12})
+RENAME	{Method fakeScan(FakeScanRequest) at app/core/src/main/java/stirling/software/SPDF/controller/api/misc/FakeScanController.java:55}	{Method scannerEffect(ScannerEffectRequest) at app/core/src/main/java/stirling/software/SPDF/controller/api/misc/ScannerEffectController.java:55})
+Parent is null: app/core/src/main/resources/static/js/favourites.js for method: updateFavoritesDropdown()
+Parent is null: stirling-pdf/src/main/resources/static/js/darkmode.js for method: getElements()
+
+Refactorings found in Stirling-PDF bbf5d5f6d48e295ad2043a2a5575132fa180007e
+EXTRACT	{Method cleanupOldJobs() at common/src/main/java/stirling/software/common/service/TaskManager.java:239}	{Method cleanupJobFiles(JobResult, String) at common/src/main/java/stirling/software/common/service/TaskManager.java:434})
+Parent is null: stirling-pdf/src/main/resources/static/js/fileInput.js for method: setupFileInput()
+Parent is null: stirling-pdf/src/main/resources/static/js/DecryptFiles.js for method: constructor()
+
+Refactorings found in Stirling-PDF bc9c127819a1d96df20bea6dec1ae841cbc347c6
+EXTRACT_MOVE	{Method dynamicYamlPropertySource(ConfigurableEnvironment) at common/src/main/java/stirling/software/common/model/ApplicationProperties.java:65}	{Method exists() at common/src/main/java/stirling/software/common/util/TempFile.java:36})
+CHANGE_SIGNATURE	{Method convertEmlToPdf(String, EmlToPdfRequest, byte[], String, boolean, stirling.software.common.service.CustomPDFDocumentFactory) at common/src/main/java/stirling/software/common/util/EmlToPdf.java:131}	{Method convertEmlToPdf(String, EmlToPdfRequest, byte[], String, boolean, stirling.software.common.service.CustomPDFDocumentFactory, TempFileManager) at common/src/main/java/stirling/software/common/util/EmlToPdf.java:131})
+EXTRACT_MOVE	{Method createDir(String) at common/src/main/java/stirling/software/common/util/GeneralUtils.java:347}	{Method exists() at common/src/main/java/stirling/software/common/util/TempFile.java:36})
+EXTRACT_MOVE	{Method addFileToZip(File, String, ZipOutputStream) at stirling-pdf/src/main/java/stirling/software/SPDF/controller/api/misc/OCRController.java:178}	{Method exists() at common/src/main/java/stirling/software/common/util/TempFile.java:36})
+CHANGE_SIGNATURE	{Method convertHtmlToPdf(String, EmlToPdfRequest, String, boolean) at common/src/main/java/stirling/software/common/util/EmlToPdf.java:193}	{Method convertHtmlToPdf(String, EmlToPdfRequest, String, boolean, TempFileManager) at common/src/main/java/stirling/software/common/util/EmlToPdf.java:195})
+CHANGE_SIGNATURE	{Method sanitizeHtmlFilesInZip(Path, boolean) at common/src/main/java/stirling/software/common/util/FileToPdf.java:81}	{Method sanitizeHtmlFilesInZip(Path, boolean, TempFileManager) at common/src/main/java/stirling/software/common/util/FileToPdf.java:83})
+CHANGE_SIGNATURE	{Method convertHtmlToPdf(String, HTMLToPdfRequest, byte[], String, boolean) at common/src/main/java/stirling/software/common/util/FileToPdf.java:24}	{Method convertHtmlToPdf(String, HTMLToPdfRequest, byte[], String, boolean, TempFileManager) at common/src/main/java/stirling/software/common/util/FileToPdf.java:24})
+Parent is null: stirling-pdf/src/main/resources/static/js/fileInput.js for method: setupFileInput()
+Parent is null: proprietary/src/main/java/stirling/software/proprietary/security/saml2/CustomSaml2AuthenticatedPrincipal.java for method: getName()
+Parent is null: proprietary/src/main/java/stirling/software/proprietary/audit/AuditEventType.java for constructor: AuditEventType(String)
+
+Refactorings found in Stirling-PDF 136f16f613652312ea66a97e331b36d3c40b4b92
+CHANGE_SIGNATURE	{Method viewTeamDetails(Long, Model) at proprietary/src/main/java/stirling/software/proprietary/security/controller/web/TeamWebController.java:63}	{Method viewTeamDetails(HttpServletRequest, Long, Model) at proprietary/src/main/java/stirling/software/proprietary/security/controller/web/TeamWebController.java:85})
+CHANGE_SIGNATURE	{Method listTeams(Model) at proprietary/src/main/java/stirling/software/proprietary/security/controller/web/TeamWebController.java:33}	{Method listTeams(HttpServletRequest, Model) at proprietary/src/main/java/stirling/software/proprietary/security/controller/web/TeamWebController.java:34})
+Parent is null: proprietary/src/main/java/stirling/software/proprietary/security/saml2/CustomSaml2AuthenticatedPrincipal.java for method: getName()
+Parent is null: stirling-pdf/src/main/resources/static/js/pages/edit-table-of-contents.js for constructor: if()
+Parent is null: stirling-pdf/src/main/resources/static/js/pages/edit-table-of-contents.js for constructor: if()
+Parent is null: src/main/resources/static/js/DecryptFiles.js for method: constructor()
+
+Refactorings found in rails 02ad9146a3800ce2aecce801df8a6b46f685771a
+EXTRACT	{Method extract_domain_from(host, tld_length) at actionpack/lib/action_dispatch/http/url.rb:98}	{Method domain_from(host, tld_length) at actionpack/lib/action_dispatch/http/url.rb:64})
+EXTRACT_MOVE	{Method extract_subdomains_from(host, tld_length) at actionpack/lib/action_dispatch/http/url.rb:102}	{Method subdomains_from(_, _) at actionpack/test/dispatch/request_test.rb:344})
+EXTRACT	{Method extract_subdomains_from(host, tld_length) at actionpack/lib/action_dispatch/http/url.rb:102}	{Method subdomains_from(host, tld_length) at actionpack/lib/action_dispatch/http/url.rb:104})
+
+Refactorings found in rails 1084b228c3c3ad92e2f6a55a6d79741612b32981
+EXTRACT	{Method depend_on_bootsnap?() at railties/lib/rails/generators/app_base.rb:663}	{Method jruby?() at railties/lib/rails/generators/app_base.rb:749})
+
+Refactorings found in rails 5ca72237e0003ccaa7e480082fbbedb6c0d77e25
+EXTRACT_MOVE	{Method collation(configuration, *arguments) at activerecord/lib/active_record/tasks/database_tasks.rb:342}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+MOVE	{Method run_cmd(cmd, args, action) at activerecord/lib/active_record/tasks/mysql_database_tasks.rb:109}	{Method run_cmd(cmd, *args, **opts) at activerecord/lib/active_record/tasks/abstract_tasks.rb:55})
+EXTRACT_MOVE	{Method test_recreates_database_with_the_given_options() at activerecord/test/cases/adapters/trilogy/trilogy_rake_test.rb:204}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+EXTRACT_MOVE	{Method test_db_retrieves_collation() at activerecord/test/cases/adapters/trilogy/trilogy_rake_test.rb:252}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+MOVE	{Method using_database_configurations?() at activerecord/lib/active_record/tasks/sqlite_database_tasks.rb:6}	{Method using_database_configurations?() at activerecord/lib/active_record/tasks/abstract_tasks.rb:6})
+MOVE	{Method run_cmd_error(cmd, args) at activerecord/lib/active_record/tasks/sqlite_database_tasks.rb:81}	{Method run_cmd_error(cmd, args) at activerecord/lib/active_record/tasks/abstract_tasks.rb:59})
+MOVE	{Method configuration_hash_without_database() at activerecord/lib/active_record/tasks/mysql_database_tasks.rb:79}	{Method configuration_hash_without_database() at activerecord/lib/active_record/tasks/abstract_tasks.rb:51})
+MOVE	{Method initialize(db_config) at activerecord/lib/active_record/tasks/mysql_database_tasks.rb:10}	{Method initialize(db_config) at activerecord/lib/active_record/tasks/abstract_tasks.rb:10})
+EXTRACT_MOVE	{Method setup() at activerecord/test/cases/adapters/trilogy/trilogy_rake_test.rb:244}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+EXTRACT_MOVE	{Method setup() at activerecord/test/cases/tasks/database_tasks_test.rb:10}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+EXTRACT_MOVE	{Method setup() at activerecord/test/cases/adapters/mysql2/mysql2_rake_test.rb:244}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+EXTRACT_MOVE	{Method test_db_retrieves_collation() at activerecord/test/cases/adapters/sqlite3/sqlite_rake_test.rb:159}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+EXTRACT_MOVE	{Method test_recreates_database_with_the_given_options() at activerecord/test/cases/adapters/mysql2/mysql2_rake_test.rb:204}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+CHANGE_SIGNATURE	{Method run_cmd(cmd, args, action) at activerecord/lib/active_record/tasks/postgresql_database_tasks.rb:120}	{Method run_cmd(cmd, *args, **opts) at activerecord/lib/active_record/tasks/postgresql_database_tasks.rb:93})
+EXTRACT_MOVE	{Method test_creates_database_with_given_collation() at activerecord/test/cases/adapters/trilogy/trilogy_rake_test.rb:57}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+MOVE	{Method check_current_protected_environment!(db_config) at activerecord/lib/active_record/tasks/database_tasks.rb:643}	{Method check_current_protected_environment!(db_config, migration_class) at activerecord/lib/active_record/tasks/abstract_tasks.rb:23})
+EXTRACT_MOVE	{Method collation_current(env_name, db_name) at activerecord/lib/active_record/tasks/database_tasks.rb:337}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+EXTRACT_MOVE	{Method test_creates_database_with_given_collation() at activerecord/test/cases/adapters/mysql2/mysql2_rake_test.rb:57}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+EXTRACT_MOVE	{Method test_db_retrieves_collation() at activerecord/test/cases/adapters/mysql2/mysql2_rake_test.rb:252}	{Method collation() at activerecord/lib/active_record/tasks/abstract_tasks.rb:19})
+MOVE	{Method establish_connection(config) at activerecord/lib/active_record/tasks/mysql_database_tasks.rb:75}	{Method establish_connection(config) at activerecord/lib/active_record/tasks/abstract_tasks.rb:47})
+
+Refactorings found in rails db27b67bb9ae8194bdb38559cac194707086de87
+CHANGE_SIGNATURE	{Method initialize(str) at activesupport/lib/active_support/core_ext/string/output_safety.rb:70}	{Method initialize(_str) at activesupport/lib/active_support/core_ext/string/output_safety.rb:70})
+
+Refactorings found in rails 1419ca5ea21b077ddab805e86d67d4484c9b8132
+CHANGE_SIGNATURE	{Method update_column(name, value) at activerecord/lib/active_record/persistence.rb:585}	{Method update_column(name, value, touch) at activerecord/lib/active_record/persistence.rb:585})
+
+Refactorings found in rails c2c7e20a28db867f2ed478def48109c0b1235b7d
+CHANGE_SIGNATURE	{Method try(*) at activesupport/lib/active_support/core_ext/object/try.rb:148}	{Method try(*, &) at activesupport/lib/active_support/core_ext/object/try.rb:148})
+CHANGE_SIGNATURE	{Method try!(*) at activesupport/lib/active_support/core_ext/object/try.rb:155}	{Method try!(*, &) at activesupport/lib/active_support/core_ext/object/try.rb:155})
+
+Refactorings found in rails d43dc9af18766f91eb450e1c6b8c8c5e64f925e6
+INLINE	{Method store() at activesupport/lib/active_support/execution_context.rb:48}	{Method clear() at activesupport/lib/active_support/execution_context.rb:96})
+
+Refactorings found in rails 1b4484c43f32a42824d3de32e22029207f76bc42
+RENAME	{Method run_step(name, start, &block) at activejob/lib/active_job/continuation.rb:270}	{Method run_step_inline(name, start, **options, &block) at activejob/lib/active_job/continuation.rb:300})
+CHANGE_SIGNATURE	{Method step(step_name, start, &block) at activejob/lib/active_job/continuable.rb:36}	{Method step(step_name, start, isolated, &block) at activejob/lib/active_job/continuable.rb:36})
+CHANGE_SIGNATURE	{Method interrupt!() at activejob/lib/active_job/continuable.rb:95}	{Method interrupt!(reason) at activejob/lib/active_job/continuable.rb:66})
+CHANGE_SIGNATURE	{Method step(name, start, &block) at activejob/lib/active_job/continuation.rb:209}	{Method step(name, **options, &block) at activejob/lib/active_job/continuation.rb:225})
+
+Refactorings found in rails bf6cd8f2290dc48d77f5223555a7706bcd76e1c4
+EXTRACT	{Method dockerfile_bun_version() at railties/lib/rails/generators/app_base.rb:556}	{Method capture_command(command, pattern) at railties/lib/rails/generators/app_base.rb:532})
+EXTRACT	{Method dockerfile_yarn_version() at railties/lib/rails/generators/app_base.rb:542}	{Method capture_command(command, pattern) at railties/lib/rails/generators/app_base.rb:532})
+
+Refactorings found in rails ea66b1c750fd2984167382039d77802930865712
+EXTRACT_MOVE	{Method query_source_location() at activerecord/lib/active_record/query_logs.rb:155}	{Method first_clean_frame(kind) at activesupport/lib/active_support/backtrace_cleaner.rb:95})
+EXTRACT_MOVE	{Method query_source_location() at activerecord/lib/active_record/query_logs.rb:155}	{Method first_clean_frame(kind) at activesupport/lib/active_support/backtrace_cleaner.rb:80})
+
+Refactorings found in maybe e8eb32d2ae281fbb6f48483e79d5ac55e091abf8
+RENAME	{Method tab_partial_name(tab) at app/components/UI/account_page.rb:36}	{Method tab_content_for(tab) at app/components/UI/account_page.rb:50})
+
+Refactorings found in maybe ab6fdbbb6806e870362f44728f88f0c82831ff10
+MOVE	{Method icon_only?() at app/components/buttonish_component.rb:110}	{Method icon_only?() at app/components/DS/buttonish.rb:110})
+MOVE	{Method initialize(variant, auto_open, reload_on_close, width, frame, disable_frame, **opts) at app/components/dialog_component.rb:46}	{Method initialize(variant, auto_open, reload_on_close, width, frame, disable_frame, **opts) at app/components/DS/dialog.rb:46})
+MOVE	{Method container_size_classes() at app/components/link_component.rb:28}	{Method container_size_classes() at app/components/DS/link.rb:28})
+MOVE	{Method container_styles() at app/components/filled_icon_component.rb:56}	{Method container_styles() at app/components/DS/filled_icon.rb:56})
+MOVE	{Method merged_opts() at app/components/link_component.rb:13}	{Method merged_opts() at app/components/DS/link.rb:13})
+MOVE	{Method transparent_border_color() at app/components/filled_icon_component.rb:96}	{Method transparent_border_color() at app/components/DS/filled_icon.rb:96})
+MOVE	{Method wrapper(&block) at app/components/menu_item_component.rb:19}	{Method wrapper(&block) at app/components/DS/menu_item.rb:19})
+MOVE	{Method unstyled?() at app/components/tabs_component.rb:51}	{Method unstyled?() at app/components/DS/tabs.rb:51})
+MOVE	{Method transparent?() at app/components/filled_icon_component.rb:64}	{Method transparent?() at app/components/DS/filled_icon.rb:64})
+MOVE	{Method container_size_classes() at app/components/buttonish_component.rb:88}	{Method container_size_classes() at app/components/DS/buttonish.rb:88})
+MOVE	{Method initialize(active_tab, classes, active_btn_classes, inactive_btn_classes, btn_classes) at app/components/tabs/nav_component.rb:22}	{Method initialize(active_tab, classes, active_btn_classes, inactive_btn_classes, btn_classes) at app/components/DS/tabs/nav.rb:22})
+MOVE	{Method active_btn_classes() at app/components/tabs_component.rb:42}	{Method active_btn_classes() at app/components/DS/tabs.rb:42})
+MOVE	{Method initialize(message, variant) at app/components/alert_component.rb:2}	{Method initialize(message, variant) at app/components/DS/alert.rb:2})
+MOVE	{Method size_classes() at app/components/filled_icon_component.rb:80}	{Method size_classes() at app/components/DS/filled_icon.rb:80})
+MOVE	{Method merged_opts() at app/components/dialog_component.rb:98}	{Method merged_opts() at app/components/DS/dialog.rb:98})
+MOVE	{Method initialize(confirm, **opts) at app/components/button_component.rb:8}	{Method initialize(confirm, **opts) at app/components/DS/button.rb:8})
+MOVE	{Method initialize(tab_id) at app/components/tabs/panel_component.rb:4}	{Method initialize(tab_id) at app/components/DS/tabs/panel.rb:4})
+MOVE	{Method icon_name() at app/components/alert_component.rb:27}	{Method icon_name() at app/components/DS/alert.rb:27})
+MOVE	{Method frame() at app/components/dialog_component.rb:56}	{Method frame() at app/components/DS/dialog.rb:56})
+MOVE	{Method container_classes(override_classes) at app/components/buttonish_component.rb:77}	{Method container_classes(override_classes) at app/components/DS/buttonish.rb:77})
+MOVE	{Method call() at app/components/buttonish_component.rb:73}	{Method call() at app/components/DS/buttonish.rb:73})
+MOVE	{Method call() at app/components/tab_component.rb:9}	{Method call() at app/components/DS/tab.rb:9})
+MOVE	{Method call() at app/components/tabs/panel_component.rb:8}	{Method call() at app/components/DS/tabs/panel.rb:8})
+MOVE	{Method size_data() at app/components/buttonish_component.rb:119}	{Method size_data() at app/components/DS/buttonish.rb:119})
+MOVE	{Method dialog_inner_classes() at app/components/dialog_component.rb:82}	{Method dialog_inner_classes() at app/components/DS/dialog.rb:82})
+MOVE	{Method container_classes() at app/components/menu_item_component.rb:41}	{Method container_classes() at app/components/DS/menu_item.rb:41})
+MOVE	{Method variant_data() at app/components/buttonish_component.rb:115}	{Method variant_data() at app/components/DS/buttonish.rb:115})
+MOVE	{Method initialize(id, label) at app/components/tab_component.rb:4}	{Method initialize(id, label) at app/components/DS/tab.rb:4})
+MOVE	{Method text_classes() at app/components/filled_icon_component.rb:49}	{Method text_classes() at app/components/DS/filled_icon.rb:49})
+MOVE	{Method initialize(variant, avatar_url, initials, placement, offset, icon_vertical, no_padding, testid) at app/components/menu_component.rb:26}	{Method initialize(variant, avatar_url, initials, placement, offset, icon_vertical, no_padding, testid) at app/components/DS/menu.rb:26})
+MOVE	{Method permitted_display_override_classes() at app/components/buttonish_component.rb:153}	{Method permitted_display_override_classes() at app/components/DS/buttonish.rb:153})
+MOVE	{Method base_btn_classes() at app/components/tabs_component.rb:55}	{Method base_btn_classes() at app/components/DS/tabs.rb:55})
+MOVE	{Method icon_classes() at app/components/buttonish_component.rb:104}	{Method icon_classes() at app/components/DS/buttonish.rb:104})
+MOVE	{Method icon_size() at app/components/filled_icon_component.rb:45}	{Method icon_size() at app/components/DS/filled_icon.rb:45})
+MOVE	{Method initialize(variant, icon, text, hex_color, size, rounded) at app/components/filled_icon_component.rb:27}	{Method initialize(variant, icon, text, hex_color, size, rounded) at app/components/DS/filled_icon.rb:27})
+MOVE	{Method merged_base_classes() at app/components/buttonish_component.rb:124}	{Method merged_base_classes() at app/components/DS/buttonish.rb:124})
+MOVE	{Method initialize(variant, text, icon, href, method, destructive, confirm, frame, **opts) at app/components/menu_item_component.rb:6}	{Method initialize(variant, text, icon, href, method, destructive, confirm, frame, **opts) at app/components/DS/menu_item.rb:6})
+MOVE	{Method initialize(active_tab, url_param_key, session_key, variant, active_btn_classes, inactive_btn_classes, testid) at app/components/tabs_component.rb:32}	{Method initialize(active_tab, url_param_key, session_key, variant, active_btn_classes, inactive_btn_classes, testid) at app/components/DS/tabs.rb:32})
+MOVE	{Method wrapper_element(&block) at app/components/dialog_component.rb:61}	{Method wrapper_element(&block) at app/components/DS/dialog.rb:61})
+MOVE	{Method dialog_outer_classes() at app/components/dialog_component.rb:69}	{Method dialog_outer_classes() at app/components/DS/dialog.rb:69})
+MOVE	{Method icon_color() at app/components/buttonish_component.rb:92}	{Method icon_color() at app/components/DS/buttonish.rb:92})
+MOVE	{Method initialize(variant, size, href, text, icon, icon_position, full_width, frame, **opts) at app/components/buttonish_component.rb:60}	{Method initialize(variant, size, href, text, icon, icon_position, full_width, frame, **opts) at app/components/DS/buttonish.rb:60})
+MOVE	{Method container_classes() at app/components/filled_icon_component.rb:36}	{Method container_classes() at app/components/DS/filled_icon.rb:36})
+MOVE	{Method custom_fg_color() at app/components/filled_icon_component.rb:88}	{Method custom_fg_color() at app/components/DS/filled_icon.rb:88})
+MOVE	{Method initialize(id, name, checked, disabled, checked_value, unchecked_value, **opts) at app/components/toggle_component.rb:4}	{Method initialize(id, name, checked, disabled, checked_value, unchecked_value, **opts) at app/components/DS/toggle.rb:4})
+MOVE	{Method container_classes() at app/components/alert_component.rb:10}	{Method container_classes() at app/components/DS/alert.rb:10})
+MOVE	{Method transparent_bg_color() at app/components/filled_icon_component.rb:92}	{Method transparent_bg_color() at app/components/DS/filled_icon.rb:92})
+MOVE	{Method solid_bg_class() at app/components/filled_icon_component.rb:69}	{Method solid_bg_class() at app/components/DS/filled_icon.rb:69})
+MOVE	{Method inactive_btn_classes() at app/components/tabs_component.rb:46}	{Method inactive_btn_classes() at app/components/DS/tabs.rb:46})
+MOVE	{Method radius_classes() at app/components/filled_icon_component.rb:84}	{Method radius_classes() at app/components/DS/filled_icon.rb:84})
+MOVE	{Method text_classes() at app/components/menu_item_component.rb:29}	{Method text_classes() at app/components/DS/menu_item.rb:29})
+MOVE	{Method merged_opts() at app/components/button_component.rb:22}	{Method merged_opts() at app/components/DS/button.rb:22})
+MOVE	{Method label_classes() at app/components/toggle_component.rb:14}	{Method label_classes() at app/components/DS/toggle.rb:14})
+MOVE	{Method icon_color() at app/components/alert_component.rb:40}	{Method icon_color() at app/components/DS/alert.rb:40})
+MOVE	{Method drawer?() at app/components/dialog_component.rb:112}	{Method drawer?() at app/components/DS/dialog.rb:112})
+MOVE	{Method initialize(title, align, open, **opts) at app/components/disclosure_component.rb:6}	{Method initialize(title, align, open, **opts) at app/components/DS/disclosure.rb:6})
+MOVE	{Method nav_container_classes() at app/components/tabs_component.rb:61}	{Method nav_container_classes() at app/components/DS/tabs.rb:61})
+MOVE	{Method permitted_radius_override_classes() at app/components/buttonish_component.rb:149}	{Method permitted_radius_override_classes() at app/components/DS/buttonish.rb:149})
+MOVE	{Method container(&block) at app/components/button_component.rb:13}	{Method container(&block) at app/components/DS/button.rb:13})
+MOVE	{Method merged_opts() at app/components/menu_item_component.rb:48}	{Method merged_opts() at app/components/DS/menu_item.rb:48})
+MOVE	{Method destructive?() at app/components/menu_item_component.rb:36}	{Method destructive?() at app/components/DS/menu_item.rb:36})
+
+Refactorings found in maybe 8c97c9d31a391b889d558a04cca468c05aa7bb9d
+MOVE	{Method destroy() at app/controllers/concerns/accountable_resource.rb:69}	{Method destroy() at app/controllers/accounts_controller.rb:49})
+
+Refactorings found in maybe 3eea5a98910a5265bdbfc90e63d717fd3db666c0
+MOVE	{Method balance_type() at app/models/balance/base_calculator.rb:60}	{Method balance_type() at app/models/account.rb:151})
+EXTRACT	{Method set_current_balance(balance) at app/models/account/current_balance_manager.rb:33}	{Method set_current_balance_for_linked_account(balance) at app/models/account/current_balance_manager.rb:95})
+
+Refactorings found in maybe 52333e3fa69d61fb69f329fadec9899393fa88b6
+INLINE	{Method perform_balance_update(account, params) at app/controllers/valuations_controller.rb:67}	{Method update() at app/controllers/valuations_controller.rb:51})
+
+Refactorings found in maybe 89cc64418e5202d8121018955b80b6965c00a1fb
+CHANGE_SIGNATURE	{Method initialize(account, balance, currency, date, notes) at app/models/account/balance_updater.rb:2}	{Method initialize(account, balance, currency, date, notes, existing_valuation_id) at app/models/account/balance_updater.rb:2})
+EXTRACT	{Method update() at app/controllers/valuations_controller.rb:27}	{Method perform_balance_update(account, params) at app/controllers/valuations_controller.rb:67})
+EXTRACT	{Method create() at app/controllers/valuations_controller.rb:4}	{Method perform_balance_update(account, params) at app/controllers/valuations_controller.rb:67})
+CHANGE_SIGNATURE	{Method update_balance(balance, date, currency, notes) at app/models/account.rb:118}	{Method update_balance(balance, date, currency, notes, existing_valuation_id) at app/models/account.rb:118})
+
+Refactorings found in maybe 662f2c04ce905c8d92d82204bf95662bbebb19d5
+EXTRACT	{Method select(method, choices, options, html_options) at app/helpers/styled_form_builder.rb:24}	{Method normalize_options(options, html_options) at app/helpers/styled_form_builder.rb:108})
+EXTRACT	{Method collection_select(method, collection, value_method, text_method, options, html_options) at app/helpers/styled_form_builder.rb:33}	{Method normalize_options(options, html_options) at app/helpers/styled_form_builder.rb:108})
+
+Refactorings found in maybe 8db95623cf9ca54f47126944c7a28660ae358384
+CHANGE_SIGNATURE	{Method initialize(account) at app/models/holding/reverse_calculator.rb:4}	{Method initialize(account, portfolio_snapshot) at app/models/holding/reverse_calculator.rb:4})
+
+Refactorings found in maybe 9336719242f5b7596766ed0fb700e3dab4621ab2
+RENAME	{Method one_active_key_per_user() at app/models/api_key.rb:85}	{Method one_active_key_per_user_per_source() at app/models/api_key.rb:89})
+
+Refactorings found in maybe 5a4c955522a85b18db309739be2426853a79981b
+MOVE	{Method destroy_everything!() at app/models/demo/generator.rb:146}	{Method destroy_everything!() at app/models/demo/data_cleaner.rb:10})
+
+Refactorings found in maybe 10ce2c8e23b4695030982351f5bf09d5a6e4e803
+MOVE	{Method active_accounts() at app/models/balance_sheet.rb:119}	{Method active_accounts() at app/models/balance_sheet/account_totals.rb:26})
+EXTRACT	{Method show() at app/controllers/accountable_sparklines_controller.rb:2}	{Method account_ids() at app/controllers/accountable_sparklines_controller.rb:34})
+EXTRACT_MOVE	{Method net_worth_series(period) at app/models/balance_sheet.rb:90}	{Method net_worth_series(period) at app/models/balance_sheet/net_worth_series_builder.rb:6})
+
+Refactorings found in maybe 6e202bd7ecd9726b045edcb3650c5b27d9cfbd4f
+CHANGE_SIGNATURE	{Method initialize(start_date, end_date, interval, trend, values) at app/models/series.rb:42}	{Method initialize(start_date, end_date, interval, values, favorable_direction) at app/models/series.rb:55})
+
+Refactorings found in maybe d21e3859624e228af03416d18b5b7be7be8c0e3c
+MOVE	{Method plaid_eu_webhooks_url() at app/controllers/concerns/accountable_resource.rb:86}	{Method plaid_eu_webhooks_url() at app/controllers/plaid_items_controller.rb:70})
+MOVE	{Method plaid_us_webhooks_url() at app/controllers/concerns/accountable_resource.rb:80}	{Method plaid_us_webhooks_url() at app/controllers/plaid_items_controller.rb:64})
+
+Refactorings found in maybe 6935ffa3d1f9cb429561e14c9346d5408ca01c31
+EXTRACT	{Method transactions_data() at app/models/plaid_item/accounts_snapshot.rb:65}	{Method can_fetch_transactions?() at app/models/plaid_item/accounts_snapshot.rb:65})
+
+Refactorings found in maybe 03a146222d8aa48c4612b9bd2f7ddd7ae47d7e66
+MOVE	{Method handle_plaid_error(error) at app/models/plaid_item/syncer.rb:51}	{Method handle_plaid_error(error) at app/models/plaid_item/importer.rb:19})
+MOVE	{Method normalize_user_category_name(name) at app/models/provider/plaid/category_alias_matcher.rb:106}	{Method normalize_user_category_name(name) at app/models/plaid_account/transactions/category_matcher.rb:106})
+CHANGE_SIGNATURE	{Method get_item_investment_transactions(item, start_date, end_date) at app/models/provider/plaid.rb:180}	{Method get_item_investment_transactions(access_token, start_date, end_date) at app/models/provider/plaid.rb:180})
+RENAME	{Method get_item_transactions(item) at app/models/provider/plaid.rb:114}	{Method get_transactions(access_token, next_cursor) at app/models/provider/plaid.rb:114})
+MOVE	{Method detailed_plaid_categories() at app/models/provider/plaid/category_alias_matcher.rb:82}	{Method detailed_plaid_categories() at app/models/plaid_account/transactions/category_matcher.rb:82})
+MOVE	{Method initialize(user_categories) at app/models/provider/plaid/category_alias_matcher.rb:16}	{Method initialize(user_categories) at app/models/plaid_account/transactions/category_matcher.rb:16})
+CHANGE_SIGNATURE	{Method get_item_investments(item, start_date, end_date) at app/models/provider/plaid.rb:142}	{Method get_item_investments(access_token, start_date, end_date) at app/models/provider/plaid.rb:142})
+MOVE	{Method normalized_user_categories() at app/models/provider/plaid/category_alias_matcher.rb:96}	{Method normalized_user_categories() at app/models/plaid_account/transactions/category_matcher.rb:96})
+CHANGE_SIGNATURE	{Method get_item_accounts(item) at app/models/provider/plaid.rb:109}	{Method get_item_accounts(access_token) at app/models/provider/plaid.rb:109})
+CHANGE_SIGNATURE	{Method get_item_liabilities(item) at app/models/provider/plaid.rb:152}	{Method get_item_liabilities(access_token) at app/models/provider/plaid.rb:152})
+MOVE	{Method get_plaid_category_details(plaid_category_name) at app/models/provider/plaid/category_alias_matcher.rb:78}	{Method get_plaid_category_details(plaid_category_name) at app/models/plaid_account/transactions/category_matcher.rb:78})
+MOVE	{Method plaid_provider_for_region(region) at app/models/family/plaid_connectable.rb:48}	{Method plaid_provider_for_region(region) at app/models/provider/registry.rb:21})
+EXTRACT_MOVE	{Method perform_sync(sync) at app/models/plaid_item/syncer.rb:8}	{Method schedule_account_syncs(parent_sync, window_start_date, window_end_date) at app/models/plaid_item.rb:73})
+CHANGE_SIGNATURE	{Method get_item_holdings(item) at app/models/provider/plaid.rb:173}	{Method get_item_holdings(access_token) at app/models/provider/plaid.rb:173})
+MOVE	{Method match(plaid_detailed_category) at app/models/provider/plaid/category_alias_matcher.rb:20}	{Method match(plaid_detailed_category) at app/models/plaid_account/transactions/category_matcher.rb:20})
+
+Refactorings found in maybe 5c82af0e8c0a9fc7779917decfa3b8e4dfd01429
+CHANGE_SIGNATURE	{Method initialize(variant, text, icon, href, method, destructive, confirm, **opts) at app/components/menu_item_component.rb:6}	{Method initialize(variant, text, icon, href, method, destructive, confirm, frame, **opts) at app/components/menu_item_component.rb:6})
+RENAME	{Method merged_button_opts() at app/components/menu_item_component.rb:47}	{Method merged_opts() at app/components/menu_item_component.rb:48})
+
+Refactorings found in maybe 94a807c3c9e0b2984ca0acfe58f8d2ee66c4d59d
+RENAME	{Method log_enrichment!(attribute_name, attribute_value, source, metadata) at app/models/concerns/enrichable.rb:25}	{Method log_enrichment(attribute_name, attribute_value, source, metadata) at app/models/concerns/enrichable.rb:67})
+
+Refactorings found in maybe 137219c121fdd31bb171d307ec364524c4d6f71a
+RENAME	{Method lock!(attr) at app/models/concerns/enrichable.rb:45}	{Method lock_attr!(attr) at app/models/concerns/enrichable.rb:45})
+
+Refactorings found in maybe 10dd9e061a5dedb0185686f08acfe6248c9a4879
+MOVE	{Method fetch_and_load_plaid_data(sync) at app/models/plaid_item.rb:120}	{Method fetch_and_load_plaid_data() at app/models/plaid_item/syncer.rb:59})
+MOVE	{Method plaid_provider_for_region(region) at app/models/plaid_item/provided.rb:13}	{Method plaid_provider_for_region(region) at app/models/family/plaid_connectable.rb:48})
+EXTRACT_MOVE	{Method get_link_token(webhooks_url, redirect_url, accountable_type, region, access_token) at app/models/family.rb:107}	{Method plaid_us() at app/models/plaid_item/syncer.rb:38})
+RENAME	{Method calculate_holdings() at app/models/holding/forward_calculator.rb:7}	{Method calculate() at app/models/holding/forward_calculator.rb:8})
+MOVE	{Method build_category_alias_matcher(user_categories) at app/models/plaid_item/provided.rb:18}	{Method build_category_alias_matcher(user_categories) at app/models/plaid_item.rb:46})
+EXTRACT_MOVE	{Method get_link_token(webhooks_url, redirect_url, accountable_type, region, access_token) at app/models/family.rb:107}	{Method plaid_us() at app/models/family/plaid_connectable.rb:40})
+MOVE	{Method sync_cache() at app/models/balance/base_calculator.rb:15}	{Method sync_cache() at app/models/balance/reverse_calculator.rb:51})
+MOVE	{Method safe_fetch_plaid_data(method) at app/models/plaid_item.rb:215}	{Method safe_fetch_plaid_data(method) at app/models/plaid_item/syncer.rb:42})
+EXTRACT_MOVE	{Method get_link_token(webhooks_url, redirect_url, accountable_type, region, access_token) at app/models/family.rb:107}	{Method plaid_eu() at app/models/plaid_item/syncer.rb:34})
+CHANGE_SIGNATURE	{Method sync_later(start_date, parent_sync) at app/models/concerns/syncable.rb:12}	{Method sync_later(parent_sync, window_start_date, window_end_date) at app/models/concerns/syncable.rb:12})
+MOVE	{Method build_balance(date, cash_balance, holdings_value) at app/models/balance/base_calculator.rb:19}	{Method build_balance(date, cash_balance, holdings_value) at app/models/balance/reverse_calculator.rb:55})
+MOVE	{Method empty_portfolio() at app/models/holding/base_calculator.rb:20}	{Method empty_portfolio() at app/models/holding/reverse_calculator.rb:41})
+MOVE	{Method calculate_next_balance(prior_balance, transactions, direction) at app/models/balance/base_calculator.rb:29}	{Method calculate_next_balance(prior_balance, transactions, direction) at app/models/balance/reverse_calculator.rb:65})
+CHANGE_SIGNATURE	{Method initialize(active_tab, url_param_key, variant, active_btn_classes, inactive_btn_classes, testid) at app/components/tabs_component.rb:32}	{Method initialize(active_tab, url_param_key, session_key, variant, active_btn_classes, inactive_btn_classes, testid) at app/components/tabs_component.rb:32})
+MOVE	{Method calculate() at app/models/holding/base_calculator.rb:8}	{Method calculate() at app/models/holding/reverse_calculator.rb:8})
+MOVE	{Method sync_balances() at app/models/account.rb:177}	{Method sync_balances() at app/models/account/syncer.rb:18})
+EXTRACT_MOVE	{Method get_link_token(webhooks_url, redirect_url, accountable_type, region, access_token) at app/models/family.rb:107}	{Method plaid_eu() at app/models/family/plaid_connectable.rb:44})
+MOVE	{Method handle_plaid_error(error) at app/models/plaid_item.rb:230}	{Method handle_plaid_error(error) at app/models/plaid_item/syncer.rb:51})
+MOVE	{Method transform_portfolio(previous_portfolio, trade_entries, direction) at app/models/holding/base_calculator.rb:29}	{Method transform_portfolio(previous_portfolio, trade_entries, direction) at app/models/holding/reverse_calculator.rb:59})
+MOVE_RENAME	{Method sync_data(sync, start_date) at app/models/account.rb:84}	{Method perform_sync(sync) at app/models/account/syncer.rb:8})
+MOVE	{Method build_holdings(portfolio, date, price_source) at app/models/holding/base_calculator.rb:43}	{Method build_holdings(portfolio, date, price_source) at app/models/holding/reverse_calculator.rb:73})
+MOVE	{Method initialize(account) at app/models/balance/base_calculator.rb:4}	{Method initialize(account) at app/models/balance/reverse_calculator.rb:4})
+MOVE	{Method generate_starting_portfolio() at app/models/holding/base_calculator.rb:25}	{Method generate_starting_portfolio() at app/models/holding/forward_calculator.rb:35})
+MOVE	{Method get_link_token(webhooks_url, redirect_url, accountable_type, region, access_token) at app/models/family.rb:107}	{Method get_link_token(webhooks_url, redirect_url, accountable_type, region, access_token) at app/models/family/plaid_connectable.rb:25})
+MOVE	{Method initialize(account) at app/models/holding/base_calculator.rb:4}	{Method initialize(account) at app/models/holding/reverse_calculator.rb:4})
+MOVE_RENAME	{Method sync_data(sync, start_date) at app/models/plaid_item.rb:40}	{Method perform_sync(sync) at app/models/plaid_item/syncer.rb:8})
+
+Refactorings found in maybe ab2cec55e77d9e5b1ebb17992ada6dc117b7eefd
+CHANGE_SIGNATURE	{Method fail!(error) at app/models/sync.rb:79}	{Method fail!(error, report_error) at app/models/sync.rb:86})
+
+Refactorings found in maybe 867318cbc18ad565c1928865b999bcab0a8f3fc5
+CHANGE_SIGNATURE	{Method fetch_and_load_plaid_data() at app/models/plaid_item.rb:123}	{Method fetch_and_load_plaid_data(sync) at app/models/plaid_item.rb:122})
+
+Refactorings found in maybe 1e5edd9f2f0dabb508e4d23748db569ab29d634b
+CHANGE_SIGNATURE	{Method initialize(entries, balances, holdings) at app/models/balance/trend_calculator.rb:26}	{Method initialize(balances) at app/models/balance/trend_calculator.rb:8})
+
+Refactorings found in maybe 5da4bb6dc370c68d96464fc29412be44ceb2da0e
+RENAME	{Method get_billing_portal_session_url(customer_id, return_url) at app/models/provider/stripe.rb:51}	{Method create_billing_portal_session_url(customer_id, return_url) at app/models/provider/stripe.rb:59})
+INLINE	{Method plan_id() at app/models/provider/stripe/subscription_event_processor.rb:22}	{Method process() at app/models/provider/stripe/subscription_event_processor.rb:4})
+CHANGE_SIGNATURE	{Method initialize(event, client) at app/models/provider/stripe/event_processor.rb:2}	{Method initialize(event) at app/models/provider/stripe/event_processor.rb:2})
+CHANGE_SIGNATURE	{Method balance_series(currency, period, favorable_direction, view, interval, timezone) at app/models/account/chartable.rb:5}	{Method balance_series(currency, period, favorable_direction, view, interval) at app/models/account/chartable.rb:5})
+EXTRACT_MOVE	{Method require_onboarding_and_upgrade() at app/controllers/concerns/onboardable.rb:17}	{Method needs_onboarding?() at app/models/user.rb:159})
+
+Refactorings found in maybe 8c10e873874d1a2ba60e684bba1bb42b539932ac
+CHANGE_SIGNATURE	{Method create_trade(security, account, qty, date, price) at test/support/entries_test_helper.rb:31}	{Method create_trade(security, account, qty, date, price, currency) at test/support/entries_test_helper.rb:31})
+
+Refactorings found in maybe 2e0794b8e164effaa89c77549e0c1a44de7ad952
+CHANGE_SIGNATURE	{Method initialize(variant, auto_open, reload_on_close, width, disable_frame, **opts) at app/components/dialog_component.rb:46}	{Method initialize(variant, auto_open, reload_on_close, width, frame, disable_frame, **opts) at app/components/dialog_component.rb:46})
+
+Refactorings found in maybe 2000f05453dc3dff4bdf1da5c91d8a8350787787
+CHANGE_SIGNATURE	{Method build_holdings(portfolio, date) at app/models/holding/base_calculator.rb:43}	{Method build_holdings(portfolio, date, price_source) at app/models/holding/base_calculator.rb:43})
+CHANGE_SIGNATURE	{Method get_price(security_id, date) at app/models/holding/portfolio_cache.rb:24}	{Method get_price(security_id, date, source) at app/models/holding/portfolio_cache.rb:24})
+CHANGE_SIGNATURE	{Method balance_series(currency, period, favorable_direction, view, interval) at app/models/account/chartable.rb:5}	{Method balance_series(currency, period, favorable_direction, view, interval, timezone) at app/models/account/chartable.rb:5})
+
+Refactorings found in spring-boot 3e6e64ec49925a40a0456a1dd658f9aad64c7885
+CHANGE_SIGNATURE	{Method GradleVersionTestTemplateInvocationContext(String, boolean) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/test/java/org/springframework/boot/gradle/junit/GradleCompatibilityExtension.java:88}	{Method GradleVersionTestTemplateInvocationContext(String, boolean, BuildOutput) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/test/java/org/springframework/boot/gradle/junit/GradleCompatibilityExtension.java:92})
+CHANGE_SIGNATURE	{Method PluginClasspathGradleBuild() at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/test/java/org/springframework/boot/gradle/testkit/PluginClasspathGradleBuild.java:58}	{Method PluginClasspathGradleBuild(BuildOutput) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/test/java/org/springframework/boot/gradle/testkit/PluginClasspathGradleBuild.java:59})
+CHANGE_SIGNATURE	{Method GradleBuild() at spring-boot-project/spring-boot-tools/spring-boot-gradle-test-support/src/main/java/org/springframework/boot/testsupport/gradle/testkit/GradleBuild.java:74}	{Method GradleBuild(BuildOutput) at spring-boot-project/spring-boot-tools/spring-boot-gradle-test-support/src/main/java/org/springframework/boot/testsupport/gradle/testkit/GradleBuild.java:77})
+CHANGE_SIGNATURE	{Method PluginClasspathGradleBuild(Dsl) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/test/java/org/springframework/boot/gradle/testkit/PluginClasspathGradleBuild.java:62}	{Method PluginClasspathGradleBuild(BuildOutput, Dsl) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/test/java/org/springframework/boot/gradle/testkit/PluginClasspathGradleBuild.java:63})
+CHANGE_SIGNATURE	{Method GradleBuild(Dsl) at spring-boot-project/spring-boot-tools/spring-boot-gradle-test-support/src/main/java/org/springframework/boot/testsupport/gradle/testkit/GradleBuild.java:78}	{Method GradleBuild(BuildOutput, Dsl) at spring-boot-project/spring-boot-tools/spring-boot-gradle-test-support/src/main/java/org/springframework/boot/testsupport/gradle/testkit/GradleBuild.java:81})
+CHANGE_SIGNATURE	{Method DslTestTemplateInvocationContext(Dsl) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/test/java/org/springframework/boot/gradle/junit/GradleMultiDslExtension.java:58}	{Method DslTestTemplateInvocationContext(BuildOutput, Dsl) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/test/java/org/springframework/boot/gradle/junit/GradleMultiDslExtension.java:62})
+
+Refactorings found in spring-boot b0350a52c2f139578502bf09ff04ce85dd82d7c6
+CHANGE_SIGNATURE	{Method ElasticCommonSchemaStructuredLogFormatter(Environment, StackTracePrinter, ContextPairs, ThrowableProxyConverter, StructuredLoggingJsonMembersCustomizer<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/logback/ElasticCommonSchemaStructuredLogFormatter.java:54}	{Method ElasticCommonSchemaStructuredLogFormatter(Environment, StackTracePrinter, ContextPairs, ThrowableProxyConverter, StructuredLoggingJsonMembersCustomizer.Builder<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/logback/ElasticCommonSchemaStructuredLogFormatter.java:54})
+MOVE	{Method loadStructuredLoggingJsonMembersCustomizers() at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/structured/StructuredLogFormatterFactory.java:109}	{Method loadStructuredLoggingJsonMembersCustomizers() at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/structured/StructuredLogFormatterFactory.java:232})
+MOVE	{Method setCharset(String) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:92}	{Method setCharset(String) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:92})
+MOVE	{Method createLogstashFormatter(Instantiator<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:134}	{Method createLogstashFormatter(Instantiator<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:134})
+CHANGE_SIGNATURE	{Method ElasticCommonSchemaStructuredLogFormatter(Environment, StackTracePrinter, ContextPairs, StructuredLoggingJsonMembersCustomizer<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/ElasticCommonSchemaStructuredLogFormatter.java:51}	{Method ElasticCommonSchemaStructuredLogFormatter(Environment, StackTracePrinter, ContextPairs, StructuredLoggingJsonMembersCustomizer.Builder<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/ElasticCommonSchemaStructuredLogFormatter.java:51})
+MOVE	{Method setFormat(String) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:87}	{Method setFormat(String) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:87})
+MOVE	{Method createGraylogFormatter(Instantiator<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:124}	{Method createGraylogFormatter(Instantiator<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:124})
+CHANGE_SIGNATURE	{Method StructuredLoggingJsonPropertiesJsonMembersCustomizer(Instantiator<?>, StructuredLoggingJsonProperties) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/structured/StructuredLoggingJsonPropertiesJsonMembersCustomizer.java:39}	{Method StructuredLoggingJsonPropertiesJsonMembersCustomizer(Instantiator<?>, StructuredLoggingJsonProperties, boolean) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/structured/StructuredLoggingJsonPropertiesJsonMembersCustomizer.java:41})
+MOVE	{Method createEcsFormatter(Instantiator<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:114}	{Method createEcsFormatter(Instantiator<?>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:114})
+MOVE	{Method addCommonFormatters(CommonFormatters<LogEvent>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:108}	{Method addCommonFormatters(CommonFormatters<LogEvent>) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/log4j2/StructuredLogLayout.java:108})
+MOVE_RENAME	{Method getStructuredLoggingJsonMembersCustomizer(StructuredLoggingJsonProperties) at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/structured/StructuredLogFormatterFactory.java:99}	{Method build() at spring-boot-project/spring-boot/src/main/java/org/springframework/boot/logging/structured/StructuredLogFormatterFactory.java:219})
+
+Refactorings found in spring-boot 17ee49be2e781a6307b7368102f454196d3fa283
+RENAME	{Method whenProjectVersionIsReleaseCandidateThenRepositoryIsArtifactoryMilestone() at buildSrc/src/test/java/org/springframework/boot/build/artifacts/ArtifactReleaseTests.java:75}	{Method whenProjectVersionIsReleaseCandidateThenRepositoryIsMavenCentral() at buildSrc/src/test/java/org/springframework/boot/build/artifacts/ArtifactReleaseTests.java:76})
+RENAME	{Method whenProjectVersionIsMilestoneThenRepositoryIsArtifactoryMilestone() at buildSrc/src/test/java/org/springframework/boot/build/artifacts/ArtifactReleaseTests.java:68}	{Method whenProjectVersionIsMilestoneThenRepositoryIsMavenCentral() at buildSrc/src/test/java/org/springframework/boot/build/artifacts/ArtifactReleaseTests.java:68})
+
+Refactorings found in spring-boot cc0aa831da618ffb83215353047cc685497f2493
+CHANGE_SIGNATURE	{Method Library(String, String, LibraryVersion, List<Group>, List<ProhibitedVersion>, boolean, VersionAlignment, String, String, Map<String, List<Link>>) at buildSrc/src/main/java/org/springframework/boot/build/bom/Library.java:98}	{Method Library(String, String, LibraryVersion, List<Group>, UpgradePolicy, List<ProhibitedVersion>, boolean, VersionAlignment, String, String, Map<String, List<Link>>) at buildSrc/src/main/java/org/springframework/boot/build/bom/Library.java:102})
+Parent is null: core/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/thread/Threading.java for method: isActive(Environment)
+
+Refactorings found in spring-boot 08cc62a6b602506425da3829ef25e6278a86b00e
+RENAME	{Method getWhenHasRuntimeRefCreatesKey() at spring-boot-project/spring-boot-tools/spring-boot-loader/src/test/java/org/springframework/boot/loader/net/protocol/jar/JarFileUrlKeyTests.java:76}	{Method equalsWhenHasRuntimeRef() at spring-boot-project/spring-boot-tools/spring-boot-loader/src/test/java/org/springframework/boot/loader/net/protocol/jar/JarFileUrlKeyTests.java:86})
+Parent is null: spring-boot-project/spring-boot-testcontainers/src/main/java/org/springframework/boot/testcontainers/service/connection/SslBundleSource.java for method: getSslBundle()
+
+Refactorings found in spring-boot f61c54632a7ecb5d8dc6ecb8fe1552fb0185135c
+EXTRACT	{Method execute(Project) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/main/java/org/springframework/boot/gradle/plugin/KotlinPluginAction.java:35}	{Method configureKotlinVersionProperty(Project) at spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin/src/main/java/org/springframework/boot/gradle/plugin/KotlinPluginAction.java:42})
+
+Refactorings found in scrcpy 8a02e3c2f58cffc3fdd8c08b26aae04bbf9d5a97
+CHANGE_SIGNATURE	{Method ClipboardManager(IInterface) at server/src/main/java/com/genymobile/scrcpy/wrappers/ClipboardManager.java:34}	{Method ClipboardManager(android.content.ClipboardManager) at server/src/main/java/com/genymobile/scrcpy/wrappers/ClipboardManager.java:22})
+
+Refactorings found in scrcpy ca4f50c5ef12eee2c0efb562e157a8b2d75cb001
+CHANGE_SIGNATURE	{Method buildUhidCreate2Req(int, int, String, byte[]) at server/src/main/java/com/genymobile/scrcpy/control/UhidManager.java:151}	{Method buildUhidCreate2Req(int, int, String, byte[], String) at server/src/main/java/com/genymobile/scrcpy/control/UhidManager.java:165})
+CHANGE_SIGNATURE	{Method DisplayInfo(int, Size, int, int, int, int) at server/src/main/java/com/genymobile/scrcpy/device/DisplayInfo.java:13}	{Method DisplayInfo(int, Size, int, int, int, int, String) at server/src/main/java/com/genymobile/scrcpy/device/DisplayInfo.java:14})
+CHANGE_SIGNATURE	{Method UhidManager(DeviceMessageSender) at server/src/main/java/com/genymobile/scrcpy/control/UhidManager.java:40}	{Method UhidManager(DeviceMessageSender, String) at server/src/main/java/com/genymobile/scrcpy/control/UhidManager.java:46})
+
+Refactorings found in scrcpy 41ed40f5f9ee557c5ccbca8b30a51c74af92da92
+CHANGE_SIGNATURE	{Method InputManager(Object) at server/src/main/java/com/genymobile/scrcpy/wrappers/InputManager.java:46}	{Method InputManager(android.hardware.input.InputManager) at server/src/main/java/com/genymobile/scrcpy/wrappers/InputManager.java:33})
+Parent is null: server/src/main/java/com/genymobile/scrcpy/device/Orientation.java for constructor: Orientation(String)
+
+Refactorings found in scrcpy 882003f314ad5077a41bbc936831aeb36dd8b078
+CHANGE_SIGNATURE	{Function event_loop(struct scrcpy) at app/src/scrcpy.c:167}	{Function event_loop(struct scrcpy, bool) at app/src/scrcpy.c:167})
+Parent is null: server/src/main/java/com/genymobile/scrcpy/audio/AudioSource.java for constructor: AudioSource(String)
+
+Refactorings found in scrcpy 4bd1c5981db307155452fa7594945e069542ddb3
+RENAME	{Function sc_gamepad_processor_process_gamepad_device(struct sc_gamepad_processor, struct sc_gamepad_device_event) at app/src/usb/gamepad_aoa.c:9}	{Function sc_gamepad_processor_process_gamepad_added(struct sc_gamepad_processor, struct sc_gamepad_device_event) at app/src/usb/gamepad_aoa.c:9})
+
+Refactorings found in scrcpy b2cdaa4bdce0adc256b87c3271c39a1482817dc6
+EXTRACT	{Method injectTouch(int, long, Position, float, int, int) at server/src/main/java/com/genymobile/scrcpy/control/Controller.java:353}	{Method getEventPointAndDisplayId(Position) at server/src/main/java/com/genymobile/scrcpy/control/Controller.java:354})
+EXTRACT	{Method injectScroll(Position, float, float, int) at server/src/main/java/com/genymobile/scrcpy/control/Controller.java:471}	{Method getEventPointAndDisplayId(Position) at server/src/main/java/com/genymobile/scrcpy/control/Controller.java:354})
+
+Refactorings found in scrcpy d72686c867dcde973f4666117128f2fc38888a1b
+MOVE	{Method setSessionDisplaySize(Size) at server/src/main/java/com/genymobile/scrcpy/video/ScreenCapture.java:286}	{Method setSessionDisplaySize(Size) at server/src/main/java/com/genymobile/scrcpy/video/DisplaySizeMonitor.java:100})
+MOVE	{Method registerDisplayListenerFallbacks() at server/src/main/java/com/genymobile/scrcpy/video/ScreenCapture.java:290}	{Method registerDisplayListenerFallbacks() at server/src/main/java/com/genymobile/scrcpy/video/DisplaySizeMonitor.java:137})
+MOVE	{Method getSessionDisplaySize() at server/src/main/java/com/genymobile/scrcpy/video/ScreenCapture.java:282}	{Method getSessionDisplaySize() at server/src/main/java/com/genymobile/scrcpy/video/DisplaySizeMonitor.java:96})
+MOVE	{Method onRotationChanged(int) at server/src/main/java/com/genymobile/scrcpy/video/ScreenCapture.java:292}	{Method onRotationChanged(int) at server/src/main/java/com/genymobile/scrcpy/video/DisplaySizeMonitor.java:139})
+MOVE	{Method onDisplayFoldChanged(int, boolean) at server/src/main/java/com/genymobile/scrcpy/video/ScreenCapture.java:307}	{Method onDisplayFoldChanged(int, boolean) at server/src/main/java/com/genymobile/scrcpy/video/DisplaySizeMonitor.java:155})
+EXTRACT_MOVE	{Method init() at server/src/main/java/com/genymobile/scrcpy/video/ScreenCapture.java:71}	{Method start(int, Listener) at server/src/main/java/com/genymobile/scrcpy/video/DisplaySizeMonitor.java:39})
+MOVE	{Method unregisterDisplayListenerFallbacks() at server/src/main/java/com/genymobile/scrcpy/video/ScreenCapture.java:329}	{Method unregisterDisplayListenerFallbacks() at server/src/main/java/com/genymobile/scrcpy/video/DisplaySizeMonitor.java:178})
+EXTRACT_MOVE	{Method release() at server/src/main/java/com/genymobile/scrcpy/video/ScreenCapture.java:227}	{Method stopAndRelease() at server/src/main/java/com/genymobile/scrcpy/video/DisplaySizeMonitor.java:80})
+
+Refactorings found in scrcpy e226950cfab9b9e8f2fe8620dc9970bcf13133ee
+CHANGE_SIGNATURE	{Method PositionMapper(Size, Size) at server/src/main/java/com/genymobile/scrcpy/control/PositionMapper.java:12}	{Method PositionMapper(Size, AffineMatrix) at server/src/main/java/com/genymobile/scrcpy/control/PositionMapper.java:13})
+
+Refactorings found in scrcpy bd9d93194b04970655b22f1eb96d5ad2bd4f2c75
+CHANGE_SIGNATURE	{Method NewDisplayCapture(VirtualDisplayListener, NewDisplay, int) at server/src/main/java/com/genymobile/scrcpy/video/NewDisplayCapture.java:46}	{Method NewDisplayCapture(VirtualDisplayListener, Options) at server/src/main/java/com/genymobile/scrcpy/video/NewDisplayCapture.java:47})
+CHANGE_SIGNATURE	{Method Controller(int, ControlChannel, CleanUp, boolean, boolean) at server/src/main/java/com/genymobile/scrcpy/control/Controller.java:100}	{Method Controller(ControlChannel, CleanUp, Options) at server/src/main/java/com/genymobile/scrcpy/control/Controller.java:101})
+CHANGE_SIGNATURE	{Method AudioEncoder(AudioCapture, Streamer, int, List<CodecOption>, String) at server/src/main/java/com/genymobile/scrcpy/audio/AudioEncoder.java:70}	{Method AudioEncoder(AudioCapture, Streamer, Options) at server/src/main/java/com/genymobile/scrcpy/audio/AudioEncoder.java:71})
+EXTRACT_MOVE	{Method scrcpy(Options) at server/src/main/java/com/genymobile/scrcpy/Server.java:76}	{Method CameraCapture(Options) at server/src/main/java/com/genymobile/scrcpy/video/CameraCapture.java:62})
+
+Refactorings found in scrcpy 794595e3f0db8208a2a1df30c1c5e9442deb4112
+CHANGE_SIGNATURE	{Method start(int, Options) at server/src/main/java/com/genymobile/scrcpy/CleanUp.java:33}	{Method start(Options) at server/src/main/java/com/genymobile/scrcpy/CleanUp.java:33})
+CHANGE_SIGNATURE	{Method CleanUp(int, Options) at server/src/main/java/com/genymobile/scrcpy/CleanUp.java:28}	{Method CleanUp(Options) at server/src/main/java/com/genymobile/scrcpy/CleanUp.java:28})
+CHANGE_SIGNATURE	{Method runCleanUp(int, Options) at server/src/main/java/com/genymobile/scrcpy/CleanUp.java:45}	{Method runCleanUp(Options) at server/src/main/java/com/genymobile/scrcpy/CleanUp.java:45})
+Parent is null
+Parent is null
