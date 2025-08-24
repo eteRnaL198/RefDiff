@@ -12,16 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jgit.lib.Repository;
-import org.treesitter.TSLanguage;
-import org.treesitter.TSNode;
-import org.treesitter.TSParser;
-import org.treesitter.TSQuery;
-import org.treesitter.TSQueryCapture;
-import org.treesitter.TSQueryCursor;
-import org.treesitter.TSQueryMatch;
-import org.treesitter.TSTree;
-import org.treesitter.TreeSitterPython;
-import org.treesitter.TreeSitterGo;
+import org.treesitter.*;
 
 import refdiff.core.io.GitHelper;
 
@@ -33,10 +24,15 @@ public class PluginMaker {
   // private static final String LANGUAGE_CTAGS_OPTION = "--kinds-Python=cfm";
   // private static final TSLanguage tsLang = new TreeSitterPython();
 
-  private static final String LANGUAGE_NAME = "go";
-  private static final String LANGUAGE_EXTENSION = ".go";
-  private static final String LANGUAGE_CTAGS_OPTION = "--kinds-Go=f";
-  private static final TSLanguage tsLang = new TreeSitterGo();
+  // private static final String LANGUAGE_NAME = "go";
+  // private static final String LANGUAGE_EXTENSION = ".go";
+  // private static final String LANGUAGE_CTAGS_OPTION = "--kinds-Go=f";
+  // private static final TSLanguage tsLang = new TreeSitterGo();
+
+  private static final String LANGUAGE_NAME = "php";
+  private static final String LANGUAGE_EXTENSION = ".php";
+  private static final String LANGUAGE_CTAGS_OPTION = "--php-kinds=f";
+  private static final TSLanguage tsLang = new TreeSitterPhp();
 
   public static void main(String[] args) throws Exception {
     PluginMaker pluginMaker = new PluginMaker();

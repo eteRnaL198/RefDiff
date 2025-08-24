@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.nio.charset.StandardCharsets;
 
 import org.treesitter.TSLanguage;
 import org.treesitter.TSNode;
@@ -52,7 +53,7 @@ public class FooParser {
       byte[] sourceBytes = sourceCode.getBytes(StandardCharsets.UTF_8);
       addNodes(tree, tsLang, root, filePath, sourceBytes);
 
-      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceBytes);
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath);
       root.addTokenizedFile(tokenizedSource);
     }
 

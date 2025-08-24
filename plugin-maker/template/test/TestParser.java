@@ -22,5 +22,6 @@ import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.UniversalPlugin;
 
 public class TestParser {
+  private static final String TEST_DATA_BASE_PATH = "src/test/resources/foo/syntax";
 
 }
