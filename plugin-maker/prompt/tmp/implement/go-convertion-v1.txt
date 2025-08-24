@@ -20,42 +20,52 @@
 JavaScriptとRubyの例から、ASTからCSTへの変換ロジックを学習してください。特に、ASTの特定のノードタイプから CstNode のプロパティをどのように埋めているかに注目してください。
 
 - 概要:
+  - 元のソースファイル: Tree-sitterが解析したソースコードファイル
   - ASTファイル: Tree-sitterが出力したASTのテキストファイル
-  - テストコード: JUnitテストで、ASTからCSTへの変換を検証するコード
-  - 実装コード: ASTをCSTに変換する処理が実装されたJavaクラス
+  - テストファイル: JUnitテストで、ASTからCSTへの変換を検証するコード
+  - 変換処理ファイル: ASTをCSTに変換する処理が実装されたJavaクラス
 
 ## 学習データ1: JavaScript
 - ファイル参照:
+    - 元のソースファイル:
+      - @experiment-for-kyutech/ast/js/class.js
+      - @experiment-for-kyutech/ast/js/file.js
+      - @experiment-for-kyutech/ast/js/function.js
     - ASTファイル:
       - @experiment-for-kyutech/ast/js/ast-class.txt
       - @experiment-for-kyutech/ast/js/ast-file.txt
       - @experiment-for-kyutech/ast/js/ast-function.txt
-    - テストコード: @refdiff-universal/src/test/java/refdiff/parsers/universal/js/TestParser.java
-    - 実装コード: @refdiff-universal/src/main/java/refdiff/parsers/universal/js/JsParser.java
+    - テストファイル: @refdiff-universal/src/test/java/refdiff/parsers/universal/js/TestParser.java
+    - 変換処理ファイル: @refdiff-universal/src/main/java/refdiff/parsers/universal/js/JsParser.java
 
 ### 学習データ2: Ruby
 - ファイル参照:
+    - 元のソースファイル: @experiment-for-kyutech/ast/ruby/method.rb
     - ASTファイル: @experiment-for-kyutech/ast/ruby/ast-method.txt
-    - テストコード: @refdiff-universal/src/test/java/refdiff/parsers/universal/ruby/TestParser.java
-    - 実装コード: @refdiff-universal/src/main/java/refdiff/parsers/universal/ruby/RubyParser.java
+    - テストファイル: @refdiff-universal/src/test/java/refdiff/parsers/universal/ruby/TestParser.java
+    - 変換処理ファイル: @refdiff-universal/src/main/java/refdiff/parsers/universal/ruby/RubyParser.java
 
 # タスク (生成対象)
 上記で学習したテストパターンを応用し、Go言語のASTからCSTへの変換処理を行うメソッドを新規に生成してください。
-GoParser.java に実装される addNodes メソッド、またはそれに類するヘルパーメソッドのコードを生成してください。
+GoParser.java に定義されている addNodes メソッド、またはそれに類するヘルパーメソッドのコードを生成してください。
 このメソッドは、GoのASTを受け取り、CstNode のリストを構築する責務を持ちます。
 
 生成対象: Go
 - ファイル参照:
+  - 元のソースファイル:
+    - @experiment-for-kyutech/ast/go/runner.go
+    - @experiment-for-kyutech/ast/go/keyvalue.go
+    - @experiment-for-kyutech/ast/go/updater_windows.go
   - ASTファイル:
     - @experiment-for-kyutech/ast/go/ast-keyvalue.txt
     - @experiment-for-kyutech/ast/go/ast-runner.txt
     - @experiment-for-kyutech/ast/go/ast-updater_windows.txt
-  - テストコード: @refdiff-universal/src/test/java/refdiff/parsers/universal/go/TestParser.java
-  - 実装コード: @refdiff-universal/src/main/java/refdiff/parsers/universal/go/GoParser.java
+  - テストファイル: @refdiff-universal/src/test/java/refdiff/parsers/universal/go/TestParser.java
+  - 変換処理ファイル: @refdiff-universal/src/main/java/refdiff/parsers/universal/go/GoParser.java
 
 # 出力要件
 - 出力言語: Java
-- 品質: 提供されたテストコード (TestParser.java) を修正することなく、すべてのテストケースをパスすること。
+- 品質: 提供されたテストファイル (TestParser.java) を修正することなく、すべてのテストケースをパスすること。
 - コーディングスタイル: refdiff-universal プロジェクト内の既存のJavaコードのスタイルに合わせてください。
 - 依存関係: プロジェクトに既に存在するクラスやライブラリのみを使用してください。新たな外部依存を追加しないでください。
 - 出力形式: 実装されたJavaメソッドのコードブロックのみを出力してください。解説や説明はコードの前に簡潔に記述するだけに留めてください。

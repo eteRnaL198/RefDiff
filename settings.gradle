@@ -1,1 +1,1 @@
-include 'refdiff-core', 'refdiff-java', 'refdiff-c', 'refdiff-universal', 'refdiff-example', 'experiment-for-kyutech'
+include 'refdiff-core', 'refdiff-java', 'refdiff-c', 'refdiff-universal', 'refdiff-example', 'plugin-maker'

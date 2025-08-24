@@ -5,7 +5,7 @@ plugins {
 }
 
 application {
-    mainClass = 'kyutech.experiment.Analysis'
+    mainClass = 'kyutech.experiment.Ast'
 }
 
 dependencies {

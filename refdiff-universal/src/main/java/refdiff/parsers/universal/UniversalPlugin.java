@@ -9,13 +9,14 @@ import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.c.CParser;
 import refdiff.parsers.universal.java.JavaParser;
 import refdiff.parsers.universal.js.JsParser;
+import refdiff.parsers.universal.python.PythonParser;
 import refdiff.parsers.universal.ruby.RubyParser;
 import refdiff.parsers.universal.go.GoParser;
 
 public class UniversalPlugin implements LanguagePlugin {
 
   private enum Language {
-    JAVA, C, JAVASCRIPT, RUBY, GO
+    JAVA, C, JAVASCRIPT, RUBY, GO, PYTHON
   }
 
   @Override
@@ -39,6 +40,9 @@ public class UniversalPlugin implements LanguagePlugin {
       case GO:
         GoParser goParser = new GoParser();
         return goParser.parse(sources);
+      case PYTHON:
+        PythonParser pythonParser = new PythonParser();
+        return pythonParser.parse(sources);
       default:
         throw new IllegalArgumentException("Unsupported language: " + language);
     }
@@ -46,7 +50,7 @@ public class UniversalPlugin implements LanguagePlugin {
 
   @Override
   public FilePathFilter getAllowedFilesFilter() {
-    return new FilePathFilter(Arrays.asList(".java", ".c", ".js", ".rb", ".go"));
+    return new FilePathFilter(Arrays.asList(".java", ".c", ".js", ".rb", ".go", ".py"));
   }
 
   private Language getLanguageByFileExtension(String filePath) {
@@ -60,6 +64,8 @@ public class UniversalPlugin implements LanguagePlugin {
       return Language.RUBY;
     } else if (filePath.endsWith(".go")) {
       return Language.GO;
+    } else if (filePath.endsWith(".py")) {
+      return Language.PYTHON;
     } else {
       throw new IllegalArgumentException("Unsupported file type: " + filePath);
     }
