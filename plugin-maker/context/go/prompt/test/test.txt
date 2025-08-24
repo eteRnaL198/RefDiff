@@ -31,24 +31,20 @@ Apply the test patterns you learned above to generate a new Java JUnit test meth
 
 Generation Target: Go
 - Overview:
-    - Test Target (keyvalue.go): Go language code containing structs and functions. Specifically, it includes struct fields, methods, function definitions, and parameters.
-    - Test Implementation (TestParser.java): A JUnit test that parses the aforementioned Go file and verifies that structs, fields, methods, and function definitions are correctly recognized as CST nodes.
+    - Test Target Code: Go language code containing classes and functions.
+    - Test Implementation (TestParser.java): A JUnit test that parses the aforementioned Go file and verifies that classes, methods, and function definitions are correctly recognized as CST nodes.
 - File Reference:
-    - Test Target Code: 
-        - @refdiff-universal/src/test/resources/go/syntax/keyvalue.go
-        - @refdiff-universal/src/test/resources/go/syntax/runner.go
-        - @refdiff-universal/src/test/resources/go/syntax/updater_windows.go
+    - Test Target Code:
+        - @plugin-maker/context/go/src/sample.go
     - Test Target Ctags:
-        - @refdiff-universal/src/test/resources/go/syntax/tags-keyvalue.txt
-        - @refdiff-universal/src/test/resources/go/syntax/tags-runner.txt
-        - @refdiff-universal/src/test/resources/go/syntax/tags-updater_windows.txt
+    - @plugin-maker/context/go/tags/tags-sample.txt
     - Test Implementation: @refdiff-universal/src/test/java/refdiff/parsers/universal/go/TestParser.java
 
 # Output Requirements
 - Generation Language: The output test code must be Java.
 - Inference and Application:
-- Infer the language's node types and use them, such as NodeTypes.FUNCTION and NodeTypes.STRUCT.
+- Infer the language's node types and use them, such as NodeTypes.FUNCTION and NodeTypes.CLASS.
 - Accurately map the code structure (packages, functions, type definitions, etc.) to ExpectedNode records.
-- Naming Convention: The method name should clearly describe the feature of the language being tested, for example, shouldParseGoFunctionsAndStructsCorrectly.
+- Naming Convention: The method name should clearly describe the feature of the language being tested, for example, shouldParseFunctionsCorrectly.
 - Structure Replication: Strictly reproduce the structure of the learned tests (use of SourceFolder, collection of CstNodes, creation of an ExpectedNode list, and the verification loop using assertThat).
-- Format: Output the generated code as a complete Java method, suitable for being placed in a new refdiff/parsers/universal/go/TestParser.java file.
+- Format: Output the generated code as a complete Java method, suitable for being placed in a new refdiff/parsers/universal/Go/TestParser.java file.

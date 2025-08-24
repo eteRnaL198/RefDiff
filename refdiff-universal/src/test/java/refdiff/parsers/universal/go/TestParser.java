@@ -26,7 +26,6 @@ public class TestParser {
     private static final LanguagePlugin parser = new UniversalPlugin();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/go/syntax";
 
-    // Helper method to find a node, similar to the JS and Ruby tests
     private CstNode findNode(List<CstNode> nodes, String name, int line) {
         return nodes.stream()
             .filter(node -> name.equals(node.getSimpleName()) && node.getLocation().getLine() == line)
@@ -34,7 +33,6 @@ public class TestParser {
             .orElseThrow(() -> new AssertionError("Node with name '" + name + "' at line " + line + " not found."));
     }
 
-    // Record for expected node data, similar to the JS and Ruby tests
     private record ExpectedNode(
         String name,
         String type,
@@ -49,89 +47,50 @@ public class TestParser {
         }
     }
 
-    // @Test
-    public void shouldParseGoFunctionsAndStructsCorrectly() throws Exception {
+    @Test
+    public void shouldParseFunctionsCorrectly() throws Exception {
         Path baseFolderPath = Paths.get(TEST_DATA_BASE_PATH);
         SourceFileSet sources = SourceFolder.from(baseFolderPath, ".go");
         CstRoot cstRoot = parser.parse(sources);
 
-        List<CstNode> allGoNodes = new ArrayList<>();
-        cstRoot.forEachNode((node, _) -> {
-            allGoNodes.add(node);
-        });
+        List<CstNode> functionNodes = cstRoot.getNodes().stream()
+            .filter(node -> node.getType().equals(GoNodeTypes.FUNCTION) || node.getType().equals(GoNodeTypes.METHOD))
+            .collect(Collectors.toList());
 
-        // Expected nodes from keyvalue.go, runner.go, and updater_windows.go
+        assertThat("Should find 16 function/method nodes", functionNodes.size(), is(equalTo(16)));
+
         List<ExpectedNode> expectedNodes = Arrays.asList(
-            // keyvalue.go
-            new ExpectedNode("KeyValue", GoNodeTypes.TYPE_DECLARATION, 8, "KeyValue", "gguf", "keyvalue.go"),
-            
-            new ExpectedNode("Valid", GoNodeTypes.METHOD, 13, "Valid()", "gguf.KeyValue", "keyvalue.go", List.of()),
-            new ExpectedNode("Value", GoNodeTypes.TYPE_DECLARATION, 17, "Value", "gguf", "keyvalue.go"),
-            
-            new ExpectedNode("value", GoNodeTypes.FUNCTION, 21, "value(v, kinds)", "gguf", "keyvalue.go", List.of("v", "kinds")),
-            new ExpectedNode("values", GoNodeTypes.FUNCTION, 29, "values(v, kinds)", "gguf", "keyvalue.go", List.of("v", "kinds")),
-            new ExpectedNode("Int", GoNodeTypes.METHOD, 43, "Int()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("Ints", GoNodeTypes.METHOD, 48, "Ints()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("Uint", GoNodeTypes.METHOD, 53, "Uint()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("Uints", GoNodeTypes.METHOD, 58, "Uints()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("Float", GoNodeTypes.METHOD, 63, "Float()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("Floats", GoNodeTypes.METHOD, 68, "Floats()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("Bool", GoNodeTypes.METHOD, 73, "Bool()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("Bools", GoNodeTypes.METHOD, 78, "Bools()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("String", GoNodeTypes.METHOD, 83, "String()", "gguf.Value", "keyvalue.go", List.of()),
-            new ExpectedNode("Strings", GoNodeTypes.METHOD, 88, "Strings()", "gguf.Value", "keyvalue.go", List.of()),
-
-            // runner.go
-            new ExpectedNode("Sequence", GoNodeTypes.TYPE_DECLARATION, 41, "Sequence", "ollamarunner", "runner.go"),
-            
-
-            new ExpectedNode("NewSequenceParams", GoNodeTypes.TYPE_DECLARATION, 97, "NewSequenceParams", "ollamarunner", "runner.go"),
-            
-
-            new ExpectedNode("NewSequence", GoNodeTypes.METHOD, 105, "NewSequence(prompt, images, params)", "ollamarunner.Server", "runner.go", List.of("prompt", "images", "params")),
-            new ExpectedNode("inputs", GoNodeTypes.METHOD, 184, "inputs(prompt, images)", "ollamarunner.Server", "runner.go", List.of("prompt", "images")),
-
-            new ExpectedNode("Server", GoNodeTypes.TYPE_DECLARATION, 261, "Server", "ollamarunner", "runner.go"),
-            
-
-            new ExpectedNode("allNil", GoNodeTypes.METHOD, 307, "allNil()", "ollamarunner.Server", "runner.go", List.of()),
-            new ExpectedNode("flushPending", GoNodeTypes.FUNCTION, 316, "flushPending(seq)", "ollamarunner", "runner.go", List.of("seq")),
-            new ExpectedNode("removeSequence", GoNodeTypes.METHOD, 342, "removeSequence(seqIndex, reason)", "ollamarunner.Server", "runner.go", List.of("seqIndex", "reason")),
-            new ExpectedNode("run", GoNodeTypes.METHOD, 354, "run(ctx)", "ollamarunner.Server", "runner.go", List.of("ctx")),
-            new ExpectedNode("processBatch", GoNodeTypes.METHOD, 370, "processBatch()", "ollamarunner.Server", "runner.go", List.of()),
-            new ExpectedNode("completion", GoNodeTypes.METHOD, 589, "completion(w, r)", "ollamarunner.Server", "runner.go", List.of("w", "r")),
-            new ExpectedNode("health", GoNodeTypes.METHOD, 713, "health(w, r)", "ollamarunner.Server", "runner.go", List.of("w", "r")),
-
-            new ExpectedNode("multiLPath", GoNodeTypes.TYPE_DECLARATION, 723, "multiLPath", "ollamarunner", "runner.go"),
-            new ExpectedNode("Set", GoNodeTypes.METHOD, 725, "Set(value)", "ollamarunner.multiLPath", "runner.go", List.of("value")),
-            new ExpectedNode("String", GoNodeTypes.METHOD, 730, "String()", "ollamarunner.multiLPath", "runner.go", List.of()),
-
-            new ExpectedNode("reserveWorstCaseGraph", GoNodeTypes.METHOD, 734, "reserveWorstCaseGraph()", "ollamarunner.Server", "runner.go", List.of()),
-            new ExpectedNode("initModel", GoNodeTypes.METHOD, 831, "initModel(mpath, params, lpath, parallel, kvCacheType, kvSize, multiUserCache)", "ollamarunner.Server", "runner.go", List.of("mpath", "params", "lpath", "parallel", "kvCacheType", "kvSize", "multiUserCache")),
-            new ExpectedNode("load", GoNodeTypes.METHOD, 868, "load(ctx, mpath, params, lpath, parallel, kvCacheType, kvSize, multiUserCache)", "ollamarunner.Server", "runner.go", List.of("ctx", "mpath", "params", "lpath", "parallel", "kvCacheType", "kvSize", "multiUserCache")),
-            new ExpectedNode("Execute", GoNodeTypes.FUNCTION, 897, "Execute(args)", "ollamarunner", "runner.go", List.of("args")),
-
-            // updater_windows.go
-            new ExpectedNode("DoUpgrade", GoNodeTypes.FUNCTION, 13, "DoUpgrade(cancel, done)", "lifecycle", "updater_windows.go", List.of("cancel", "done"))
+            new ExpectedNode("MethodWithValueReceiver", GoNodeTypes.METHOD, 17, "MethodWithValueReceiver()", "main.", "sample.go", List.of()),
+            new ExpectedNode("CustomIntMethod", GoNodeTypes.METHOD, 22, "CustomIntMethod()", "main.", "sample.go", List.of()),
+            new ExpectedNode("MethodWithPointerReceiver", GoNodeTypes.METHOD, 29, "MethodWithPointerReceiver()", "main.", "sample.go", List.of()),
+            new ExpectedNode("MethodWithVariadicArgs", GoNodeTypes.METHOD, 38, "MethodWithVariadicArgs(numbers ...int)", "main.", "sample.go", List.of("numbers")),
+            new ExpectedNode("MethodWithMultipleArguments", GoNodeTypes.METHOD, 50, "MethodWithMultipleArguments(a, b int)", "main.", "sample.go", List.of("a", "b")),
+            new ExpectedNode("MethodWithReturnValue", GoNodeTypes.METHOD, 55, "MethodWithReturnValue()", "main.", "sample.go", List.of()),
+            new ExpectedNode("MethodWithNakedReturns", GoNodeTypes.METHOD, 60, "MethodWithNakedReturns(s string)", "main.", "sample.go", List.of("s")),
+            new ExpectedNode("main", GoNodeTypes.FUNCTION, 65, "main()", "main.", "sample.go", List.of()),
+            new ExpectedNode("simpleFunction", GoNodeTypes.FUNCTION, 89, "simpleFunction()", "main.", "sample.go", List.of()),
+            new ExpectedNode("functionWithParameters", GoNodeTypes.FUNCTION, 94, "functionWithParameters(x int, y string)", "main.", "sample.go", List.of("x", "y")),
+            new ExpectedNode("functionWithMultipleSameTypeParameters", GoNodeTypes.FUNCTION, 99, "functionWithMultipleSameTypeParameters(a, b int, c, d float64)", "main.", "sample.go", List.of("a", "b", "c", "d")),
+            new ExpectedNode("functionWithReturnValue", GoNodeTypes.FUNCTION, 104, "functionWithReturnValue()", "main.", "sample.go", List.of()),
+            new ExpectedNode("functionWithBoth", GoNodeTypes.FUNCTION, 109, "functionWithBoth(x, y int)", "main.", "sample.go", List.of("x", "y")),
+            new ExpectedNode("functionWithMultipleReturnValues", GoNodeTypes.FUNCTION, 114, "functionWithMultipleReturnValues(a, b int)", "main.", "sample.go", List.of("a", "b")),
+            new ExpectedNode("functionWithNamedReturnValues", GoNodeTypes.FUNCTION, 122, "functionWithNamedReturnValues(a int, b int)", "main.", "sample.go", List.of("a", "b")),
+            new ExpectedNode("functionWithVariadicParameters", GoNodeTypes.FUNCTION, 129, "functionWithVariadicParameters(s string, nums ...int)", "main.", "sample.go", List.of("s", "nums"))
         );
 
         for (ExpectedNode expected : expectedNodes) {
-            CstNode actualNode = findNode(allGoNodes, expected.name(), expected.line());
-
-            assertThat("Type for " + expected.name() + " at line " + expected.line(), actualNode.getType(), is(equalTo(expected.type())));
-            assertThat("SimpleName for " + expected.name() + " at line " + expected.line(), actualNode.getSimpleName(), is(equalTo(expected.name())));
-            assertThat("LocalName for " + expected.name() + " at line " + expected.line(), actualNode.getLocalName(), is(equalTo(expected.localName())));
-            if (expected.namespace() != null) {
-                assertThat("Namespace for " + expected.name() + " at line " + expected.line(), actualNode.getNamespace(), is(equalTo(expected.namespace())));
-            }
-            Location actualLocation = actualNode.getLocation();
-            assertThat("Location file for " + expected.name() + " at line " + expected.line(), actualLocation.getFile(), is(equalTo(expected.fileName())));
-            assertThat("Location line for " + expected.name() + " at line " + expected.line(), actualLocation.getLine(), is(equalTo(expected.line())));
-
+            CstNode actualNode = findNode(functionNodes, expected.name(), expected.line());
+            assertThat(actualNode.getType(), is(equalTo(expected.type())));
+            assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
+            assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+            assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+            Location location = actualNode.getLocation();
+            assertThat(location.getFile(), is(equalTo(expected.fileName())));
+            assertThat(location.getLine(), is(equalTo(expected.line())));
             List<String> actualParamNames = actualNode.getParameters().stream()
                 .map(Parameter::getName)
                 .collect(Collectors.toList());
-            assertThat("Parameters for " + expected.name() + " at line " + expected.line(), actualParamNames, is(equalTo(expected.params())));
+            assertThat(actualParamNames, is(equalTo(expected.params())));
         }
     }
 }

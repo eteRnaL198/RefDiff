@@ -49,9 +49,10 @@ public class FooParser {
       String filePath = treeEntry.getKey();
       TSTree tree = treeEntry.getValue();
       String sourceCode = sourceCodeMap.get(filePath);
-      addNodes(tree, tsLang, root, filePath, sourceCode);
-      
-      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode);
+      byte[] sourceBytes = sourceCode.getBytes(StandardCharsets.UTF_8);
+      addNodes(tree, tsLang, root, filePath, sourceBytes);
+
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceBytes);
       root.addTokenizedFile(tokenizedSource);
     }
 
@@ -61,7 +62,7 @@ public class FooParser {
     return root;
   }
 
-  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot cstRoot, String filePath, String sourceCode) {
+  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot cstRoot, String filePath, byte[] sourceBytes) {
   }
 
 }

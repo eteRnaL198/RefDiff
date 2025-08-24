@@ -21,45 +21,57 @@ import org.treesitter.TSQueryCursor;
 import org.treesitter.TSQueryMatch;
 import org.treesitter.TSTree;
 import org.treesitter.TreeSitterPython;
-
+import org.treesitter.TreeSitterGo;
 
 import refdiff.core.io.GitHelper;
 
 
 public class PluginMaker {
-  private static final String LANGUAGE_NAME = "python";
-  private static final String LANGUAGE_EXTENSION = ".py";
-  private static final String REPO_URL = "https://github.com/Significant-Gravitas/AutoGPT.git";
+  // private static final String LANGUAGE_NAME = "python";
+  // private static final String LANGUAGE_EXTENSION = ".py";
+  // private static final String REPO_URL = "https://github.com/Significant-Gravitas/AutoGPT.git";
+  // private static final String LANGUAGE_CTAGS_OPTION = "--kinds-Python=cfm";
+  // private static final TSLanguage tsLang = new TreeSitterPython();
+
+  private static final String LANGUAGE_NAME = "go";
+  private static final String LANGUAGE_EXTENSION = ".go";
+  private static final String LANGUAGE_CTAGS_OPTION = "--kinds-Go=f";
+  private static final TSLanguage tsLang = new TreeSitterGo();
 
   public static void main(String[] args) throws Exception {
     PluginMaker pluginMaker = new PluginMaker();
-    String repoName = REPO_URL.substring(REPO_URL.lastIndexOf('/') + 1, REPO_URL.lastIndexOf('.'));
-    String repoPath = "repo/" + LANGUAGE_NAME + "/" + repoName;
-    File repoDir = pluginMaker.cloneRepository(REPO_URL, repoPath);
+    // String repoName = REPO_URL.substring(REPO_URL.lastIndexOf('/') + 1, REPO_URL.lastIndexOf('.'));
+    // String repoPath = "repo/" + LANGUAGE_NAME + "/" + repoName;
+    // File repoDir = pluginMaker.cloneRepository(REPO_URL, repoPath);
 
     Path srcDir = Paths.get("context/" + LANGUAGE_NAME + "/src/");
-    List<Path> randomFiles;
-    if (Files.exists(srcDir)) {
-      try (Stream<Path> stream = Files.list(srcDir)) {
-        randomFiles = stream
+    List<Path> sourceFiles = Files.list(srcDir)
         .filter(Files::isRegularFile)
         .filter(p -> p.toString().endsWith(LANGUAGE_EXTENSION))
         .collect(Collectors.toList());
-      }
-    } else {
-      randomFiles = pluginMaker.getRandomSourceFiles(repoDir.toPath(), 5, LANGUAGE_EXTENSION);
-      Files.createDirectories(srcDir);
-      for (Path sourceFile : randomFiles) {
-        Path destinationFile = srcDir.resolve(sourceFile.getFileName());
-        Files.copy(sourceFile, destinationFile);
-      }
-    }
+    
+    // List<Path> sourceFiles;
+    // if (Files.exists(srcDir)) {
+    //   try (Stream<Path> stream = Files.list(srcDir)) {
+    //     sourceFiles = stream
+    //     .filter(Files::isRegularFile)
+    //     .filter(p -> p.toString().endsWith(LANGUAGE_EXTENSION))
+    //     .collect(Collectors.toList());
+    //   }
+    // } else {
+    //   sourceFiles = pluginMaker.getRandomSourceFiles(repoDir.toPath(), 5, LANGUAGE_EXTENSION);
+    //   Files.createDirectories(srcDir);
+    //   for (Path sourceFile : sourceFiles) {
+    //     Path destinationFile = srcDir.resolve(sourceFile.getFileName());
+    //     Files.copy(sourceFile, destinationFile);
+    //   }
+    // }
     
     Path tagsDir = Paths.get("context/" + LANGUAGE_NAME + "/tags/");
     if (!Files.exists(tagsDir)) {
       Files.createDirectories(tagsDir);
     }
-    for (Path sourceFile : randomFiles) {
+    for (Path sourceFile : sourceFiles) {
       String sourceFileName = sourceFile.getFileName().toString();
       String baseName = sourceFileName.substring(0, sourceFileName.lastIndexOf('.'));
       Path ctagsOutputFile = tagsDir.resolve("tags-" + baseName + ".txt");
@@ -72,7 +84,7 @@ public class PluginMaker {
           "-o",
           ctagsOutputFile.toAbsolutePath().toString(),
           "--fields=+n",
-          "--kinds-Python=cfm",
+          LANGUAGE_CTAGS_OPTION,
           sourceFileName);
     }
 
@@ -80,8 +92,9 @@ public class PluginMaker {
     if (!Files.exists(astDir)) {
       Files.createDirectories(astDir);
     }
-    for (Path sourceFile : randomFiles) {
-      String astContent = pluginMaker.parse(sourceFile);
+
+    for (Path sourceFile : sourceFiles) {
+      String astContent = pluginMaker.parse(sourceFile, tsLang);
       String sourceFileName = sourceFile.getFileName().toString();
       String baseName = sourceFileName.substring(0, sourceFileName.lastIndexOf('.'));
       Path astOutputFile = astDir.resolve("ast-" + baseName + ".txt");
@@ -90,9 +103,8 @@ public class PluginMaker {
 
   }
 
-  private String parse(Path sourceFile) throws Exception {
+  private String parse(Path sourceFile, TSLanguage tsLang) throws Exception {
     TSParser parser = new TSParser();
-    TSLanguage tsLang = new TreeSitterPython();
     parser.setLanguage(tsLang);
 
     String sourceCode = Files.readString(sourceFile);
