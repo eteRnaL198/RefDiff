@@ -41,8 +41,8 @@ public class Ast {
     TSLanguage tsLang = new TreeSitterRuby();
     parser.setLanguage(tsLang);
     
-		// Path basePath = Paths.get("repository/ollama/");
-		// SourceFolder sources = SourceFolder.from(basePath, Paths.get("runner/ollamarunner/runner.go"));
+		Path basePath = Paths.get("repository/ollama/");
+		SourceFolder sources = SourceFolder.from(basePath, Paths.get("runner/ollamarunner/runner.go"));
     // SourceFolder sources = SourceFolder.from(basePath, Paths.get("fs/gguf/keyvalue.go"));
     // SourceFolder sources = SourceFolder.from(basePath, Paths.get("app/lifecycle/updater_windows.go"));
     
@@ -51,8 +51,8 @@ public class Ast {
     // SourceFolder sources = SourceFolder.from(basePath, Paths.get("class.js"));
     // SourceFolder sources = SourceFolder.from(basePath, Paths.get("function.js"));
     
-    Path basePath = Paths.get("ast/ruby/");
-    SourceFolder sources = SourceFolder.from(basePath, Paths.get("method.rb"));
+    // Path basePath = Paths.get("ast/ruby/");
+    // SourceFolder sources = SourceFolder.from(basePath, Paths.get("method.rb"));
     
     String sourceCode = sources.readContent(sources.getSourceFiles().get(0));
     TSTree tree = parser.parseString(null, sourceCode);
@@ -66,8 +66,7 @@ public class Ast {
       TSQueryCapture[] captures = match.getCaptures();
       for (TSQueryCapture capture : captures) {
         TSNode node = capture.getNode();
-        System.out.println(node.toString() + " L:" + node.getStartPoint().getRow());
-
+        System.out.println(node.toString() + " L:" + (node.getStartPoint().getRow()+1));
       }
     }
   }

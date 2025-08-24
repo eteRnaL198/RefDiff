@@ -51,7 +51,7 @@ public class GoParser {
       String sourceCode = sourceCodeMap.get(filePath);
       addNodes(tree, tsLang, root, filePath, sourceCode);
       
-      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode);
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath);
       root.addTokenizedFile(tokenizedSource);
     }
 
@@ -62,6 +62,6 @@ public class GoParser {
   }
 
   private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot cstRoot, String filePath, String sourceCode) {
-    
   }
+
 }
