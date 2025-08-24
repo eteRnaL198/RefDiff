@@ -66,7 +66,9 @@ public class JsParser {
     TSNode fileTsNode = tree.getRootNode(); // This is the (program) node for JS
     CstNode fileCstNode = new CstNode(cstId++);
     fileCstNode.setType(JsNodeTypes.FILE);
-    fileCstNode.setLocation(new Location(filePath,fileTsNode.getStartByte(), fileTsNode.getEndByte(),1,fileTsNode.getStartByte(), fileTsNode.getEndByte()));
+    int lineNumber = fileTsNode.getStartPoint().getRow() + 1;
+    int endLineNumber = fileTsNode.getEndPoint().getRow() + 1;
+    fileCstNode.setLocation(new Location(filePath,fileTsNode.getStartByte(), fileTsNode.getEndByte(),lineNumber,endLineNumber, fileTsNode.getEndByte()));
     String nameForFileNode = getFileNameFromFilePath(filePath);
     fileCstNode.setSimpleName(nameForFileNode);
     fileCstNode.setLocalName(nameForFileNode);
@@ -114,11 +116,13 @@ public class JsParser {
 
       CstNode classCstNode = new CstNode(cstId++);
       classCstNode.setType(JsNodeTypes.CLASS);
-      int lineNumber = classDeclarationNode.getStartPoint().getRow() + 1;
+      lineNumber = classDeclarationNode.getStartPoint().getRow() + 1;
+      endLineNumber = classDeclarationNode.getEndPoint().getRow() + 1;
       classCstNode.setLocation(new Location(
         filePath,
         classDeclarationNode.getStartByte(), classDeclarationNode.getEndByte(),
         lineNumber,
+        endLineNumber,
         bodyNode.getStartByte(), bodyNode.getEndByte()
       ));
       String className = new String(sourceBytes, nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte() - nameIdentifierNode.getStartByte(), StandardCharsets.UTF_8);
@@ -207,11 +211,13 @@ public class JsParser {
 
       CstNode funcCstNode = new CstNode(cstId++);
       funcCstNode.setType(JsNodeTypes.FUNCTION);
-      int lineNumber = funcDefinitionNode.getStartPoint().getRow() + 1;
+      lineNumber = funcDefinitionNode.getStartPoint().getRow() + 1;
+      endLineNumber = funcDefinitionNode.getEndPoint().getRow() + 1;
       funcCstNode.setLocation(new Location(
           filePath,
           funcDefinitionNode.getStartByte(), funcDefinitionNode.getEndByte(),
           lineNumber,
+          endLineNumber,
           bodyValueNode.getStartByte(), bodyValueNode.getEndByte()
         ));
       String funcName = new String(sourceBytes, nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte() - nameIdentifierNode.getStartByte(), StandardCharsets.UTF_8);

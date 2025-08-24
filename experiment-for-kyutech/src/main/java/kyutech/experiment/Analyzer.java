@@ -140,7 +140,7 @@ public class Analyzer {
             lines.append("No refactorings found.").append(System.lineSeparator());
         } else {
             for (Relationship rel : diff.getRefactoringRelationships()) {
-                lines.append(rel.getStandardDescription()).append(System.lineSeparator());
+                lines.append(rel.getDescriptionWithLOC()).append(System.lineSeparator());
             }
         }
         lines.append(System.lineSeparator());

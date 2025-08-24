@@ -75,7 +75,8 @@ public class CParser {
             CstNode cstNode = new CstNode(cstId++);
             cstNode.setType(CNodeTypes.FILE);
             int lineNumber = tsNode.getStartPoint().getRow() + 1;
-            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, tsNode.getStartByte(), tsNode.getEndByte())); // TODO bodyと区別して計算
+            int endLineNumber = tsNode.getEndPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, tsNode.getStartByte(), tsNode.getEndByte())); // TODO bodyと区別して計算
 
             Path filePath = Paths.get(path);
             Path parentPath = filePath.getParent();
@@ -93,7 +94,8 @@ public class CParser {
             
             TSNode block = tsNode.getChildByFieldName("body");
             int lineNumber = tsNode.getStartPoint().getRow() + 1;
-            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, block.getStartByte(), block.getEndByte())); // TODO bodyと区別して計算
+            int endLineNumber = tsNode.getEndPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, tsNode.getStartByte(), tsNode.getEndByte())); // TODO bodyと区別して計算
 
             TSNode declarator = tsNode.getChildByFieldName("declarator");
             TSNode identifier = declarator.getChild(0);

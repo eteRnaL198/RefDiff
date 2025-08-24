@@ -6,7 +6,8 @@ public class Location {
 	private String file;
 	private int begin;
 	private int end;
-	private int line;
+	private int beginLine;
+	private int endLine;
 	private int bodyBegin;
 	private int bodyEnd;
 	
@@ -16,7 +17,17 @@ public class Location {
 		this.file = file;
 		this.begin = begin;
 		this.end = end;
-		this.line = line;
+		this.beginLine = line;
+		this.bodyBegin = bodyBegin;
+		this.bodyEnd = bodyEnd;
+	}
+
+	public Location(String file, int begin, int end, int beginLine, int endLine, int bodyBegin, int bodyEnd) {
+		this.file = file;
+		this.begin = begin;
+		this.end = end;
+		this.beginLine = beginLine;
+		this.endLine = endLine;
 		this.bodyBegin = bodyBegin;
 		this.bodyEnd = bodyEnd;
 	}
@@ -105,15 +116,19 @@ public class Location {
 	}
 
 	public String format() {
-		return String.format("%s:%d", file, line);
+		return String.format("%s:%d", file, beginLine);
 	}
 
-	public int getLine() {
-		return line;
+	public int getBeginLine() {
+		return beginLine;
 	}
 
-	public void setLine(int line) {
-		this.line = line;
+	public void setBeginLine(int line) {
+		this.beginLine = line;
+	}
+
+	public int getLoc() {
+		return endLine - beginLine + 1;
 	}
 	
 }

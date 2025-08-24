@@ -161,9 +161,10 @@ public class PhpParser {
         int startByte = wholeDefNode.getStartByte();
         int endByte = wholeDefNode.getEndByte();
         int startLine = wholeDefNode.getStartPoint().getRow() + 1;
+        int endLine = wholeDefNode.getEndPoint().getRow() + 1;
         int bodyStartByte = (bodyNode != null) ? bodyNode.getStartByte() : endByte;
         int bodyEndByte = (bodyNode != null) ? bodyNode.getEndByte() : endByte;
-        cstNode.setLocation(new Location(filePath, startByte, endByte, startLine, bodyStartByte, bodyEndByte));
+        cstNode.setLocation(new Location(filePath, startByte, endByte, startLine, endLine, bodyStartByte, bodyEndByte));
 
         cstRoot.addNode(cstNode);
       }

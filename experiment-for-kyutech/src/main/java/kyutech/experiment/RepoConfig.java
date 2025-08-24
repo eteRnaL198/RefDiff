@@ -39,12 +39,12 @@ public final class RepoConfig {
 
     public static final String[] PHP = {
         // "https://github.com/laravel/framework.git",
-        "https://github.com/nextcloud/server.git",
+        // "https://github.com/nextcloud/server.git",
     };
 
     public static final String[] PYTHON = {
         // "https://github.com/Significant-Gravitas/AutoGPT.git",
-        // "https://github.com/huggingface/transformers.git",
+        "https://github.com/huggingface/transformers.git",
         // "https://github.com/ytdl-org/youtube-dl.git"
     };
 

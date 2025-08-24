@@ -124,13 +124,14 @@ public class RubyParser {
       int defStartByte = methodDefinitionNode.getStartByte();
       int defEndByte = methodDefinitionNode.getEndByte();
       int lineNumber = methodDefinitionNode.getStartPoint().getRow() + 1; // Tree-sitter uses 0-based indexing, so we add 1 for line number
+      int endLineNumber = methodDefinitionNode.getEndPoint().getRow() + 1;
       if (bodyNode == null) {
         // Method has no body, e.g. `def foo; end` with empty body statement
-        methodCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, defEndByte, defEndByte));
+        methodCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, endLineNumber, defEndByte));
       } else {
         int bodyStartByte = bodyNode.getStartByte();
         int bodyEndByte = bodyNode.getEndByte();
-        methodCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, bodyStartByte, bodyEndByte));
+        methodCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, endLineNumber, bodyStartByte, bodyEndByte));
       }
       
       List<String> paramNames = new ArrayList<>();

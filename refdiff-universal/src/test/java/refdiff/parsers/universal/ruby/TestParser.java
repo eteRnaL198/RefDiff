@@ -27,7 +27,7 @@ public class TestParser {
 
     private CstNode findMethod(List<CstNode> nodes, String name, int line) {
         return nodes.stream()
-            .filter(node -> name.equals(node.getSimpleName()) && node.getLocation().getLine() == line)
+            .filter(node -> name.equals(node.getSimpleName()) && node.getLocation().getBeginLine() == line)
             .findFirst()
             .orElseThrow(() -> new AssertionError("Method with name '" + name + "' at line " + line + " not found."));
     }
@@ -95,7 +95,7 @@ public class TestParser {
 
             Location actualLocation = actualNode.getLocation();
             assertThat("Location file for " + expected.name(), actualLocation.getFile(), is(equalTo("method.rb")));
-            assertThat("Location line for " + expected.name(), actualLocation.getLine(), is(equalTo(expected.line())));
+            assertThat("Location line for " + expected.name(), actualLocation.getBeginLine(), is(equalTo(expected.line())));
 
             List<String> actualParamNames = actualNode.getParameters().stream()
                 .map(Parameter::getName)

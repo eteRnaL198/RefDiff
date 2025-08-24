@@ -28,7 +28,7 @@ public class TestParser {
 
     private CstNode findNode(List<CstNode> nodes, String name, int line) {
         return nodes.stream()
-            .filter(node -> name.equals(node.getSimpleName()) && node.getLocation().getLine() == line)
+            .filter(node -> name.equals(node.getSimpleName()) && node.getLocation().getBeginLine() == line)
             .findFirst()
             .orElseThrow(() -> new AssertionError("Node with name '" + name + "' at line " + line + " not found."));
     }
@@ -123,7 +123,7 @@ public class TestParser {
             assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
             Location location = actualNode.getLocation();
             assertThat(location.getFile(), is(equalTo(expected.fileName())));
-            assertThat(location.getLine(), is(equalTo(expected.line())));
+            assertThat(location.getBeginLine(), is(equalTo(expected.line())));
             List<String> actualParamNames = actualNode.getParameters().stream()
                 .map(Parameter::getName)
                 .collect(Collectors.toList());
@@ -137,7 +137,7 @@ public class TestParser {
                 + ", namespace=" + expected.namespace()
                 + ", file=" + expected.fileName()
                 + ", params=" + expected.params());
-            System.err.println("Actual node: line=" + actualNode.getLocation().getLine()
+            System.err.println("Actual node: line=" + actualNode.getLocation().getBeginLine()
                 + ", type=" + actualNode.getType()
                 + ", localName=" + actualNode.getLocalName()
                 + ", namespace=" + actualNode.getNamespace()

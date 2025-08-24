@@ -119,9 +119,9 @@ public class PythonParser {
       int bodyStartByte = bodyNode.getStartByte();
       int bodyEndByte = bodyNode.getEndByte();
       int lineNumber = functionDefinitionNode.getStartPoint().getRow() + 1;
-      
-      functionCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, bodyStartByte, bodyEndByte));
-      
+      int endLineNumber = functionDefinitionNode.getEndPoint().getRow() + 1;
+      functionCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, endLineNumber, bodyStartByte, bodyEndByte));
+
       List<Parameter> cstParameters = new ArrayList<>();
       if (paramsNode != null) {
           cstParameters = extractParametersFromAst(paramsNode, sourceBytes);

@@ -77,6 +77,10 @@ public class Relationship {
 	public String getStandardDescription() {
 		return String.format("%s\t{%s}\t{%s})", this.type, formatWithLineNum(this.nodeBefore), formatWithLineNum(this.nodeAfter));
 	}
+
+	public String getDescriptionWithLOC() {
+		return String.format("%s\t{%s}\t{%s})", this.type, formatWithLineNumAndLoc(this.nodeBefore), formatWithLineNumAndLoc(this.nodeAfter));
+	}
 	
 	public String getDescriptionWithScore() {
 		if (this.similarity != null) {			
@@ -86,7 +90,11 @@ public class Relationship {
 	}
 	
 	private String formatWithLineNum(CstNode node) {
-		return String.format("%s %s at %s:%d", node.getType().replace("Declaration", ""), node.getLocalName(), node.getLocation().getFile(), node.getLocation().getLine());
+		return String.format("%s %s at %s:%d", node.getType().replace("Declaration", ""), node.getLocalName(), node.getLocation().getFile(), node.getLocation().getBeginLine());
+	}
+
+	private String formatWithLineNumAndLoc(CstNode node) {
+		return String.format("%s %s at %s:%d LOC:%d", node.getType().replace("Declaration", ""), node.getLocalName(),node.getLocation().getFile(), node.getLocation().getBeginLine(), node.getLocation().getLoc());
 	}
 	
 	private String format(CstNode node) {

@@ -135,8 +135,8 @@ public class GoParser {
             int bodyStartByte = bodyNode.getStartByte();
             int bodyEndByte = bodyNode.getEndByte();
             int startLine = defNode.getStartPoint().getRow() + 1;
-
-            cstNode.setLocation(new Location(filePath, startByte, endByte, startLine, bodyStartByte, bodyEndByte));
+            int endLine = defNode.getEndPoint().getRow() + 1;
+            cstNode.setLocation(new Location(filePath, startByte, endByte, startLine, endLine, bodyStartByte, bodyEndByte));
 
             String paramsString = "()";
             if (paramsNode != null) {

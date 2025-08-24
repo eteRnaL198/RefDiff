@@ -140,7 +140,8 @@ public class JavaParser {
 
             TSNode body = tsNode.getChildByFieldName("body");
             int lineNumber = tsNode.getStartPoint().getRow() + 1;
-            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, body.getStartByte(), body.getEndByte()));
+            int endLineNumber = tsNode.getEndPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, body.getStartByte(), body.getEndByte()));
 
             TSNode identifier = tsNode.getChildByFieldName("name");
             String className = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
@@ -165,8 +166,9 @@ public class JavaParser {
             cstNode.setType(JavaNodeTypes.INTERFACE_DECLARATION);
 
             TSNode body = tsNode.getChildByFieldName("body");
-            int lineNumber = body.getStartPoint().getRow() + 1;
-            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, body.getStartByte(), body.getEndByte()));
+            int lineNumber = tsNode.getStartPoint().getRow() + 1;
+            int endLineNumber = tsNode.getEndPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, body.getStartByte(), body.getEndByte()));
 
             TSNode identifier = tsNode.getChildByFieldName("name");
             String interfaceName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
@@ -192,8 +194,9 @@ public class JavaParser {
             cstNode.setType(JavaNodeTypes.METHOD_DECLARATION);
 
             TSNode block = tsNode.getChildByFieldName("body");
-            int lineNumber = block.getStartPoint().getRow() + 1;
-            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, block.getStartByte(), block.getEndByte()));
+            int lineNumber = tsNode.getStartPoint().getRow() + 1;
+            int endLineNumber = tsNode.getEndPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, block.getStartByte(), block.getEndByte()));
 
             TSNode identifier = tsNode.getChildByFieldName("name");
             String constructorName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
@@ -217,10 +220,11 @@ public class JavaParser {
 
             TSNode block = tsNode.getChildByFieldName("body");
             int lineNumber = tsNode.getStartPoint().getRow() + 1;
+            int endLineNumber = tsNode.getEndPoint().getRow() + 1;
             if (block.isNull()) {
-              cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, block.getStartByte(), block.getEndByte()));
+              cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, block.getStartByte(), block.getEndByte()));
             } else {
-              cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, block.getStartByte(), block.getEndByte()));
+              cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, block.getStartByte(), block.getEndByte()));
             }
 
             TSNode identifier = tsNode.getChildByFieldName("name");
