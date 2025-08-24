@@ -3,6 +3,7 @@ package refdiff.parsers.universal.js;
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstNodeRelationship;
 import refdiff.core.cst.CstRoot;
+import refdiff.core.cst.Location;
 import refdiff.core.cst.TokenizedSource;
 import refdiff.core.cst.Parameter;
 import refdiff.core.io.SourceFileSet;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 import org.treesitter.TSLanguage;
 import org.treesitter.TSNode;
@@ -47,9 +49,10 @@ public class JsParser {
       String filePath = treeEntry.getKey();
       TSTree tree = treeEntry.getValue();
       String sourceCode = sourceCodeMap.get(filePath);
-      addNodes(tree, tsLang, root, filePath, sourceCode);
-      
-      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode); // TODO: Should the argument for tokenize be a relative path?
+      byte[] sourceBytes = sourceCode.getBytes(StandardCharsets.UTF_8);
+      addNodes(tree, tsLang, root, filePath, sourceBytes);
+
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath); // TODO: Should the argument for tokenize be a relative path?
       root.addTokenizedFile(tokenizedSource);
     }
 
@@ -59,15 +62,11 @@ public class JsParser {
     return root;
   }
 
-  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot cstRoot, String filePath, String sourceCode) {
+  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot cstRoot, String filePath, byte[] sourceBytes) {
     TSNode fileTsNode = tree.getRootNode(); // This is the (program) node for JS
     CstNode fileCstNode = new CstNode(cstId++);
     fileCstNode.setType(JsNodeTypes.FILE);
-    fileCstNode.setLocation(refdiff.core.cst.Location.of(
-        filePath,
-        fileTsNode.getStartByte(), fileTsNode.getEndByte(),
-        fileTsNode.getStartByte(), fileTsNode.getEndByte(),
-        sourceCode));
+    fileCstNode.setLocation(new Location(filePath,fileTsNode.getStartByte(), fileTsNode.getEndByte(),1,fileTsNode.getStartByte(), fileTsNode.getEndByte()));
     String nameForFileNode = getFileNameFromFilePath(filePath);
     fileCstNode.setSimpleName(nameForFileNode);
     fileCstNode.setLocalName(nameForFileNode);
@@ -115,12 +114,14 @@ public class JsParser {
 
       CstNode classCstNode = new CstNode(cstId++);
       classCstNode.setType(JsNodeTypes.CLASS);
-      classCstNode.setLocation(refdiff.core.cst.Location.of(
-          filePath,
-          classDeclarationNode.getStartByte(), classDeclarationNode.getEndByte(),
-          bodyNode.getStartByte(), bodyNode.getEndByte(),
-          sourceCode));
-      String className = sourceCode.substring(nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte());
+      int lineNumber = classDeclarationNode.getStartPoint().getRow() + 1;
+      classCstNode.setLocation(new Location(
+        filePath,
+        classDeclarationNode.getStartByte(), classDeclarationNode.getEndByte(),
+        lineNumber,
+        bodyNode.getStartByte(), bodyNode.getEndByte()
+      ));
+      String className = new String(sourceBytes, nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte() - nameIdentifierNode.getStartByte(), StandardCharsets.UTF_8);
       classCstNode.setSimpleName(className);
       classCstNode.setLocalName(className);
       classCstNode.setNamespace(getNamespaceFromFilePath(filePath));
@@ -206,17 +207,19 @@ public class JsParser {
 
       CstNode funcCstNode = new CstNode(cstId++);
       funcCstNode.setType(JsNodeTypes.FUNCTION);
-      funcCstNode.setLocation(refdiff.core.cst.Location.of(
+      int lineNumber = funcDefinitionNode.getStartPoint().getRow() + 1;
+      funcCstNode.setLocation(new Location(
           filePath,
           funcDefinitionNode.getStartByte(), funcDefinitionNode.getEndByte(),
-          bodyValueNode.getStartByte(), bodyValueNode.getEndByte(),
-          sourceCode));
-      String funcName = sourceCode.substring(nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte());
+          lineNumber,
+          bodyValueNode.getStartByte(), bodyValueNode.getEndByte()
+        ));
+      String funcName = new String(sourceBytes, nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte() - nameIdentifierNode.getStartByte(), StandardCharsets.UTF_8);
       funcCstNode.setSimpleName(funcName);
       funcCstNode.setLocalName(funcName);
       List<refdiff.core.cst.Parameter> cstParameters = new ArrayList<>();
       if (parametersHostNode != null) {
-          extractParameters(parametersHostNode, sourceCode, cstParameters);
+          extractParameters(parametersHostNode, sourceBytes, cstParameters);
       }
       funcCstNode.setParameters(cstParameters);
 
@@ -247,40 +250,40 @@ public class JsParser {
     return filePath;
   }
 
-  private void extractParameters(TSNode parametersHostNode, String sourceCode, List<Parameter> cstParameters) {
+  private void extractParameters(TSNode parametersHostNode, byte[] sourceBytes, List<Parameter> cstParameters) {
     String hostNodeType = parametersHostNode.getType();
 
     if ("formal_parameters".equals(hostNodeType)) {
         for (int i = 0; i < parametersHostNode.getChildCount(); i++) {
             TSNode paramElementNode = parametersHostNode.getChild(i);
             if (paramElementNode.isNamed()) { // Process only named nodes like identifier, rest_pattern, etc.
-                String paramName = extractParameterNameInternal(paramElementNode, sourceCode);
+                String paramName = extractParameterNameInternal(paramElementNode, sourceBytes);
                 if (paramName != null) {
                     cstParameters.add(new Parameter(paramName));
                 }
             }
         }
     } else if ("identifier".equals(hostNodeType)) { // Single parameter for arrow function: param => ...
-        String paramName = sourceCode.substring(parametersHostNode.getStartByte(), parametersHostNode.getEndByte());
+        String paramName = new String(sourceBytes, parametersHostNode.getStartByte(), parametersHostNode.getEndByte() - parametersHostNode.getStartByte(), StandardCharsets.UTF_8);
         cstParameters.add(new Parameter(paramName));
     }
   }
 
-  private String extractParameterNameInternal(TSNode paramNode, String sourceCode) {
+  private String extractParameterNameInternal(TSNode paramNode, byte[] sourceBytes) {
       String nodeType = paramNode.getType();
       if ("identifier".equals(nodeType)) {
-          return sourceCode.substring(paramNode.getStartByte(), paramNode.getEndByte());
+          return new String(sourceBytes, paramNode.getStartByte(), paramNode.getEndByte() - paramNode.getStartByte(), StandardCharsets.UTF_8);
       } else if ("rest_pattern".equals(nodeType)) {
         if (paramNode.getNamedChildCount() > 0) {
             TSNode nameNode = paramNode.getNamedChild(0); // (rest_pattern (identifier))
             if (nameNode != null && "identifier".equals(nameNode.getType())) {
-                return sourceCode.substring(nameNode.getStartByte(), nameNode.getEndByte());
+                return new String(sourceBytes, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
             }
         }
       } else if ("assignment_pattern".equals(nodeType)) { // e.g. name = "Guest"
         TSNode leftNode = paramNode.getChildByFieldName("left");
         if (leftNode != null && "identifier".equals(leftNode.getType())) {
-            return sourceCode.substring(leftNode.getStartByte(), leftNode.getEndByte());
+            return new String(sourceBytes, leftNode.getStartByte(), leftNode.getEndByte() - leftNode.getStartByte(), StandardCharsets.UTF_8);
         }
       }
       // Array/Object patterns (destructuring) could be handled here if needed

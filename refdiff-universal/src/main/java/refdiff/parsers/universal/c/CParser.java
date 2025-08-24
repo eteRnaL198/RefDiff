@@ -12,6 +12,7 @@ import org.treesitter.TSQueryMatch;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 
 import java.util.Map;
 
@@ -42,9 +43,9 @@ public class CParser {
       String filePath = entry.getKey();
       String sourceCode = entry.getValue();
       TSTree tree = parser.parseString(null, sourceCode);
-      addNodes(tree, tsLang, root, filePath, sourceCode);
-      
-      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode);// TODO tokenizeの引数にはrelative pathを渡す？
+      byte[] sourceBytes = sourceCode.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+      addNodes(tree, tsLang, root, filePath, sourceBytes);
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath);
       root.addTokenizedFile(tokenizedSource);
     }
 
@@ -54,7 +55,7 @@ public class CParser {
     return root;
   }
 
-  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
+  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, byte[] sourceBytes) {
     String query = "[(translation_unit) (function_definition)] @node";
     TSQuery tsQuery = new TSQuery(tsLang, query);
 
@@ -73,8 +74,9 @@ public class CParser {
           case "translation_unit": { // file
             CstNode cstNode = new CstNode(cstId++);
             cstNode.setType(CNodeTypes.FILE);
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), tsNode.getStartByte(), tsNode.getEndByte(), sourceCode)); // TODO bodyと区別して計算
-            
+            int lineNumber = tsNode.getStartPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, tsNode.getStartByte(), tsNode.getEndByte())); // TODO bodyと区別して計算
+
             Path filePath = Paths.get(path);
             Path parentPath = filePath.getParent();
             cstNode.setNamespace(parentPath != null ? parentPath.toString() + "/" : "");
@@ -90,11 +92,12 @@ public class CParser {
             cstNode.setType(CNodeTypes.FUNCTION_DECLARATION);
             
             TSNode block = tsNode.getChildByFieldName("body");
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode)); // TODO bodyと区別して計算
+            int lineNumber = tsNode.getStartPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, block.getStartByte(), block.getEndByte())); // TODO bodyと区別して計算
 
             TSNode declarator = tsNode.getChildByFieldName("declarator");
             TSNode identifier = declarator.getChild(0);
-            String functionName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+            String functionName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
             cstNode.setSimpleName(functionName);
 
             TSNode parameters = declarator.getChildByFieldName("parameters");
@@ -110,7 +113,7 @@ public class CParser {
                   localNameBuilder.append("...");
                 } else if (parameter.getType().equals("parameter_declaration")) {
                   TSNode type = parameter.getChildByFieldName("type");
-                  String typeName = sourceCode.substring(type.getStartByte(), type.getEndByte());
+                  String typeName = new String(sourceBytes, type.getStartByte(), type.getEndByte() - type.getStartByte(), StandardCharsets.UTF_8);
                   localNameBuilder.append(typeName);
                 }
               }

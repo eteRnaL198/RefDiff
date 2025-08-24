@@ -3,6 +3,7 @@ package refdiff.parsers.universal.ruby;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 import org.treesitter.TSLanguage;
 import org.treesitter.TSNode;
@@ -46,9 +47,10 @@ public class RubyParser {
       String filePath = treeEntry.getKey();
       TSTree tree = treeEntry.getValue();
       String sourceCode = sourceCodeMap.get(filePath);
-      addNodes(tree, tsLang, root, filePath, sourceCode);
-      
-      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode); // TODO: Should the argument for tokenize be a relative path?
+      byte[] sourceBytes = sourceCode.getBytes(StandardCharsets.UTF_8);
+      addNodes(tree, tsLang, root, filePath, sourceBytes);
+
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath); // TODO: Should the argument for tokenize be a relative path?
       root.addTokenizedFile(tokenizedSource);
     }
 
@@ -58,7 +60,7 @@ public class RubyParser {
     return root;
   }
 
-  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot cstRoot, String filePath, String sourceCode) {
+  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot cstRoot, String filePath, byte[] sourceBytes) {
     TSNode fileTsNode = tree.getRootNode(); // This is the (program) node for Ruby
 
     String methodQuerySrc = String.join("\n",
@@ -115,7 +117,7 @@ public class RubyParser {
 
       CstNode methodCstNode = new CstNode(cstId++);
       methodCstNode.setType(RubyNodeTypes.METHOD);
-      String methodName = sourceCode.substring(nameNode.getStartByte(), nameNode.getEndByte());
+      String methodName = new String(sourceBytes, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
       methodCstNode.setSimpleName(methodName);
       methodCstNode.setNamespace(filePath + "/");
 
@@ -133,7 +135,7 @@ public class RubyParser {
       
       List<String> paramNames = new ArrayList<>();
       if (paramsNode != null) {
-        paramNames = extractParametersFromAst(paramsNode, sourceCode);
+        paramNames = extractParametersFromAst(paramsNode, sourceBytes);
         List<Parameter> cstParameters = new ArrayList<>();
         for (String paramName : paramNames) {
           cstParameters.add(new Parameter(paramName));
@@ -147,11 +149,11 @@ public class RubyParser {
   }
 
   // Helper to iterate over parameter definition nodes within (method_parameters)
-  private List<String> extractParametersFromAst(TSNode paramsContainerNode, String sourceCode) {
+  private List<String> extractParametersFromAst(TSNode paramsContainerNode, byte[] sourceBytes) {
     List<String> paramNames = new ArrayList<>();
     for (int i = 0; i < paramsContainerNode.getNamedChildCount(); i++) {
         TSNode paramChildNode = paramsContainerNode.getNamedChild(i); // Each child is a potential parameter definition node
-        String paramName = extractActualParameterName(paramChildNode, sourceCode);
+        String paramName = extractActualParameterName(paramChildNode, sourceBytes);
         if (paramName != null && !paramName.isEmpty()) {
           paramNames.add(paramName);
         }
@@ -160,24 +162,24 @@ public class RubyParser {
   }
 
   // Helper to get the name from a single parameter definition node
-  private String extractActualParameterName(TSNode paramNode, String sourceCode) {
+  private String extractActualParameterName(TSNode paramNode, byte[] sourceBytes) {
     String nodeType = paramNode.getType();
 
     switch (nodeType) {
         case "identifier": // e.g., def m(a)
-            return sourceCode.substring(paramNode.getStartByte(), paramNode.getEndByte());
+            return new String(sourceBytes, paramNode.getStartByte(), paramNode.getEndByte() - paramNode.getStartByte(), StandardCharsets.UTF_8);
 
         case "splat_parameter": // e.g., def m(*a)
         case "hash_splat_parameter": // e.g., def m(**a)
         case "block_parameter": // e.g., def m(&a)
             // The full text of the node gives the desired representation (e.g., "*args", "&block").
-            return sourceCode.substring(paramNode.getStartByte(), paramNode.getEndByte());
+            return new String(sourceBytes, paramNode.getStartByte(), paramNode.getEndByte() - paramNode.getStartByte(), StandardCharsets.UTF_8);
 
         case "keyword_parameter": // e.g., def m(a: val)
         case "optional_parameter": { // e.g., def m(a = val)
             TSNode nameField = paramNode.getChildByFieldName("name"); // tree-sitter-ruby uses 'name' for the identifier part
             if (nameField != null) {
-                return sourceCode.substring(nameField.getStartByte(), nameField.getEndByte());
+                return new String(sourceBytes, nameField.getStartByte(), nameField.getEndByte() - nameField.getStartByte(), StandardCharsets.UTF_8);
             }
             break;
         }

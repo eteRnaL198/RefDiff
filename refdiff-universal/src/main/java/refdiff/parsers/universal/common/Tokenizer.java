@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Tokenizer {
 
-    public static TokenizedSource tokenize(TSTree tree, TSLanguage tsLang, String path, String sourceCode) {
+    public static TokenizedSource tokenize(TSTree tree, TSLanguage tsLang, String path) {
         String query = "_ @node";
         TSQuery tsQuery = new TSQuery(tsLang, query);
         TSQueryCursor cursor = new TSQueryCursor();

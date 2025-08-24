@@ -92,9 +92,6 @@ public class TestCstComparator {
     @Test
     public void shouldMatchInline() throws Exception {
         CstDiff diff = diff("inline");
-        for (Relationship r : diff.getRelationships()) {
-            System.out.println(r);
-        }
         assertThat(diff, containsOnly(
             relationship(RelationshipType.INLINE, node("main.rb/calculate_sum(a, b)"), node("main.rb/foo()")),
             relationship(RelationshipType.SAME, node("main.rb/foo()"), node("main.rb/foo()")),

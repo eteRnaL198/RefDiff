@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
 
 
 import refdiff.core.io.SourceFileSet;
@@ -53,9 +54,10 @@ public class JavaParser {
       String filePath = treeEntry.getKey();
       TSTree tree = treeEntry.getValue();
       String sourceCode = sourceCodeMap.get(filePath); // Get source code for context
-      addNodes(tree, tsLang, root, filePath, sourceCode);
+      byte[] sourceBytes = sourceCode.getBytes(StandardCharsets.UTF_8);
+      addNodes(tree, tsLang, root, filePath, sourceBytes);
       
-      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath, sourceCode); // TODO: Should the argument for tokenize be a relative path?
+      TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath); // TODO: Should the argument for tokenize be a relative path?
       root.addTokenizedFile(tokenizedSource);
     }
 
@@ -74,10 +76,10 @@ public class JavaParser {
    * Extracts parameter types from a parameters TSNode and builds a signature string.
    * e.g., "(String, int[])"
    * @param parametersNode The TSNode representing the parameters list (e.g., content of formal_parameters).
-   * @param sourceCode The source code string to extract type names.
+   * @param sourceBytes The source code string to extract type names.
    * @return A string representing the parameter signature.
    */
-  private String extractSignatureParameters(TSNode parametersNode, String sourceCode) {
+  private String extractSignatureParameters(TSNode parametersNode, byte[] sourceBytes) {
     StringBuilder paramsStr = new StringBuilder();
     paramsStr.append("(");
 
@@ -89,12 +91,12 @@ public class JavaParser {
         if (parameter.getType().equals("formal_parameter")) {
             TSNode typeNode = parameter.getChildByFieldName("type");
             if (typeNode != null && !typeNode.isNull()) {
-                paramTypeString = sourceCode.substring(typeNode.getStartByte(), typeNode.getEndByte());
+                paramTypeString = new String(sourceBytes, typeNode.getStartByte(), typeNode.getEndByte() - typeNode.getStartByte(), StandardCharsets.UTF_8);
             }
         } else if (parameter.getType().equals("spread_parameter")) {
             TSNode typeNode = parameter.getChild(0); // The first child is the type for spread parameters
             if (typeNode != null && !typeNode.isNull()) {
-                paramTypeString = sourceCode.substring(typeNode.getStartByte(), typeNode.getEndByte()) + "..."; // For spread parameters, the type is followed by "..."
+                paramTypeString = new String(sourceBytes, typeNode.getStartByte(), typeNode.getEndByte() - typeNode.getStartByte(), StandardCharsets.UTF_8) + "..."; // For spread parameters, the type is followed by "..."
             }
         } else if (parameter.getType().equals("receiver_parameter")) {
             // Receiver parameters (e.g., `Outer.this`) are generally not included in RefDiff's localName.
@@ -107,7 +109,7 @@ public class JavaParser {
         } else {
             System.err.println("Warning: Could not determine type for parameter: " + parameter.getType() + 
                                " at " + parameter.getStartByte() + "-" + parameter.getEndByte() + 
-                               " in source code: " + sourceCode);
+                               " in source code: " + sourceBytes);
         }
     }
     paramsStr.append(String.join(", ", paramTypes));
@@ -115,7 +117,7 @@ public class JavaParser {
     return paramsStr.toString();
   }
 
-  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, String sourceCode) {
+  private void addNodes(TSTree tree, TSLanguage tsLang, CstRoot root, String path, byte[] sourceBytes) {
     String query;
     query = "[(class_declaration) (interface_declaration) (constructor_declaration) (method_declaration)] @node";
     TSQuery tsQuery = new TSQuery(tsLang, query);
@@ -137,10 +139,11 @@ public class JavaParser {
             cstNode.setType(JavaNodeTypes.CLASS_DECLARATION);
 
             TSNode body = tsNode.getChildByFieldName("body");
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode));
+            int lineNumber = tsNode.getStartPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, body.getStartByte(), body.getEndByte()));
 
             TSNode identifier = tsNode.getChildByFieldName("name");
-            String className = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+            String className = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
             cstNode.setLocalName(className);
             cstNode.setSimpleName(className);
 
@@ -150,7 +153,7 @@ public class JavaParser {
               TSNode child = program.getChild(i);
               if (child.getType().equals("package_declaration")) {
                 TSNode scopedIdentifier = child.getChild(1);
-                packageName = sourceCode.substring(scopedIdentifier.getStartByte(), child.getEndByte() - 1); // -1は末尾の;を除去するため
+                packageName = new String(sourceBytes, scopedIdentifier.getStartByte(), scopedIdentifier.getEndByte() - scopedIdentifier.getStartByte(), StandardCharsets.UTF_8);
               }
             }
             cstNode.setNamespace(packageName + ".");
@@ -162,10 +165,11 @@ public class JavaParser {
             cstNode.setType(JavaNodeTypes.INTERFACE_DECLARATION);
 
             TSNode body = tsNode.getChildByFieldName("body");
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), body.getStartByte(), body.getEndByte(), sourceCode));
+            int lineNumber = body.getStartPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, body.getStartByte(), body.getEndByte()));
 
             TSNode identifier = tsNode.getChildByFieldName("name");
-            String interfaceName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+            String interfaceName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
             cstNode.setLocalName(interfaceName);
             cstNode.setSimpleName(interfaceName);
 
@@ -175,7 +179,7 @@ public class JavaParser {
               TSNode child = program.getChild(i);
               if (child.getType().equals("package_declaration")) {
                 TSNode scopedIdentifier = child.getChild(1);
-                packageName = sourceCode.substring(scopedIdentifier.getStartByte(), child.getEndByte() - 1); // -1は末尾の;を除去するため
+                packageName = new String(sourceBytes, scopedIdentifier.getStartByte(), scopedIdentifier.getEndByte() - scopedIdentifier.getStartByte(), StandardCharsets.UTF_8);
               }
             }
             cstNode.setNamespace(packageName + ".");
@@ -188,14 +192,15 @@ public class JavaParser {
             cstNode.setType(JavaNodeTypes.METHOD_DECLARATION);
 
             TSNode block = tsNode.getChildByFieldName("body");
-            cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode));
+            int lineNumber = block.getStartPoint().getRow() + 1;
+            cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, block.getStartByte(), block.getEndByte()));
 
             TSNode identifier = tsNode.getChildByFieldName("name");
-            String constructorName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+            String constructorName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
             cstNode.setSimpleName(constructorName);
 
             TSNode parameters = tsNode.getChildByFieldName("parameters");
-            String paramsSignature = extractSignatureParameters(parameters, sourceCode);
+            String paramsSignature = extractSignatureParameters(parameters, sourceBytes);
             cstNode.setLocalName(constructorName + paramsSignature);
 
             cstNode.addStereotypes(Stereotype.TYPE_CONSTRUCTOR);
@@ -211,18 +216,19 @@ public class JavaParser {
             cstNode.setType(JavaNodeTypes.METHOD_DECLARATION);
 
             TSNode block = tsNode.getChildByFieldName("body");
+            int lineNumber = tsNode.getStartPoint().getRow() + 1;
             if (block.isNull()) {
-              cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), tsNode.getEndByte(), tsNode.getEndByte(), sourceCode)); // Abstract method has no body
+              cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, block.getStartByte(), block.getEndByte()));
             } else {
-              cstNode.setLocation(Location.of(path, tsNode.getStartByte(), tsNode.getEndByte(), block.getStartByte(), block.getEndByte(), sourceCode));
+              cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, block.getStartByte(), block.getEndByte()));
             }
 
             TSNode identifier = tsNode.getChildByFieldName("name");
-            String methodName = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+            String methodName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
             cstNode.setSimpleName(methodName);
 
             TSNode parameters = tsNode.getChildByFieldName("parameters");
-            String paramsSignature = extractSignatureParameters(parameters, sourceCode);
+            String paramsSignature = extractSignatureParameters(parameters, sourceBytes);
             cstNode.setLocalName(methodName + paramsSignature);
 
             cstNode.addStereotypes(Stereotype.TYPE_MEMBER);
