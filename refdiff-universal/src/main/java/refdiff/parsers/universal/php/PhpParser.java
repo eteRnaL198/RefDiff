@@ -23,8 +23,9 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
+import refdiff.parsers.universal.common.Parser;
 
-public class PhpParser {
+public class PhpParser implements Parser {
   private int cstId = 0;
 
   public CstRoot parse(SourceFileSet folder) {

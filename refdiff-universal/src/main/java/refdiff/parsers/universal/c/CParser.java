@@ -21,13 +21,13 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
+import refdiff.parsers.universal.common.Parser;
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.TokenizedSource;
 
-
-public class CParser {
+public class CParser implements Parser{
 
   private int cstId = 0;
 

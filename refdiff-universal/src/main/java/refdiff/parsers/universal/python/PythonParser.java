@@ -25,10 +25,11 @@ import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
 import java.util.stream.Collectors;
+import refdiff.parsers.universal.common.Parser;
 
 import java.util.ArrayList;
 
-public class PythonParser {
+public class PythonParser implements Parser {
   private int cstId = 0;
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();

@@ -26,8 +26,9 @@ import org.treesitter.TSQueryCursor;
 import org.treesitter.TSQueryMatch;
 import org.treesitter.TSTree;
 import org.treesitter.TreeSitterJavascript;
+import refdiff.parsers.universal.common.Parser;
 
-public class JsParser {
+public class JsParser implements Parser {
 
   private int cstId = 0;
 

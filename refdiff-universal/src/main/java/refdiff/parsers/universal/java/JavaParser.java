@@ -29,9 +29,9 @@ import refdiff.core.cst.Stereotype;
 import refdiff.core.cst.TokenizedSource;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.InheritanceTreeGenerator;
+import refdiff.parsers.universal.common.Parser;
 
-
-public class JavaParser {
+public class JavaParser implements Parser {
 
   private int cstId = 0;
 

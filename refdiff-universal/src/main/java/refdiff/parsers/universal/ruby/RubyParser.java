@@ -24,10 +24,11 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
+import refdiff.parsers.universal.common.Parser;
 
 import java.util.ArrayList;
 
-public class RubyParser {
+public class RubyParser implements Parser {
   private int cstId = 0;
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();
@@ -127,7 +128,7 @@ public class RubyParser {
       int endLineNumber = methodDefinitionNode.getEndPoint().getRow() + 1;
       if (bodyNode == null) {
         // Method has no body, e.g. `def foo; end` with empty body statement
-        methodCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, endLineNumber, defEndByte));
+        methodCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, endLineNumber, defStartByte, defEndByte));
       } else {
         int bodyStartByte = bodyNode.getStartByte();
         int bodyEndByte = bodyNode.getEndByte();

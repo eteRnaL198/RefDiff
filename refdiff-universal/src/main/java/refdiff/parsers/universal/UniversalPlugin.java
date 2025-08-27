@@ -13,6 +13,7 @@ import refdiff.parsers.universal.python.PythonParser;
 import refdiff.parsers.universal.ruby.RubyParser;
 import refdiff.parsers.universal.go.GoParser;
 import refdiff.parsers.universal.php.PhpParser;
+import refdiff.parsers.universal.common.Parser;
 
 
 public class UniversalPlugin implements LanguagePlugin {
@@ -25,32 +26,33 @@ public class UniversalPlugin implements LanguagePlugin {
   public CstRoot parse(SourceFileSet sources) throws Exception {
     String firstFilePath = sources.getSourceFiles().get(0).getPath(); // TODO 最初のファイルのパスを取得する方法を改善
     Language language = getLanguageByFileExtension(firstFilePath);
+    Parser parser;
     switch (language) {
-      case JAVA: {
-        JavaParser javaParser = new JavaParser();
-        return javaParser.parse(sources);
-      }
+      case JAVA:
+        parser = new JavaParser();
+        break;
       case C:
-        CParser cParser = new CParser();
-        return cParser.parse(sources);
+        parser = new CParser();
+        break;
       case JAVASCRIPT:
-        JsParser jsParser = new JsParser();
-        return jsParser.parse(sources);
+        parser = new JsParser();
+        break;
       case RUBY:
-        RubyParser rubyParser = new RubyParser();
-        return rubyParser.parse(sources);
+        parser = new RubyParser();
+        break;
       case GO:
-        GoParser goParser = new GoParser();
-        return goParser.parse(sources);
+        parser = new GoParser();
+        break;
       case PYTHON:
-        PythonParser pythonParser = new PythonParser();
-        return pythonParser.parse(sources);
+        parser = new PythonParser();
+        break;
       case PHP:
-        PhpParser phpParser = new PhpParser();
-        return phpParser.parse(sources);
+        parser = new PhpParser();
+        break;
       default:
         throw new IllegalArgumentException("Unsupported language: " + language);
     }
+    return parser.parse(sources);
   }
 
   @Override
