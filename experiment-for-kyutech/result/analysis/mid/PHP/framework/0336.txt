@@ -23,8 +23,8 @@ Commit: 7d7fe2312bc17734670e99a4e78d22a1f7bb7621
 No refactorings found.
 
 Commit: ce4faf187fb8a181b21cf95cbb2a5e72e1643ad1
-EXTRACT_MOVE	{method_declaration createTransaction() at src/Illuminate/Database/Concerns/ManagesTransactions.php:145}	{method_declaration executeBeginTransactionStatement() at src/Illuminate/Database/Connection.php:1478})
-EXTRACT_MOVE	{method_declaration handleBeginTransactionException($e) at src/Illuminate/Database/Concerns/ManagesTransactions.php:182}	{method_declaration executeBeginTransactionStatement() at src/Illuminate/Database/Connection.php:1478})
+EXTRACT_MOVE	{method_declaration handleBeginTransactionException($e) at src/Illuminate/Database/Concerns/ManagesTransactions.php:182 LOC:10}	{method_declaration executeBeginTransactionStatement() at src/Illuminate/Database/Connection.php:1478 LOC:4})
+EXTRACT_MOVE	{method_declaration createTransaction() at src/Illuminate/Database/Concerns/ManagesTransactions.php:145 LOC:14}	{method_declaration executeBeginTransactionStatement() at src/Illuminate/Database/Connection.php:1478 LOC:4})
 
 Commit: 450a04ec21f8e48136a48d7f115218e1ccbc9688
 No refactorings found.
@@ -90,8 +90,8 @@ Commit: 5521c5efa31026244322e937fce03ae24280a508
 No refactorings found.
 
 Commit: b8f2502fb6538cf05a5123391f11072fe7d9170d
-CHANGE_SIGNATURE	{method_declaration flushHandlersState() at src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:327}	{method_declaration flushHandlersState($testCase) at src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:331})
-CHANGE_SIGNATURE	{method_declaration flushState() at src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:309}	{method_declaration flushState($testCase) at src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:312})
+CHANGE_SIGNATURE	{method_declaration flushState() at src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:309 LOC:12}	{method_declaration flushState($testCase) at src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:312 LOC:12})
+CHANGE_SIGNATURE	{method_declaration flushHandlersState() at src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:327 LOC:19}	{method_declaration flushHandlersState($testCase) at src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:331 LOC:24})
 
 Commit: 0aaeeeb9c22fb5f288f8eb97515461dc07427e20
 No refactorings found.
@@ -109,18 +109,18 @@ Commit: 6e3cd5d124b65579450ed3e3c073dffbb9644e2e
 No refactorings found.
 
 Commit: bebbf49c4000e03455b434a0fb9cdde119d4f1e4
-CHANGE_SIGNATURE	{method_declaration getConcreteBindingFromAttributes($abstract, $reflectedAttributes) at src/Illuminate/Container/Container.php:1009}	{method_declaration getConcreteBindingFromAttributes($abstract) at src/Illuminate/Container/Container.php:1010})
-EXTRACT	{method_declaration isShared($abstract) at src/Illuminate/Container/Container.php:270}	{method_declaration getScopedTyped($reflection) at src/Illuminate/Container/Container.php:303})
+EXTRACT	{method_declaration isShared($abstract) at src/Illuminate/Container/Container.php:270 LOC:30}	{method_declaration getScopedTyped($reflection) at src/Illuminate/Container/Container.php:303 LOC:12})
+CHANGE_SIGNATURE	{method_declaration getConcreteBindingFromAttributes($abstract, $reflectedAttributes) at src/Illuminate/Container/Container.php:1009 LOC:32}	{method_declaration getConcreteBindingFromAttributes($abstract) at src/Illuminate/Container/Container.php:1010 LOC:50})
 
 Commit: 0d09b305229117e17b90605448230f3d29e1b789
-CHANGE_SIGNATURE	{method_declaration numericMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1526}	{method_declaration numericMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1529})
-CHANGE_SIGNATURE	{method_declaration uuidMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1558}	{method_declaration uuidMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1569})
-CHANGE_SIGNATURE	{method_declaration morphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1490}	{method_declaration morphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1491})
-CHANGE_SIGNATURE	{method_declaration nullableNumericMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1542}	{method_declaration nullableNumericMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1548})
-CHANGE_SIGNATURE	{method_declaration ulidMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1590}	{method_declaration ulidMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1609})
-CHANGE_SIGNATURE	{method_declaration nullableMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1508}	{method_declaration nullableMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1510})
-CHANGE_SIGNATURE	{method_declaration nullableUuidMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1574}	{method_declaration nullableUuidMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1588})
-CHANGE_SIGNATURE	{method_declaration nullableUlidMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1606}	{method_declaration nullableUlidMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1628})
+CHANGE_SIGNATURE	{method_declaration morphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1490 LOC:10}	{method_declaration morphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1491 LOC:10})
+CHANGE_SIGNATURE	{method_declaration uuidMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1558 LOC:8}	{method_declaration uuidMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1569 LOC:10})
+CHANGE_SIGNATURE	{method_declaration numericMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1526 LOC:8}	{method_declaration numericMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1529 LOC:10})
+CHANGE_SIGNATURE	{method_declaration nullableNumericMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1542 LOC:8}	{method_declaration nullableNumericMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1548 LOC:12})
+CHANGE_SIGNATURE	{method_declaration nullableUlidMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1606 LOC:8}	{method_declaration nullableUlidMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1628 LOC:12})
+CHANGE_SIGNATURE	{method_declaration nullableMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1508 LOC:10}	{method_declaration nullableMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1510 LOC:10})
+CHANGE_SIGNATURE	{method_declaration ulidMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1590 LOC:8}	{method_declaration ulidMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1609 LOC:10})
+CHANGE_SIGNATURE	{method_declaration nullableUuidMorphs($name, $indexName) at src/Illuminate/Database/Schema/Blueprint.php:1574 LOC:8}	{method_declaration nullableUuidMorphs($name, $indexName, $after) at src/Illuminate/Database/Schema/Blueprint.php:1588 LOC:12})
 
 Commit: fbfe9adfa599df93fe6c15368097b794662a334f
 No refactorings found.
@@ -141,7 +141,7 @@ Commit: 7eeeed0831a799a78f8144d90af567733c171405
 No refactorings found.
 
 Commit: 31e1213799157913886d554811153eb0687e57c0
-RENAME	{method_declaration testMiddlewareDataProvider() at tests/Queue/FailOnExceptionMiddlewareTest.php:31}	{method_declaration middlewareDataProvider() at tests/Queue/FailOnExceptionMiddlewareTest.php:31})
+RENAME	{method_declaration testMiddlewareDataProvider() at tests/Queue/FailOnExceptionMiddlewareTest.php:31 LOC:15}	{method_declaration middlewareDataProvider() at tests/Queue/FailOnExceptionMiddlewareTest.php:31 LOC:15})
 
 Commit: 93174e206955448054f89c2e97fe0b436e958bd3
 No refactorings found.
@@ -207,7 +207,7 @@ Commit: c082869b577f88eed010c3ddc564663cbc956b07
 No refactorings found.
 
 Commit: d83b9f530a95b44c2ecadbb2cb1b6e8200c31a70
-CHANGE_SIGNATURE	{method_declaration defer($callback) at src/Illuminate/Events/Dispatcher.php:797}	{method_declaration defer($callback, $events) at src/Illuminate/Events/Dispatcher.php:805})
+CHANGE_SIGNATURE	{method_declaration defer($callback) at src/Illuminate/Events/Dispatcher.php:797 LOC:23}	{method_declaration defer($callback, $events) at src/Illuminate/Events/Dispatcher.php:805 LOC:26})
 
 Commit: 810581ae3a98930f98aafde729b01171be0b83db
 No refactorings found.
@@ -255,9 +255,9 @@ Commit: c9af3bce35731b3a9d1b3db7e87262efeaccd5c7
 No refactorings found.
 
 Commit: 0dba49dd00ec999047f6497c5a26936bd6e52621
-CHANGE_SIGNATURE	{method_declaration withoutParents() at src/Illuminate/Database/Eloquent/Factories/Factory.php:779}	{method_declaration withoutParents($parents) at src/Illuminate/Database/Eloquent/Factories/Factory.php:793})
-CHANGE_SIGNATURE	{function_definition evaluateRelations($attribute) at src/Illuminate/Database/Eloquent/Factories/Factory.php:508}	{function_definition evaluateRelations($attribute, $key) at src/Illuminate/Database/Eloquent/Factories/Factory.php:518})
-CHANGE_SIGNATURE	{method_declaration __construct($count, $states, $has, $for, $afterMaking, $afterCreating, $connection, $recycle, $expandRelationships) at src/Illuminate/Database/Eloquent/Factories/Factory.php:156}	{method_declaration __construct($count, $states, $has, $for, $afterMaking, $afterCreating, $connection, $recycle, $expandRelationships, $excludeRelationships) at src/Illuminate/Database/Eloquent/Factories/Factory.php:164})
+CHANGE_SIGNATURE	{function_definition evaluateRelations($attribute) at src/Illuminate/Database/Eloquent/Factories/Factory.php:508 LOC:12}	{function_definition evaluateRelations($attribute, $key) at src/Illuminate/Database/Eloquent/Factories/Factory.php:518 LOC:15})
+CHANGE_SIGNATURE	{method_declaration __construct($count, $states, $has, $for, $afterMaking, $afterCreating, $connection, $recycle, $expandRelationships) at src/Illuminate/Database/Eloquent/Factories/Factory.php:156 LOC:22}	{method_declaration __construct($count, $states, $has, $for, $afterMaking, $afterCreating, $connection, $recycle, $expandRelationships, $excludeRelationships) at src/Illuminate/Database/Eloquent/Factories/Factory.php:164 LOC:24})
+CHANGE_SIGNATURE	{method_declaration withoutParents() at src/Illuminate/Database/Eloquent/Factories/Factory.php:779 LOC:4}	{method_declaration withoutParents($parents) at src/Illuminate/Database/Eloquent/Factories/Factory.php:793 LOC:4})
 
 Commit: d70e372dbd6a33b414b7558f66bc403bc6597063
 No refactorings found.
@@ -296,8 +296,8 @@ Commit: 767f9b71918c2b33c64fcb507e7947b76be53165
 No refactorings found.
 
 Commit: f9e89bb5424617edd4c9491399b920b353eaba93
-EXTRACT_MOVE	{method_declaration causedByConcurrencyError($e) at src/Illuminate/Database/DetectsConcurrencyErrors.php:17}	{method_declaration causedByConcurrencyError($e) at src/Illuminate/Database/ConcurrencyErrorDetector.php:18})
-EXTRACT_MOVE	{method_declaration causedByLostConnection($e) at src/Illuminate/Database/DetectsLostConnections.php:16}	{method_declaration causedByLostConnection($e) at src/Illuminate/Database/LostConnectionDetector.php:17})
+EXTRACT_MOVE	{method_declaration causedByConcurrencyError($e) at src/Illuminate/Database/DetectsConcurrencyErrors.php:17 LOC:20}	{method_declaration causedByConcurrencyError($e) at src/Illuminate/Database/ConcurrencyErrorDetector.php:18 LOC:20})
+EXTRACT_MOVE	{method_declaration causedByLostConnection($e) at src/Illuminate/Database/DetectsLostConnections.php:16 LOC:71}	{method_declaration causedByLostConnection($e) at src/Illuminate/Database/LostConnectionDetector.php:17 LOC:71})
 
 Commit: 146a2b8f8792e0b5965204a7e55434e3ecbec2e2
 No refactorings found.
@@ -315,7 +315,7 @@ Commit: 983c5f158cccb52341c0475102441974f0f58873
 No refactorings found.
 
 Commit: a3267a351d0c59029c6ebe82c236a5ca1473f50c
-CHANGE_SIGNATURE	{method_declaration validateInteger($attribute, $value) at src/Illuminate/Validation/Concerns/ValidatesAttributes.php:1559}	{method_declaration validateInteger($attribute, $value, $parameters) at src/Illuminate/Validation/Concerns/ValidatesAttributes.php:1560})
+CHANGE_SIGNATURE	{method_declaration validateInteger($attribute, $value) at src/Illuminate/Validation/Concerns/ValidatesAttributes.php:1559 LOC:4}	{method_declaration validateInteger($attribute, $value, $parameters) at src/Illuminate/Validation/Concerns/ValidatesAttributes.php:1560 LOC:8})
 
 Commit: fc6e0c69d5e2c5f6f0b65bfddc5713c48b8f5232
 No refactorings found.
@@ -378,8 +378,8 @@ Commit: a182063ecc4db001173d8c8c430d32c14c613658
 No refactorings found.
 
 Commit: c890a83f6981e9a6753e4209e9b267c0b52a25e0
-CHANGE_SIGNATURE	{method_declaration isUuid() at src/Illuminate/Support/Stringable.php:397}	{method_declaration isUuid($version) at src/Illuminate/Support/Stringable.php:399})
-CHANGE_SIGNATURE	{method_declaration isUrl() at src/Illuminate/Support/Stringable.php:387}	{method_declaration isUrl($protocols) at src/Illuminate/Support/Stringable.php:388})
+CHANGE_SIGNATURE	{method_declaration isUrl() at src/Illuminate/Support/Stringable.php:387 LOC:4}	{method_declaration isUrl($protocols) at src/Illuminate/Support/Stringable.php:388 LOC:4})
+CHANGE_SIGNATURE	{method_declaration isUuid() at src/Illuminate/Support/Stringable.php:397 LOC:4}	{method_declaration isUuid($version) at src/Illuminate/Support/Stringable.php:399 LOC:4})
 
 Commit: 1618e437aa5f54e2f3429ac55f909446d7207593
 No refactorings found.
@@ -529,8 +529,8 @@ Commit: 347cc4aa36cf4e958a3f0a0b2600e36e2478b937
 No refactorings found.
 
 Commit: 1784f2e64b1df3989ccb092daa923c05d23f6227
-CHANGE_SIGNATURE	{method_declaration spatialIndex($columns, $name) at src/Illuminate/Database/Schema/Blueprint.php:689}	{method_declaration spatialIndex($columns, $name, $operatorClass) at src/Illuminate/Database/Schema/Blueprint.php:690})
-CHANGE_SIGNATURE	{method_declaration indexCommand($type, $columns, $index, $algorithm) at src/Illuminate/Database/Schema/Blueprint.php:1652}	{method_declaration indexCommand($type, $columns, $index, $algorithm, $operatorClass) at src/Illuminate/Database/Schema/Blueprint.php:1654})
+CHANGE_SIGNATURE	{method_declaration spatialIndex($columns, $name) at src/Illuminate/Database/Schema/Blueprint.php:689 LOC:4}	{method_declaration spatialIndex($columns, $name, $operatorClass) at src/Illuminate/Database/Schema/Blueprint.php:690 LOC:4})
+CHANGE_SIGNATURE	{method_declaration indexCommand($type, $columns, $index, $algorithm) at src/Illuminate/Database/Schema/Blueprint.php:1652 LOC:13}	{method_declaration indexCommand($type, $columns, $index, $algorithm, $operatorClass) at src/Illuminate/Database/Schema/Blueprint.php:1654 LOC:13})
 
 Commit: 2f70782dea855e17941c282cd9c49857f0591123
 No refactorings found.
@@ -545,7 +545,7 @@ Commit: 59b1dfff74f2df0e70ae954a66e5a32217b00cb9
 No refactorings found.
 
 Commit: 5064292e46e55650ad820923b623f97082aaec64
-CHANGE_SIGNATURE	{method_declaration validateBoolean($attribute, $value) at src/Illuminate/Validation/Concerns/ValidatesAttributes.php:491}	{method_declaration validateBoolean($attribute, $value, $parameters) at src/Illuminate/Validation/Concerns/ValidatesAttributes.php:492})
+CHANGE_SIGNATURE	{method_declaration validateBoolean($attribute, $value) at src/Illuminate/Validation/Concerns/ValidatesAttributes.php:491 LOC:6}	{method_declaration validateBoolean($attribute, $value, $parameters) at src/Illuminate/Validation/Concerns/ValidatesAttributes.php:492 LOC:10})
 
 Commit: 2784ca1100c3c61fe4bc355757e83a3d74ced446
 No refactorings found.

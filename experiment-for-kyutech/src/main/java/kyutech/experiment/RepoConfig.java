@@ -12,7 +12,7 @@ public final class RepoConfig {
 
     public static final String[] C = {
         // "https://github.com/torvalds/linux.git",
-        // "https://github.com/Genymobile/scrcpy.git",
+        "https://github.com/Genymobile/scrcpy.git",
         // "https://github.com/netdata/netdata.git",
         // "https://github.com/redis/redis.git",
         // "https://github.com/obsproject/obs-studio.git",
@@ -29,7 +29,7 @@ public final class RepoConfig {
 
     public static final String[] RUBY = {
         // "https://github.com/rails/rails.git",
-        // "https://github.com/maybe-finance/maybe.git",
+        "https://github.com/maybe-finance/maybe.git",
     };
 
     public static final String[] GO = {
@@ -44,7 +44,7 @@ public final class RepoConfig {
 
     public static final String[] PYTHON = {
         // "https://github.com/Significant-Gravitas/AutoGPT.git",
-        "https://github.com/huggingface/transformers.git",
+        // "https://github.com/huggingface/transformers.git",
         // "https://github.com/ytdl-org/youtube-dl.git"
     };
 
