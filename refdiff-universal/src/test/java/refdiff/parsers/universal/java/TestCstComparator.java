@@ -21,7 +21,7 @@ import refdiff.parsers.universal.UniversalPlugin;
 public class TestCstComparator {
 
     private static final LanguagePlugin parser = new UniversalPlugin();
-    private static final String TEST_DATA_BASE_PATH = "src/test/resources/java/";
+    private static final String TEST_DATA_BASE_PATH = "src/test/resources/java/refactor";
 
     private CstDiff diff(String folderName) throws Exception {
         Path baseFolderPath = Paths.get(TEST_DATA_BASE_PATH, folderName);
@@ -145,6 +145,17 @@ public class TestCstComparator {
             relationship(RelationshipType.INLINE, node("pkg.Foo", "hello(String[])"), node("pkg.Foo", "main(String[])")),
             relationship(RelationshipType.SAME, node("pkg.Foo", "main(String[])"), node("pkg.Foo", "main(String[])")),
             relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo"))
+        ));
+    }
+
+    @Test
+    public void shouldMatchInternalMoveMethod() throws Exception {
+        CstDiff diff = diff("InternalMoveMethod"); // Folder name is "InternalMoveMethod"
+        assertThat(diff, containsOnly(
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo")),
+            relationship(RelationshipType.SAME, node("pkg.Foo", "pkg.Bar"), node("pkg.Foo", "pkg.Bar")),
+            relationship(RelationshipType.INTERNAL_MOVE, node("pkg.Foo", "pkg.Bar", "hello(String[])"), node("pkg.Foo", "hello(String[])")),
+            relationship(RelationshipType.SAME, node("pkg.Foo", "main(String[])"), node("pkg.Foo", "main(String[])"))
         ));
     }
 }

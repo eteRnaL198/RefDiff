@@ -47,7 +47,8 @@ public class InheritanceTreeGenerator {
             TSTree tree = treeEntry.getValue();
             String filePath = treeEntry.getKey();
             String sourceCode = sourceCodeMap.get(filePath);
-            addInheritanceRelationshipsForFile(root, participatingTypeNodeMap, tree, tsLang, sourceCode);
+            byte[] sourceBytes = sourceCode.getBytes();
+            addInheritanceRelationshipsForFile(root, participatingTypeNodeMap, tree, tsLang, sourceBytes);
         }
     }
 
@@ -61,7 +62,7 @@ public class InheritanceTreeGenerator {
         }
     }
 
-    private void addInheritanceRelationshipsForFile(CstRoot root, Map<String, CstNode> participatingTypeNodeMap, TSTree tree, TSLanguage tsLang, String sourceCode) {
+    private void addInheritanceRelationshipsForFile(CstRoot root, Map<String, CstNode> participatingTypeNodeMap, TSTree tree, TSLanguage tsLang, byte[] sourceBytes) {
         TSQuery tsQuery = new TSQuery(tsLang, this.inheritanceConstructQueryString);
         TSQueryCursor cursor = new TSQueryCursor();
         TSNode rootNode = tree.getRootNode();
@@ -75,9 +76,9 @@ public class InheritanceTreeGenerator {
                     case "superclass": { // e.g., class A extends B
                         TSNode superclass = tsNode;
                         TSNode extendsToken = superclass.getChild(0);
-                        String superclassName = sourceCode.substring(extendsToken.getEndByte(), superclass.getEndByte()).trim();
+                        String superclassName = new String(sourceBytes, extendsToken.getEndByte(), superclass.getEndByte() - extendsToken.getEndByte()).trim();
                         TSNode identifier = superclass.getParent().getChildByFieldName("name");
-                        String className = sourceCode.substring(identifier.getStartByte(), identifier.getEndByte());
+                        String className = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte());
                         if (participatingTypeNodeMap.containsKey(className) && participatingTypeNodeMap.containsKey(superclassName)) {
                             root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, participatingTypeNodeMap.get(className).getId(), participatingTypeNodeMap.get(superclassName).getId()));
                         }
@@ -87,9 +88,9 @@ public class InheritanceTreeGenerator {
                     case "extends_interfaces": { // e.g., interface A extends B, C
                         TSNode interfacesNode = tsNode;
                         TSNode subTypeNameNode = interfacesNode.getParent().getChildByFieldName("name");
-                        String subTypeName = sourceCode.substring(subTypeNameNode.getStartByte(), subTypeNameNode.getEndByte());
+                        String subTypeName = new String(sourceBytes, subTypeNameNode.getStartByte(), subTypeNameNode.getEndByte() - subTypeNameNode.getStartByte());
                         TSNode firstTokenAfterKeyword = interfacesNode.getChild(0); // e.g., 'implements' or 'extends' token
-                        List<String> superTypeNames = java.util.Arrays.stream(sourceCode.substring(firstTokenAfterKeyword.getEndByte(), interfacesNode.getEndByte()).split(",")).map(String::trim).toList();
+                        List<String> superTypeNames = java.util.Arrays.stream(new String(sourceBytes, firstTokenAfterKeyword.getEndByte(), interfacesNode.getEndByte() - firstTokenAfterKeyword.getEndByte()).split(",")).map(String::trim).toList();
                         for (String name : superTypeNames) {
                             if (participatingTypeNodeMap.containsKey(subTypeName) && participatingTypeNodeMap.containsKey(name)) {
                                 root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, participatingTypeNodeMap.get(subTypeName).getId(), participatingTypeNodeMap.get(name).getId()));

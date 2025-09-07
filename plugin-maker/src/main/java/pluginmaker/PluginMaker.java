@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,37 +14,60 @@ import java.util.stream.Stream;
 
 import org.eclipse.jgit.lib.Repository;
 import org.treesitter.*;
+import java.util.function.Supplier;
 
 import refdiff.core.io.GitHelper;
 
 
 public class PluginMaker {
-  // private static final String LANGUAGE_NAME = "python";
-  // private static final String LANGUAGE_EXTENSION = ".py";
-  // private static final String REPO_URL = "https://github.com/Significant-Gravitas/AutoGPT.git";
-  // private static final String LANGUAGE_CTAGS_OPTION = "--kinds-Python=cfm";
-  // private static final TSLanguage tsLang = new TreeSitterPython();
+  private enum Language {
+    PYTHON("python", ".py", "--kinds-Python=cfm", () -> new TreeSitterPython()),
+    GO("go", ".go", "--kinds-Go=f", () -> new TreeSitterGo()),
+    PHP("php", ".php", "--php-kinds=f", () -> new TreeSitterPhp()),
+    JAVA("java", ".java", "--kinds-Java=pigacm", () -> new TreeSitterJava());
 
-  // private static final String LANGUAGE_NAME = "go";
-  // private static final String LANGUAGE_EXTENSION = ".go";
-  // private static final String LANGUAGE_CTAGS_OPTION = "--kinds-Go=f";
-  // private static final TSLanguage tsLang = new TreeSitterGo();
+    private final String name;
+    private final String extension;
+    private final String ctagsOption;
+    private final Supplier<TSLanguage> tsSupplier;
 
-  private static final String LANGUAGE_NAME = "php";
-  private static final String LANGUAGE_EXTENSION = ".php";
-  private static final String LANGUAGE_CTAGS_OPTION = "--php-kinds=f";
-  private static final TSLanguage tsLang = new TreeSitterPhp();
+    Language(String name, String extension, String ctagsOption, Supplier<TSLanguage> tsSupplier) {
+      this.name = name;
+      this.extension = extension;
+      this.ctagsOption = ctagsOption;
+      this.tsSupplier = tsSupplier;
+    }
+
+    String getName() { return name; }
+    String getExtension() { return extension; }
+    String getCtagsOption() { return ctagsOption; }
+    TSLanguage getTSLanguage() { return tsSupplier.get(); }
+
+    static Language fromName(String n) {
+      for (Language l : values()) {
+        if (l.name.equalsIgnoreCase(n)) return l;
+      }
+      throw new IllegalArgumentException("Unknown language: " + n);
+    }
+  }
 
   public static void main(String[] args) throws Exception {
     PluginMaker pluginMaker = new PluginMaker();
-    // String repoName = REPO_URL.substring(REPO_URL.lastIndexOf('/') + 1, REPO_URL.lastIndexOf('.'));
-    // String repoPath = "repo/" + LANGUAGE_NAME + "/" + repoName;
-    // File repoDir = pluginMaker.cloneRepository(REPO_URL, repoPath);
+    System.out.println(Arrays.toString(args));
+    String langArg = null;
+    if (args != null && args.length > 0 && args[0] != null && !args[0].isEmpty()) {
+      langArg = args[0];
+    }
 
-    Path srcDir = Paths.get("context/" + LANGUAGE_NAME + "/src/");
+    if (langArg == null) {
+      throw new IllegalArgumentException("Language argument is required");
+    }
+    Language language = Language.fromName(langArg);
+
+    Path srcDir = Paths.get("context/" + language.getName() + "/src/");
     List<Path> sourceFiles = Files.list(srcDir)
         .filter(Files::isRegularFile)
-        .filter(p -> p.toString().endsWith(LANGUAGE_EXTENSION))
+        .filter(p -> p.toString().endsWith(language.getExtension()))
         .collect(Collectors.toList());
     
     // List<Path> sourceFiles;
@@ -63,7 +87,7 @@ public class PluginMaker {
     //   }
     // }
     
-    Path tagsDir = Paths.get("context/" + LANGUAGE_NAME + "/tags/");
+    Path tagsDir = Paths.get("context/" + language.getName() + "/tags/");
     if (!Files.exists(tagsDir)) {
       Files.createDirectories(tagsDir);
     }
@@ -72,25 +96,25 @@ public class PluginMaker {
       String baseName = sourceFileName.substring(0, sourceFileName.lastIndexOf('.'));
       Path ctagsOutputFile = tagsDir.resolve("tags-" + baseName + ".txt");
 
-      pluginMaker.executeCommand(
-          srcDir.toFile(),
-          "ctags",
-          "--pseudo-tags",
-          "--sort=no",
-          "-o",
-          ctagsOutputFile.toAbsolutePath().toString(),
-          "--fields=+n",
-          LANGUAGE_CTAGS_OPTION,
-          sourceFileName);
+    pluginMaker.executeCommand(
+      srcDir.toFile(),
+      "ctags",
+      "--pseudo-tags",
+      "--sort=no",
+      "-o",
+      ctagsOutputFile.toAbsolutePath().toString(),
+      "--fields=+n",
+      language.getCtagsOption(),
+      sourceFileName);
     }
 
-    Path astDir = Paths.get("context/" + LANGUAGE_NAME + "/ast/");
+    Path astDir = Paths.get("context/" + language.getName() + "/ast/");
     if (!Files.exists(astDir)) {
       Files.createDirectories(astDir);
     }
 
     for (Path sourceFile : sourceFiles) {
-      String astContent = pluginMaker.parse(sourceFile, tsLang);
+      String astContent = pluginMaker.parse(sourceFile, language.getTSLanguage());
       String sourceFileName = sourceFile.getFileName().toString();
       String baseName = sourceFileName.substring(0, sourceFileName.lastIndexOf('.'));
       Path astOutputFile = astDir.resolve("ast-" + baseName + ".txt");

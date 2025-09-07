@@ -5,8 +5,8 @@ plugins {
 }
 
 application {
-    mainClass = 'kyutech.experiment.Analyzer'
-    // mainClass = 'kyutech.experiment.JavaPerformance'
+    // mainClass = 'kyutech.experiment.Analyzer'
+    mainClass = 'kyutech.experiment.JavaPerformance'
 }
 
 dependencies {

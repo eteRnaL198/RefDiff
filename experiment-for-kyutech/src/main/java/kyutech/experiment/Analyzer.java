@@ -22,7 +22,8 @@ import refdiff.core.diff.Relationship;
 import refdiff.parsers.universal.UniversalPlugin;
 
 public class Analyzer {
-        private static int COMMIT_COUNT = 200;
+        // private static int COMMIT_COUNT = 200;
+        private static int COMMIT_COUNT = 2;
 
         public static void main(String[] args) throws Exception {
             UniversalPlugin universalPlugin = new UniversalPlugin();
