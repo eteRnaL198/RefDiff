@@ -1,4 +1,4 @@
-package kyutech.experiment;
+package experiment;
 
 import java.io.BufferedReader;
 import java.io.File;

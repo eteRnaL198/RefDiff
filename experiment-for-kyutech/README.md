@@ -1,3 +1,0 @@
-```bash
-./gradlew run
-```

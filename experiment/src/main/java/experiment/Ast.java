@@ -1,4 +1,5 @@
-package kyutech.experiment;
+package experiment;
+
 
 import java.io.File;
 import java.nio.file.Path;

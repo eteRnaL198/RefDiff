@@ -5,8 +5,8 @@ plugins {
 }
 
 application {
-    // mainClass = 'kyutech.experiment.Analyzer'
-    mainClass = 'kyutech.experiment.JavaPerformance'
+    // mainClass = 'experiment.Analyzer'
+    mainClass = 'experiment.JavaPerformance'
 }
 
 dependencies {
@@ -17,4 +17,9 @@ dependencies {
 
     implementation project(':refdiff-universal')
     implementation project(':refdiff-java')
+}
+
+task runJavaPerformance(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    mainClass = 'experiment.JavaPerformance'
 }
