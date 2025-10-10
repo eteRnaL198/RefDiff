@@ -21,11 +21,22 @@ public class UniversalPlugin implements LanguagePlugin {
   private enum Language {
     JAVA, C, JAVASCRIPT, RUBY, GO, PYTHON, PHP
   }
+  private Language language;
+
+  public UniversalPlugin() {
+    this.language = null;
+  }
+
+  public UniversalPlugin(Language lang) {
+    this.language = lang;
+  }
 
   @Override
   public CstRoot parse(SourceFileSet sources) throws Exception {
-    String firstFilePath = sources.getSourceFiles().get(0).getPath(); // TODO 最初のファイルのパスを取得する方法を改善
-    Language language = getLanguageByFileExtension(firstFilePath);
+    if (this.language == null) {
+      this.language = getLanguageByFileExtension(sources);
+    }
+
     Parser parser;
     switch (language) {
       case JAVA:
@@ -60,7 +71,8 @@ public class UniversalPlugin implements LanguagePlugin {
     return new FilePathFilter(Arrays.asList(".java", ".c", ".js", ".rb", ".go", ".py", ".php"));
   }
 
-  private Language getLanguageByFileExtension(String filePath) {
+  private Language getLanguageByFileExtension(SourceFileSet sources) {
+    String filePath = sources.getSourceFiles().get(0).getPath(); // TODO 最初のファイルのパスを取得する方法を改善
     if (filePath.endsWith(".java")) {
       return Language.JAVA;
     } else if (filePath.endsWith(".c")) {
