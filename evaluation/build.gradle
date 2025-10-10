@@ -5,8 +5,8 @@ plugins {
 }
 
 application {
-    // mainClass = 'experiment.Analyzer'
-    mainClass = 'experiment.JavaPerformance'
+    // mainClass = 'evaluation.Analyzer'
+    mainClass = 'evaluation.JavaPerformance'
 }
 
 dependencies {
@@ -19,7 +19,7 @@ dependencies {
     implementation project(':refdiff-java')
 }
 
-task runJavaPerformance(type: JavaExec) {
+task runJavaEvaluation(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
-    mainClass = 'experiment.JavaPerformance'
+    mainClass = 'evaluation.JavaEvaluator'
 }

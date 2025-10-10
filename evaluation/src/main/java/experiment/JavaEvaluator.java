@@ -1,4 +1,4 @@
-package experiment;
+package evaluation;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -11,30 +11,30 @@ import refdiff.core.diff.Relationship;
 import refdiff.core.diff.RelationshipType;
 import refdiff.parsers.universal.UniversalPlugin;
 import refdiff.parsers.java.JavaPlugin;
-import experiment.CommitUrl;
+import evaluation.CommitUrl;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.charset.StandardCharsets;
 
-public class JavaPerformance {
+public class JavaEvaluator {
 
     public static void main(String[] args) throws Exception {
         File clonedRepositoryBaseDir = new File("repository");
         String id = "1011-0116";
-        String resultDir = String.format("result/JavaPerformance/%s", id);
+        String resultDir = String.format("result/%s", id);
         Files.createDirectories(Paths.get(resultDir));
 
         // Universal plugin
         UniversalPlugin universalPlugin = new UniversalPlugin();
         RefDiff refDiffUniversal = new RefDiff(universalPlugin);
-        new JavaPerformance().runForRepo(refDiffUniversal, clonedRepositoryBaseDir, "Universal Plugin Java on Repository", resultDir + "/universal.txt");
+        new JavaEvaluator().runForRepo(refDiffUniversal, clonedRepositoryBaseDir, "Universal Plugin Java on Repository", resultDir + "/universal.txt");
 
         // Java plugin (needs base dir in constructor)
         JavaPlugin javaPlugin = new JavaPlugin(clonedRepositoryBaseDir);
         RefDiff refDiffJava = new RefDiff(javaPlugin);
-        new JavaPerformance().runForRepo(refDiffJava, clonedRepositoryBaseDir, "Java Plugin on Repository", resultDir + "/java.txt");
+        new JavaEvaluator().runForRepo(refDiffJava, clonedRepositoryBaseDir, "Java Plugin on Repository", resultDir + "/java.txt");
     }
 
 

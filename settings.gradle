@@ -1,1 +1,1 @@
-include 'refdiff-core', 'refdiff-java', 'refdiff-universal', 'experiment', 'plugin-maker'
+include 'refdiff-core', 'refdiff-java', 'refdiff-universal', 'evaluation', 'investigation', 'plugin-maker'
