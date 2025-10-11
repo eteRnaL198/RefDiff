@@ -1,3 +1,3 @@
 ```bash
-./gradlew runJavaPerformance
+./gradlew runJavaEvaluation
 ```

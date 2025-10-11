@@ -5,8 +5,7 @@ plugins {
 }
 
 application {
-    // mainClass = 'evaluation.Analyzer'
-    mainClass = 'evaluation.JavaPerformance'
+    mainClass = 'evaluation.JavaEvaluator'
 }
 
 dependencies {

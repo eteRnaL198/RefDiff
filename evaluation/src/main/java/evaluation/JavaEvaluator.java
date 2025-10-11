@@ -22,14 +22,14 @@ public class JavaEvaluator {
 
     public static void main(String[] args) throws Exception {
         File clonedRepositoryBaseDir = new File("repository");
-        String id = "1011-0116";
+        String id = "1011-1405";
         String resultDir = String.format("result/%s", id);
         Files.createDirectories(Paths.get(resultDir));
 
         // Universal plugin
         UniversalPlugin universalPlugin = new UniversalPlugin();
         RefDiff refDiffUniversal = new RefDiff(universalPlugin);
-        new JavaEvaluator().runForRepo(refDiffUniversal, clonedRepositoryBaseDir, "Universal Plugin Java on Repository", resultDir + "/universal.txt");
+        // new JavaEvaluator().runForRepo(refDiffUniversal, clonedRepositoryBaseDir, "Universal Plugin Java on Repository", resultDir + "/universal.txt");
 
         // Java plugin (needs base dir in constructor)
         JavaPlugin javaPlugin = new JavaPlugin(clonedRepositoryBaseDir);
@@ -37,21 +37,9 @@ public class JavaEvaluator {
         new JavaEvaluator().runForRepo(refDiffJava, clonedRepositoryBaseDir, "Java Plugin on Repository", resultDir + "/java.txt");
     }
 
-
-    private static String extractMethodOrExtractMoveAsString(String headLine, CstDiff diff) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(headLine).append(System.lineSeparator());
-            for (Relationship rel : diff.getRefactoringRelationships()) {
-                    if (rel.getType() == RelationshipType.EXTRACT || rel.getType() == RelationshipType.EXTRACT_MOVE) {
-                            sb.append(rel.getStandardDescription()).append(System.lineSeparator());
-                    }
-            }
-            return sb.toString();
-    }
-
     private void runForRepo(RefDiff refDiff, File clonedRepositoryBaseDir, String header, String outputFilePath) throws Exception {
         System.out.println("\n\n----- " + header + " -----");
-        String[] commitUrls = CommitUrl.getCommitUrls();
+        String[] commitUrls = CommitUrl.getUniqueCommitUrls();
 
         // 1. Clone all unique repositories first.
         Map<String, File> clonedRepos = new HashMap<>();
@@ -79,6 +67,9 @@ public class JavaEvaluator {
         System.out.println("\n\n----- Analyzing commits -----");
         // 最初にファイルを空にする
         Files.write(Paths.get(outputFilePath), new byte[0], StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        int FILE_WRITING_COMMIT_COUNT = 10;
+        int commitCount = 0;
+        StringBuilder result = new StringBuilder();
         for (String commitUrl : commitUrls) {
             String[] parts = commitUrl.split("/");
             if (parts.length < 7) {
@@ -93,12 +84,16 @@ public class JavaEvaluator {
 
             File clonedRepo = clonedRepos.get(repoIdentifier);
             try {
-                String result = extractMethodOrExtractMoveAsString(
-                    String.format("\nRefactorings found in %s %s", repoName, sha1),
-                    refDiff.computeDiffForCommit(clonedRepo, sha1));
-                // TODO 100コミットごとにまとめて追記でもいいかも
-                // 1コミットごとに追記
-                Files.write(Paths.get(outputFilePath), result.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                CstDiff diff = refDiff.computeDiffForCommit(clonedRepo, sha1);
+                for (Relationship rel : diff.getRefactoringRelationships()) {
+                    result.append(repoName).append(" ").append(sha1).append(" ").append(rel.getStandardDescription()).append(System.lineSeparator());
+                }
+                commitCount++;
+                if (commitCount % FILE_WRITING_COMMIT_COUNT == 0) {
+                    Files.write(Paths.get(outputFilePath), result.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    result.setLength(0); // clear the StringBuilder
+                }
+
             } catch (Exception e) {
                 String errorMsg = String.format("Error processing commit %s in repository %s: %s\n", sha1, repoName, e.getMessage());
                 Files.write(Paths.get(outputFilePath), errorMsg.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
