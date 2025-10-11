@@ -1,15 +1,50 @@
 package evaluation;
 
+import java.io.File;
 import java.util.Arrays;
+
+import refdiff.core.io.GitHelper;
 
 public class CommitUrl {
   public static String[] getUniqueCommitUrls() {
-    return Arrays.stream(all)
+    return Arrays.stream(javaCommitUrls)
         .distinct()
         .toArray(String[]::new);
     }
+
+  public static String extractOwner(String commitUrl) {
+    String[] parts = commitUrl.split("/");
+    if (parts.length < 7) {
+      throw new IllegalArgumentException("Invalid commit URL: " + commitUrl);
+    }
+    return parts[3];
+  }
+
+  public static String extractRepoName(String commitUrl) {
+    String[] parts = commitUrl.split("/");
+    if (parts.length < 7) {
+      throw new IllegalArgumentException("Invalid commit URL: " + commitUrl);
+    }
+    return parts[4];
+  }
+
+  public static String extractSha1(String commitUrl) {
+    String[] parts = commitUrl.split("/");
+    if (parts.length < 7) {
+      throw new IllegalArgumentException("Invalid commit URL: " + commitUrl);
+    }
+    return parts[6];
+  }
+
+  public static File clone(File destBaseDir, String owner, String repoName) {
+    String cloneUrl = String.format("https://github.com/%s/%s.git", owner, repoName);
+    System.out.println("\nCloning " + repoName + " from " + cloneUrl);
+    File repoDir = new File(destBaseDir, repoName);
+    File clonedRepo = GitHelper.cloneBareRepository(repoDir, cloneUrl);
+    return clonedRepo;
+  }
   
-  private static final String[] all = {
+  private static final String[] javaCommitUrls = {
     "https://github.com/icse18-refactorings/realm-java/commit/6cf596df183b3c3a38ed5dd9bb3b0100c6548ebb",
     "https://github.com/icse18-refactorings/realm-java/commit/6cf596df183b3c3a38ed5dd9bb3b0100c6548ebb",
     "https://github.com/icse18-refactorings/rstudio/commit/cb49e436b9d7ee55f2531ebc2ef1863f5c9ba9fe",

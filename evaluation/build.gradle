@@ -16,6 +16,8 @@ dependencies {
 
     implementation project(':refdiff-universal')
     implementation project(':refdiff-java')
+
+    testImplementation 'junit:junit:4.11'
 }
 
 task runJavaEvaluation(type: JavaExec) {
