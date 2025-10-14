@@ -1,3 +1,7 @@
 ```bash
-./gradlew runJavaEvaluation
+./gradlew runJavaEvaluation --args='-o <output_directory>'
+```
+
+```bash
+./gradlew runCalculator
 ```

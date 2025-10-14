@@ -1,20 +1,16 @@
-package evaluation;
+package detection;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jgit.revwalk.DepthWalk.Commit;
-
 import refdiff.core.RefDiff;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
 import refdiff.core.diff.RelationshipType;
-import refdiff.core.io.GitHelper;
 import refdiff.parsers.universal.UniversalPlugin;
 import refdiff.parsers.java.JavaPlugin;
-import evaluation.CommitUrl;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,18 +23,41 @@ public class JavaEvaluator {
         JavaEvaluator javaEvaluator = new JavaEvaluator();
 
         File clonedRepositoryBaseDir = new File("repository");
-        String id = "1011-1405";
-        String resultDir = String.format("result/%s", id);
+        // Require output directory id be specified with -o <id> (no default).
+        String dirName = null;
+        for (int i = 0; i < args.length; i++) {
+            String a = args[i];
+            if ("-h".equals(a) || "--help".equals(a)) {
+                System.out.println("Usage: JavaEvaluator -o <outputDirName>");
+                System.out.println("Example: JavaEvaluator -o 1012-2215");
+                return;
+            }
+            if ("-o".equals(a) || "--output".equals(a)) {
+                if (i + 1 < args.length) {
+                    dirName = args[i + 1];
+                    i++; // skip next
+                } else {
+                    System.err.println("Error: missing value for -o/--output");
+                    System.exit(1);
+                }
+            }
+        }
+        if (dirName == null) {
+            System.err.println("Error: output id must be specified with -o <id>");
+            System.err.println("Usage: JavaEvaluator -o <outputDirName>");
+            System.exit(1);
+        }
+        String resultDir = String.format("detection-result/%s", dirName);
         Files.createDirectories(Paths.get(resultDir));
         Map<String, File> repoMap = javaEvaluator.cloneRepos(clonedRepositoryBaseDir);
 
         UniversalPlugin universalPlugin = new UniversalPlugin();
         RefDiff refDiffUniversal = new RefDiff(universalPlugin);
-        javaEvaluator.runForRepo(refDiffUniversal, repoMap, resultDir + "/universal.txt");
+        // javaEvaluator.runForRepo(refDiffUniversal, repoMap, resultDir + "/universal.csv");
 
         JavaPlugin javaPlugin = new JavaPlugin(clonedRepositoryBaseDir); // needs base dir in constructor
         RefDiff refDiffJava = new RefDiff(javaPlugin);
-        javaEvaluator.runForRepo(refDiffJava, repoMap, resultDir + "/java.txt");
+        javaEvaluator.runForRepo(refDiffJava, repoMap, resultDir + "/java.csv");
     }
 
     private void runForRepo(RefDiff refDiff, Map<String, File> repoMap, String outputFilePath) throws Exception {
@@ -49,6 +68,7 @@ public class JavaEvaluator {
         int FILE_WRITING_COMMIT_COUNT = 10;
         int commitCount = 0;
         StringBuilder result = new StringBuilder();
+        result.append("repository,commit,type,before,after\n"); // header
         for (String commitUrl : commitUrls) {
             String owner = CommitUrl.extractOwner(commitUrl);
             String repoName = CommitUrl.extractRepoName(commitUrl);
@@ -62,7 +82,7 @@ public class JavaEvaluator {
             try {
                 CstDiff diff = refDiff.computeDiffForCommit(repo, sha1);
                 for (Relationship rel : diff.getRefactoringRelationships()) {
-                    result.append(String.format("%s %s %s%n", repoName, sha1, rel.getStandardDescription()));
+                    result.append(String.format("\"%s\",\"%s\",%s\n",  repoName, sha1, rel.getStandardDescriptionForCsv()));
                 }
             } catch (Exception e) {
                 String errorMsg = String.format("Error processing commit %s in repository %s: %s\n", sha1, repoName, e.getMessage());
@@ -72,7 +92,7 @@ public class JavaEvaluator {
             // Write results to file
             try {
                 commitCount++;
-                if (commitCount % FILE_WRITING_COMMIT_COUNT != 0) continue; // Write to file every FILE_WRITING_COMMIT_COUNT commits
+                if (commitCount % FILE_WRITING_COMMIT_COUNT != 0 && commitCount != commitUrls.length) continue; // Write to file every FILE_WRITING_COMMIT_COUNT commits
                 Files.write(Paths.get(outputFilePath), result.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 result.setLength(0); // clear the StringBuilder
             } catch (Exception e) {

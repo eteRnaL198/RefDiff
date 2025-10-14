@@ -22,5 +22,16 @@ dependencies {
 
 task runJavaEvaluation(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
-    mainClass = 'evaluation.JavaEvaluator'
+    mainClass = 'detection.JavaEvaluator'
+}
+
+task runCalculator(type: Exec) {
+    group = 'Python Scripts'
+    description = 'Runs the CSV processing Python script.'
+
+    workingDir 'calculator'
+    commandLine 'sh', '-c', 'venv/bin/python -m src.main'
+
+    standardOutput = System.out
+    errorOutput = System.err
 }
