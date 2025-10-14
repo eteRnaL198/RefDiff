@@ -78,6 +78,10 @@ public class Relationship {
 		return String.format("%s\t{%s}\t{%s})", this.type, formatWithLineNum(this.nodeBefore), formatWithLineNum(this.nodeAfter));
 	}
 
+	public String getStandardDescriptionForCsv() {
+		return String.format("\"%s\",\"{%s}\",\"{%s})\"", this.type, formatWithLineNum(this.nodeBefore), formatWithLineNum(this.nodeAfter));
+	}
+
 	public String getDescriptionWithLOC() {
 		return String.format("%s\t{%s}\t{%s})", this.type, formatWithLineNumAndLoc(this.nodeBefore), formatWithLineNumAndLoc(this.nodeAfter));
 	}
