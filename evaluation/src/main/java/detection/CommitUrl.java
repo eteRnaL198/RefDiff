@@ -43,6 +43,10 @@ public class CommitUrl {
     File clonedRepo = GitHelper.cloneBareRepository(repoDir, cloneUrl);
     return clonedRepo;
   }
+
+  public static final String[] specificCommitUrls = {
+    "https://github.com/icse18-refactorings/BroadleafCommerce/commit/abba5d83602c7ae23901bd579ba9fbb7dc36adc0",
+  };
   
   private static final String[] javaCommitUrls = {
     "https://github.com/icse18-refactorings/realm-java/commit/6cf596df183b3c3a38ed5dd9bb3b0100c6548ebb",

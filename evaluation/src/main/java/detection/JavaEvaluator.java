@@ -27,11 +27,6 @@ public class JavaEvaluator {
         String dirName = null;
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
-            if ("-h".equals(a) || "--help".equals(a)) {
-                System.out.println("Usage: JavaEvaluator -o <outputDirName>");
-                System.out.println("Example: JavaEvaluator -o 1012-2215");
-                return;
-            }
             if ("-o".equals(a) || "--output".equals(a)) {
                 if (i + 1 < args.length) {
                     dirName = args[i + 1];
@@ -53,11 +48,11 @@ public class JavaEvaluator {
 
         UniversalPlugin universalPlugin = new UniversalPlugin();
         RefDiff refDiffUniversal = new RefDiff(universalPlugin);
-        // javaEvaluator.runForRepo(refDiffUniversal, repoMap, resultDir + "/universal.csv");
+        javaEvaluator.runForRepo(refDiffUniversal, repoMap, resultDir + "/universal.csv");
 
         JavaPlugin javaPlugin = new JavaPlugin(clonedRepositoryBaseDir); // needs base dir in constructor
         RefDiff refDiffJava = new RefDiff(javaPlugin);
-        javaEvaluator.runForRepo(refDiffJava, repoMap, resultDir + "/java.csv");
+        // javaEvaluator.runForRepo(refDiffJava, repoMap, resultDir + "/java.csv");
     }
 
     private void runForRepo(RefDiff refDiff, Map<String, File> repoMap, String outputFilePath) throws Exception {
