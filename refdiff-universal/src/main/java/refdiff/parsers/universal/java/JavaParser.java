@@ -224,12 +224,12 @@ public class JavaParser implements Parser {
         if (parameter.getType().equals("formal_parameter")) {
             TSNode typeNode = parameter.getChildByFieldName("type");
             if (typeNode != null && !typeNode.isNull()) {
-                paramTypeString = new String(sourceBytes, typeNode.getStartByte(), typeNode.getEndByte() - typeNode.getStartByte(), StandardCharsets.UTF_8);
+                paramTypeString = new String(sourceBytes, typeNode.getStartByte(), typeNode.getEndByte() - typeNode.getStartByte(), StandardCharsets.UTF_8).split("<")[0]; // Remove generic type parameters if any, e.g., List<String> -> List
             }
         } else if (parameter.getType().equals("spread_parameter")) {
             TSNode typeNode = parameter.getChild(0); // The first child is the type for spread parameters
             if (typeNode != null && !typeNode.isNull()) {
-                paramTypeString = new String(sourceBytes, typeNode.getStartByte(), typeNode.getEndByte() - typeNode.getStartByte(), StandardCharsets.UTF_8) + "..."; // For spread parameters, the type is followed by "..."
+                paramTypeString = new String(sourceBytes, typeNode.getStartByte(), typeNode.getEndByte() - typeNode.getStartByte(), StandardCharsets.UTF_8).split("<")[0] + "..."; // For spread parameters, the type is followed by "..."
             }
         } else if (parameter.getType().equals("receiver_parameter")) {
             // Receiver parameters (e.g., `Outer.this`) are generally not included in RefDiff's localName.
@@ -240,7 +240,7 @@ public class JavaParser implements Parser {
         }
 
         if (paramTypeString != null) {
-            paramTypes.add(paramTypeString);
+          paramTypes.add(paramTypeString);
         } else {
             System.out.println("Warning: Could not determine type for parameter: " + parameter.getType() +
                 " at " + parameter.getStartPoint().getRow() + "-" + parameter.getEndPoint().getRow() +
