@@ -235,6 +235,8 @@ public class JavaParser implements Parser {
             // Receiver parameters (e.g., `Outer.this`) are generally not included in RefDiff's localName.
             // If they need to be included, this part can be adjusted.
             continue; // Skipping receiver parameters for localName.
+        } else if (parameter.getType().equals("block_comment") || parameter.getType().equals("line_comment")) {
+            continue; // Skip comments within parameters
         }
 
         if (paramTypeString != null) {
