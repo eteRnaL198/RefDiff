@@ -8,6 +8,7 @@ Usage:
 
 import argparse
 import sys
+import csv
 from pathlib import Path
 from pprint import pprint
 
@@ -21,9 +22,10 @@ REPO_OWNER_NAME = "icse18-refactorings"
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Read and summarize a java.csv result file")
-    parser.add_argument("--detected", "-d", default="../detection-result/1015_0500/universal.csv", help="Relative path to detected results")
+    parser.add_argument("--detected", "-d", default="../detection-result/1016_0052/universal.csv", help="Relative path to detected results")
     parser.add_argument("--oracle", default="../oracle/java/evaluation-data-public.csv", help="Relative path to oracle")
     parser.add_argument("--output", "-o", default="result.csv", help="Output path")
+    parser.add_argument("--ignore-line", "-i", action='store_true', help="Ignore line or not")
     args = parser.parse_args(argv)
 
     oracle_path = Path(args.oracle)
@@ -49,14 +51,16 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     detected_reprod_java_df = detected_reprod_java_df.dropna() # drop rows containing "Error processing commit" in csv
 
-    result_df = join_table(oracle_java_df, detected_reprod_java_df, REPO_OWNER_NAME)
+    if args.ignore_line:
+        result_df = join_table(oracle_java_df, detected_reprod_java_df, REPO_OWNER_NAME, does_ignore_line=True)
+    else:
+        result_df = join_table(oracle_java_df, detected_reprod_java_df, REPO_OWNER_NAME)
 
-    
     if args.output:
         output_path = Path(args.output)
         result_df["oracle index"] = result_df["oracle index"].astype('Int64')
         result_df["detected index"] = result_df["detected index"].astype('Int64')
-        result_df.to_csv(output_path, index=False, encoding="utf-8")
+        result_df.to_csv(output_path, index=False, encoding="utf-8", quoting=csv.QUOTE_NONNUMERIC)
 
     try:
         metrics = calc_precision_recall(result_df)

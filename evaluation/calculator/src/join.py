@@ -1,16 +1,14 @@
+from typing import Optional
+
 from pandas import DataFrame, merge
 from numpy import select, where
 
 from src.schema import result_java_schema
 
 
-def join_table(oracle_df: DataFrame, detected_df: DataFrame, repo_owner: str) -> DataFrame:
+def join_table(oracle_df: DataFrame, detected_df: DataFrame, repo_owner: str, does_ignore_line: Optional[bool]=False) -> DataFrame:
     oracle_df = oracle_df.reset_index()
     detected_df = detected_df.reset_index()
-
-    detected_df["Commit URL"] = detected_df.apply(
-        lambda row: create_commit_url(repo_owner, row["repository"], row["commit"]), axis=1
-    )
 
     oracle_df = oracle_df.rename(
         columns={"CST Node before": "before", "CST Node After": "after", "index": "oracle index"}
@@ -18,6 +16,18 @@ def join_table(oracle_df: DataFrame, detected_df: DataFrame, repo_owner: str) ->
     detected_df = detected_df.rename(
         columns={"index": "detected index"}
     )
+
+    detected_df["Commit URL"] = detected_df.apply(
+        lambda row: create_commit_url(repo_owner, row["repository"], row["commit"]), axis=1
+    )
+
+    if does_ignore_line:
+        # Normalize 'before' and 'after' columns by stripping whitespace and removing line numbers (e.g., ":123" at the end).
+        # Because line numbers may differ between oracle and detected results depending on inclusions of comments and blank lines.
+        oracle_df["before"] = oracle_df["before"].str.replace(r":\d+", "", regex=True)
+        oracle_df["after"] = oracle_df["after"].str.replace(r":\d+", "", regex=True)
+        detected_df["before"] = detected_df["before"].str.replace(r":\d+", "", regex=True)
+        detected_df["after"] = detected_df["after"].str.replace(r":\d+", "", regex=True)
 
     oracle_df["join_key_type"] = oracle_df["Relationship Type"].str.upper()
     detected_df["join_key_type"] = detected_df["type"].str.upper()
@@ -57,7 +67,7 @@ def join_table(oracle_df: DataFrame, detected_df: DataFrame, repo_owner: str) ->
     result_df["equal to baseline"] = result_df["baseline result"] == result_df[
         "detected result"
     ]
-    
+
     result_df["oracle index"] = merged_df["oracle index"]
     result_df["detected index"] = merged_df["detected index"]
     result_df["note"] = "" # TODO for notes
