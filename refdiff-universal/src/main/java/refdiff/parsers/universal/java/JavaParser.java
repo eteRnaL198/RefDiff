@@ -240,9 +240,9 @@ public class JavaParser implements Parser {
         if (paramTypeString != null) {
             paramTypes.add(paramTypeString);
         } else {
-            System.err.println("Warning: Could not determine type for parameter: " + parameter.getType() + 
-                               " at " + parameter.getStartByte() + "-" + parameter.getEndByte() + 
-                               " in source code: " + new String(sourceBytes, StandardCharsets.UTF_8));
+            System.out.println("Warning: Could not determine type for parameter: " + parameter.getType() +
+                " at " + parameter.getStartPoint().getRow() + "-" + parameter.getEndPoint().getRow() +
+                " in source code: " + new String(sourceBytes, parametersNode.getStartByte(), parametersNode.getEndByte() - parametersNode.getStartByte(), StandardCharsets.UTF_8));
         }
     }
     paramsStr.append(String.join(", ", paramTypes));
