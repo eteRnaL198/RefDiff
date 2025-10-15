@@ -25,6 +25,11 @@ task runJavaEvaluation(type: JavaExec) {
     mainClass = 'detection.JavaEvaluator'
 }
 
+task runDetection(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    mainClass = 'detection.Detector'
+}
+
 task runCalculator(type: Exec) {
     group = 'Python Scripts'
     description = 'Runs the CSV processing Python script.'
