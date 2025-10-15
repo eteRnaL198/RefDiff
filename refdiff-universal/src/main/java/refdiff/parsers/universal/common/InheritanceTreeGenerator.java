@@ -93,20 +93,13 @@ public class InheritanceTreeGenerator {
                         TSNode interfacesNode = tsNode;
                         TSNode subTypeNameNode = interfacesNode.getParent().getChildByFieldName("name");
                         String subTypeName = new String(sourceBytes, subTypeNameNode.getStartByte(), subTypeNameNode.getEndByte() - subTypeNameNode.getStartByte());
-                        TSNode superTypeListNode = interfacesNode.getChild(1); // e.g., implements B, C
-                        List<String> superTypeNames = new ArrayList<>();
-                        for (int i = 0; i < superTypeListNode.getChildCount(); i++) {
-                            TSNode child = superTypeListNode.getChild(i);
-                            if (child.getGrammarType().equals(",")) continue; // comma between multiple interfaces
-                            if (child.getType().equals("type_identifier")) {
-                                String name = new String(sourceBytes, child.getStartByte(), child.getEndByte() - child.getStartByte());
-                                superTypeNames.add(name);
-                            } else if (child.getType().equals("generic_type")) {
-                                TSNode identifierNode = child.getChild(0);
-                                String name = new String(sourceBytes, identifierNode.getStartByte(), identifierNode.getEndByte() - identifierNode.getStartByte());
-                                superTypeNames.add(name);
-                            }
-                        }
+                        TSNode implementsOrExtends = interfacesNode.getChild(0); // e.g., 'implements' or 'extends' token
+                        List<String> superTypeNames = java.util.Arrays.stream(
+                            new String(sourceBytes, implementsOrExtends.getEndByte(), interfacesNode.getEndByte() - implementsOrExtends.getEndByte())
+                            .split(",")) // Split by commas
+                            .map(String::trim)
+                            .map(s -> s.split("<")[0]) // Remove generic type parameters if any, e.g., B<T> -> B
+                            .toList();
                         for (String name : superTypeNames) {
                             if (participatingTypeNodeMap.containsKey(subTypeName) && participatingTypeNodeMap.containsKey(name)) {
                                 root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, participatingTypeNodeMap.get(subTypeName).getId(), participatingTypeNodeMap.get(name).getId()));
