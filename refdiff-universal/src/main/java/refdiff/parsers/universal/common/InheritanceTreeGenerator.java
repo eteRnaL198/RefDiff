@@ -76,7 +76,11 @@ public class InheritanceTreeGenerator {
                     case "superclass": { // e.g., class A extends B
                         TSNode superclass = tsNode;
                         TSNode extendsToken = superclass.getChild(0);
-                        String superclassName = new String(sourceBytes, extendsToken.getEndByte(), superclass.getEndByte() - extendsToken.getEndByte()).trim();
+                        TSNode superclassNameNode = superclass.getChild(1);
+                        if (superclassNameNode.getChildCount() > 1) {
+                            superclassNameNode = superclassNameNode.getChild(0); // In case of generic superclass, e.g., extends Base<T>
+                        }
+                        String superclassName = new String(sourceBytes, extendsToken.getEndByte(), superclassNameNode.getEndByte() - extendsToken.getEndByte()).trim();
                         TSNode identifier = superclass.getParent().getChildByFieldName("name");
                         String className = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte());
                         if (participatingTypeNodeMap.containsKey(className) && participatingTypeNodeMap.containsKey(superclassName)) {
@@ -89,8 +93,20 @@ public class InheritanceTreeGenerator {
                         TSNode interfacesNode = tsNode;
                         TSNode subTypeNameNode = interfacesNode.getParent().getChildByFieldName("name");
                         String subTypeName = new String(sourceBytes, subTypeNameNode.getStartByte(), subTypeNameNode.getEndByte() - subTypeNameNode.getStartByte());
-                        TSNode firstTokenAfterKeyword = interfacesNode.getChild(0); // e.g., 'implements' or 'extends' token
-                        List<String> superTypeNames = java.util.Arrays.stream(new String(sourceBytes, firstTokenAfterKeyword.getEndByte(), interfacesNode.getEndByte() - firstTokenAfterKeyword.getEndByte()).split(",")).map(String::trim).toList();
+                        TSNode superTypeListNode = interfacesNode.getChild(1); // e.g., implements B, C
+                        List<String> superTypeNames = new ArrayList<>();
+                        for (int i = 0; i < superTypeListNode.getChildCount(); i++) {
+                            TSNode child = superTypeListNode.getChild(i);
+                            if (child.getGrammarType().equals(",")) continue; // comma between multiple interfaces
+                            if (child.getType().equals("type_identifier")) {
+                                String name = new String(sourceBytes, child.getStartByte(), child.getEndByte() - child.getStartByte());
+                                superTypeNames.add(name);
+                            } else if (child.getType().equals("generic_type")) {
+                                TSNode identifierNode = child.getChild(0);
+                                String name = new String(sourceBytes, identifierNode.getStartByte(), identifierNode.getEndByte() - identifierNode.getStartByte());
+                                superTypeNames.add(name);
+                            }
+                        }
                         for (String name : superTypeNames) {
                             if (participatingTypeNodeMap.containsKey(subTypeName) && participatingTypeNodeMap.containsKey(name)) {
                                 root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, participatingTypeNodeMap.get(subTypeName).getId(), participatingTypeNodeMap.get(name).getId()));

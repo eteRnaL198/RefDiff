@@ -95,7 +95,7 @@ class Car extends AbstractVehicle {
 /**
  * 複数のインターフェースを実装するクラス。
  */
-class MultiImplementer implements Runnable, Serializable, Cloneable {
+class MultiImplementer implements Runnable, Serializable<Foo>, Cloneable {
   @Override
   public void run() {
     // implementação
@@ -329,7 +329,16 @@ class AnnotatedClass {
 class EmptyClass {
 }
 
-/*
- * このファイルはここまでです。
- * These patterns should cover a wide range of parsing scenarios.
+
+// =========================================================================
+// 8. 追加のテストケース (Additional Test Cases)
+// =========================================================================
+
+/**
+ * ジェネリクスの親クラスを持つクラス。
  */
+class GenericsSubclass extends BoundedGenericCache<String, Map<String, Integer>> {
+  public GenericsSubclass(Map<String, Integer> cache) {
+    super(cache);
+  }
+}
