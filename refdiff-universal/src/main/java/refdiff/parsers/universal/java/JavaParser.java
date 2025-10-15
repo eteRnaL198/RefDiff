@@ -143,8 +143,7 @@ public class JavaParser implements Parser {
         int endLineNumber = tsNode.getEndPoint().getRow() + 1;
         cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, block.getStartByte(), block.getEndByte()));
 
-        TSNode identifier = tsNode.getChildByFieldName("name");
-        String constructorName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
+        String constructorName = "new";
         cstNode.setSimpleName(constructorName);
 
         TSNode parameters = tsNode.getChildByFieldName("parameters");
