@@ -4,34 +4,34 @@ plugins {
     id 'application'
 }
 
-application {
-    mainClass = 'evaluation.JavaEvaluator'
-}
-
 dependencies {
     implementation("io.github.bonede:tree-sitter:0.22.6")
     implementation("io.github.bonede:tree-sitter-javascript:0.23.1")
     implementation("io.github.bonede:tree-sitter-ruby:0.23.1")
     implementation("io.github.bonede:tree-sitter-go:0.23.3")
 
+    implementation project(':refdiff-core')
     implementation project(':refdiff-universal')
-    implementation project(':refdiff-java')
 
     testImplementation 'junit:junit:4.11'
 }
 
-task runJavaEvaluation(type: JavaExec) {
+task runExecutor(type: JavaExec) {
+    group = 'Application'
+    description = 'Runs the performance evaluation executor. Args: <language> [metric]'
     classpath sourceSets.main.runtimeClasspath
-    mainClass = 'detection.JavaEvaluator'
+    mainClass = 'executor.Executor'
 }
 
-task runDetection(type: JavaExec) {
+task runDebug(type: JavaExec) {
+    group = 'Application'
+    description = 'Runs the Debugger class for debugging purposes.'
     classpath sourceSets.main.runtimeClasspath
-    mainClass = 'detection.Detector'
+    mainClass = 'executor.Debugger'
 }
 
 task runCalculator(type: Exec) {
-    group = 'Python Scripts'
+    group = 'Application'
     description = 'Runs the CSV processing Python script.'
 
     workingDir 'calculator'

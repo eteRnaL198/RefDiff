@@ -24,7 +24,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Read and summarize a java.csv result file")
     parser.add_argument("--detected", "-d", default="../detection-result/1016_0052/universal.csv", help="Relative path to detected results")
     parser.add_argument("--oracle", default="../oracle/java/evaluation-data-public.csv", help="Relative path to oracle")
-    parser.add_argument("--output", "-o", default="result.csv", help="Output path")
+    parser.add_argument("--output", "-o", default="result/result.csv", help="Output path")
     parser.add_argument("--ignore-line", "-i", action='store_true', help="Ignore line or not")
     args = parser.parse_args(argv)
 

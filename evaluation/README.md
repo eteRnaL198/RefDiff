@@ -1,7 +1,10 @@
 ```bash
-./gradlew runJavaEvaluation --args='-o <output_directory>'
+./gradlew runExecutor --args='java'
+./gradlew runExecutor --args='c precision'
+./gradlew runExecutor --args='js recall'
 ```
 
+For a specific directory:
 ```bash
-./gradlew runCalculator
+./gradlew runDebug
 ```

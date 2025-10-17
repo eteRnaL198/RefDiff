@@ -1,4 +1,3 @@
-from lzma import FILTER_LZMA1
 from pandas import DataFrame
 from typing import Dict, Any
 import math

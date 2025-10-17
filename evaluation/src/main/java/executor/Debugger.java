@@ -1,4 +1,4 @@
-package detection;
+package executor;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +11,7 @@ import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.UniversalPlugin;
 
-public class Detector {
+public class Debugger {
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/";
     
     private static final LanguagePlugin parser = new UniversalPlugin();
@@ -25,7 +25,7 @@ public class Detector {
     }
 
     public static void main(String[] args) throws Exception {
-        Detector detector = new Detector();
+        Debugger detector = new Debugger();
         // CstDiff diff = detector.diff("BuildCraft");
         CstDiff diff = detector.diff("crate");
         for (Relationship r : diff.getRelationships()) {
