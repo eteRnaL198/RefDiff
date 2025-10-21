@@ -18,7 +18,7 @@ import refdiff.parsers.universal.common.Parser;
 
 public class UniversalPlugin implements LanguagePlugin {
 
-  private enum Language {
+  public enum Language {
     JAVA, C, JAVASCRIPT, RUBY, GO, PYTHON, PHP
   }
   private Language language;
