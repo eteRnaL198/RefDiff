@@ -1,4 +1,4 @@
-package executor;
+package evaluation;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

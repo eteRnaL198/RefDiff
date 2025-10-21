@@ -1,4 +1,4 @@
-package executor;
+package evaluation;
 
 import java.io.File;
 import java.util.Map;
@@ -9,6 +9,7 @@ import refdiff.core.RefDiff;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
 import refdiff.parsers.universal.UniversalPlugin;
+import refdiff.parsers.universal.UniversalPlugin.Language;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,32 +25,18 @@ public class Executor {
         Language lang = mapLanguage(args[0]);
         Metric metric = null;
         if (args.length >= 2) {
-            metric = mapMetrics(args[1]);
+            metric = Metric.buildMetric(args[1]);
         }
 
         String resultDir = "detection-result/";
         Files.createDirectories(Paths.get(resultDir));
-        
-        String[] commitUrls;
-        if (lang == Language.JAVA) {
-            commitUrls = Commit.getJavaCommitUrls();
-        } else if (lang == Language.C && metric == Metric.PRECISION) {
-            commitUrls = Commit.getCPrecisionCommitUrls();
-        } else if (lang == Language.C && metric == Metric.RECALL) {
-            commitUrls = Commit.getCRecallCommitUrls();
-        } else if (lang == Language.JS && metric == Metric.PRECISION) {
-            commitUrls = Commit.getJsPrecisionCommitUrls();
-        } else if (lang == Language.JS && metric == Metric.RECALL) {
-            commitUrls = Commit.getJsRecallCommitUrls();
-        } else {
-            throw new IllegalArgumentException("Unsupported combination of language and metric.");
-        }
 
+        String[] commitUrls = Commit.getCommitUrls(lang, metric);
         File clonedRepositoryBaseDir = new File("repository");
         Map<String, File> repoMap = Commit.cloneRepos(commitUrls, clonedRepositoryBaseDir);
         
-        UniversalPlugin universalPlugin = new UniversalPlugin();
-        RefDiff refDiff = new RefDiff(universalPlugin);
+        UniversalPlugin plugin = new UniversalPlugin(lang);
+        RefDiff refDiff = new RefDiff(plugin);
         
         Executor executor = new Executor();
         String fileName = executor.getNowDateTime() + "-" + lang.toString().toLowerCase() + ".csv";
@@ -102,12 +89,6 @@ public class Executor {
         return now.format(formatter);
     }
 
-    private enum Language {
-        JAVA,
-        C,
-        JS,
-    }
-
     private static Language mapLanguage(String lang) {
         switch (lang.toLowerCase()) {
             case "java":
@@ -116,25 +97,9 @@ public class Executor {
                 return Language.C;
             case "javascript":
             case "js":
-                return Language.JS;
+                return Language.JAVASCRIPT;
             default:
                 throw new IllegalArgumentException("Unsupported language: " + lang);
-        }
-    }
-
-    private enum Metric {
-        PRECISION,
-        RECALL,
-    }
-
-    private static Metric mapMetrics(String metric) {
-        switch (metric.toLowerCase()) {
-            case "precision":
-                return Metric.PRECISION;
-            case "recall":
-                return Metric.RECALL;
-            default:
-                throw new IllegalArgumentException("Unsupported metric: " + metric);
         }
     }
 }

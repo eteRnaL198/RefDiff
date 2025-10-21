@@ -16,18 +16,18 @@ dependencies {
     testImplementation 'junit:junit:4.11'
 }
 
-task runExecutor(type: JavaExec) {
+task runEvaluation(type: JavaExec) {
     group = 'Application'
     description = 'Runs the performance evaluation executor. Args: <language> [metric]'
     classpath sourceSets.main.runtimeClasspath
-    mainClass = 'executor.Executor'
+    mainClass = 'evaluation.Executor'
 }
 
-task runDebug(type: JavaExec) {
+task runEvalDebug(type: JavaExec) {
     group = 'Application'
     description = 'Runs the Debugger class for debugging purposes.'
     classpath sourceSets.main.runtimeClasspath
-    mainClass = 'executor.Debugger'
+    mainClass = 'evaluation.Debugger'
 }
 
 task runCalculator(type: Exec) {

@@ -1,8 +1,7 @@
-package executor;
+package evaluation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,43 +11,27 @@ import java.nio.charset.StandardCharsets;
 
 
 import refdiff.core.io.GitHelper;
+import refdiff.parsers.universal.UniversalPlugin.Language;
 
 public class Commit {
-  private static String[] javaCommitUrls;
-  private static String[] cPrecisionCommitUrls;
-  private static String[] cRecallCommitUrls;
-
   private static final String JAVA_COMMIT_URLS_FILE = "src/main/resources/java-commit-urls.txt";
   private static final String C_PRECISION_COMMIT_URLS_FILE = "src/main/resources/c-precision-commit-urls.txt";
   private static final String C_RECALL_COMMIT_URLS_FILE = "src/main/resources/c-recall-commit-urls.txt";
-
-  public static String[] getJavaCommitUrls() {
-    if (javaCommitUrls != null) {
-      return javaCommitUrls;
+  
+  public static String[] getCommitUrls(Language lang, Metric metric) {
+    if (lang == Language.JAVA && metric == null) {
+      return loadCommitUrlsFromFile(JAVA_COMMIT_URLS_FILE);
+    } else if (lang == Language.C && metric == Metric.PRECISION) {
+      return loadCommitUrlsFromFile(C_PRECISION_COMMIT_URLS_FILE);
+    } else if (lang == Language.C && metric == Metric.RECALL) {
+      return loadCommitUrlsFromFile(C_RECALL_COMMIT_URLS_FILE);
+    } else if (lang == Language.JAVASCRIPT && metric == Metric.PRECISION) {
+      throw new UnsupportedOperationException("Not implemented yet.");
+    } else if (lang == Language.JAVASCRIPT && metric == Metric.RECALL) {
+      throw new UnsupportedOperationException("Not implemented yet.");
+    } else {
+      throw new IllegalArgumentException("Unsupported combination of language and metric.");
     }
-    return loadCommitUrlsFromFile(JAVA_COMMIT_URLS_FILE);
-  }
-
-  public static String[] getCPrecisionCommitUrls() {
-    if (cPrecisionCommitUrls != null) {
-      return cPrecisionCommitUrls;
-    }
-    return loadCommitUrlsFromFile(C_PRECISION_COMMIT_URLS_FILE);
-  }
-
-  public static String[] getCRecallCommitUrls() {
-    if (cRecallCommitUrls != null) {
-      return cRecallCommitUrls;
-    }
-    return loadCommitUrlsFromFile(C_RECALL_COMMIT_URLS_FILE);
-  }
-
-  public static String[] getJsPrecisionCommitUrls() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  public static String[] getJsRecallCommitUrls() {
-    throw new UnsupportedOperationException("Not implemented yet.");
   }
 
   private static String[] loadCommitUrlsFromFile(String filePath) {

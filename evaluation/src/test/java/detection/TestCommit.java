@@ -2,7 +2,7 @@ package detection;
 
 import org.junit.Test;
 
-import executor.Commit;
+import evaluation.Commit;
 
 import static org.junit.Assert.assertEquals;;
 
