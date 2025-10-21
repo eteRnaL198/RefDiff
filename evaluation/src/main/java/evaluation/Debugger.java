@@ -1,37 +1,69 @@
 package evaluation;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.eclipse.jgit.lib.Repository;
 
 import refdiff.core.diff.CstComparator;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.RelationshipType;
 import refdiff.core.diff.Relationship;
+import refdiff.core.io.FilePathFilter;
+import refdiff.core.io.GitHelper;
+import refdiff.core.io.SourceFileSet;
 import refdiff.core.io.SourceFolder;
+import refdiff.core.util.PairBeforeAfter;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.UniversalPlugin;
+import refdiff.parsers.universal.UniversalPlugin.Language;
 
 public class Debugger {
-    private static final String TEST_DATA_BASE_PATH = "src/test/resources/";
-    
-    private static final LanguagePlugin parser = new UniversalPlugin();
+    private static final Boolean IS_FOR_REPO = true;
+    // private static final Boolean IS_FOR_REPO = false;
+    private static final String COMMIT_URL = 
+        "https://github.com/refdiff-study/darknet/commit/8d9ed0a1d680c8d31e453e2e1cebfda66b357c11";
 
-    private CstDiff diff(String folderName) throws Exception {
-        Path baseFolderPath = Paths.get(TEST_DATA_BASE_PATH, folderName);
-        SourceFolder sourcesBefore = SourceFolder.from(baseFolderPath.resolve("v0"), ".java");
-        SourceFolder sourcesAfter = SourceFolder.from(baseFolderPath.resolve("v1"), ".java");
-        CstComparator comparator = new CstComparator(parser);
+    private static final String DIR_NAME = "crate";
+
+    // private static final Language LANG = Language.JAVA;
+    private static final Language LANG = Language.C;
+    // private static final Language LANG = Language.JAVASCRIPT;
+
+    private CstDiff diff(LanguagePlugin plugin, Path path) throws Exception {
+        SourceFolder sourcesBefore = SourceFolder.from(path.resolve("v0"), ".java");
+        SourceFolder sourcesAfter = SourceFolder.from(path.resolve("v1"), ".java");
+        CstComparator comparator = new CstComparator(plugin);
         return comparator.compare(sourcesBefore, sourcesAfter);
     }
 
+    private CstDiff diff(LanguagePlugin plugin, File gitRepository, String commitSha1) throws Exception {
+        Repository repo = GitHelper.openRepository(gitRepository);
+        FilePathFilter fileFilter = plugin.getAllowedFilesFilter();
+        PairBeforeAfter<SourceFileSet> beforeAndAfter = GitHelper.getSourcesBeforeAndAfterCommit(repo, commitSha1, fileFilter); 
+        CstComparator comparator = new CstComparator(plugin);
+        return comparator.compare(beforeAndAfter);
+    }
+
     public static void main(String[] args) throws Exception {
-        Debugger detector = new Debugger();
-        // CstDiff diff = detector.diff("BuildCraft");
-        CstDiff diff = detector.diff("crate");
+        Debugger debugger = new Debugger();
+        LanguagePlugin plugin = new UniversalPlugin(LANG);
+        CstDiff diff = null;
+
+        if (IS_FOR_REPO) {
+            File baseDir = new File("repository");
+            File repo = Commit.clone(baseDir, Commit.extractOwner(COMMIT_URL), Commit.extractRepoName(COMMIT_URL));
+            diff = debugger.diff(plugin, repo, Commit.extractSha1(COMMIT_URL));
+        } else {
+            Path path = Paths.get("src/test/resources/", DIR_NAME);
+            diff = debugger.diff(plugin, path);
+        }
+        
         for (Relationship r : diff.getRelationships()) {
-            // RelationshipType type = r.getType();
-            // System.out.println(type);
-            System.out.println(r);
+            if (r.isRefactoring()) {
+                System.out.println(r.toString());
+            }
         }
     }
 }

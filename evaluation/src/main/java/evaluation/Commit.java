@@ -87,7 +87,7 @@ public class Commit {
     return parts[6];
   }
 
-  private static File clone(File destBaseDir, String owner, String repoName) {
+  public static File clone(File destBaseDir, String owner, String repoName) {
     String cloneUrl = String.format("https://github.com/%s/%s.git", owner, repoName);
     System.out.println("\nCloning " + repoName + " from " + cloneUrl);
     File repoDir = new File(destBaseDir, repoName);
