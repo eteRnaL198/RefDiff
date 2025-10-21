@@ -29,7 +29,6 @@ import refdiff.core.diff.similarity.TfIdfSourceRepresentationBuilder;
 import refdiff.core.io.SourceFolder;
 import refdiff.core.io.SourceFile;
 import refdiff.core.io.SourceFileSet;
-import refdiff.parsers.java.JavaPlugin;
 import refdiff.parsers.universal.UniversalPlugin;
 
 public class Ast {

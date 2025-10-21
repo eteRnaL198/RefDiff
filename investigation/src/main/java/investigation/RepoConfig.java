@@ -12,7 +12,7 @@ public final class RepoConfig {
 
     public static final String[] C = {
         // "https://github.com/torvalds/linux.git",
-        // "https://github.com/Genymobile/scrcpy.git",
+        "https://github.com/Genymobile/scrcpy.git",
         // "https://github.com/netdata/netdata.git",
         // "https://github.com/redis/redis.git",
         // "https://github.com/obsproject/obs-studio.git",

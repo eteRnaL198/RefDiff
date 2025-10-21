@@ -21,11 +21,12 @@ import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
 import refdiff.parsers.universal.UniversalPlugin;
 
-public class Analyzer {
-        // private static int COMMIT_COUNT = 200;
-        private static int COMMIT_COUNT = 2;
+public class Executor {
+        private static int COMMIT_COUNT = 200;
+        // private static int COMMIT_COUNT = 100;
 
         public static void main(String[] args) throws Exception {
+            // UniversalPlugin universalPlugin = new UniversalPlugin(UniversalPlugin.Language.C);
             UniversalPlugin universalPlugin = new UniversalPlugin();
             RefDiff refDiffUniversal = new RefDiff(universalPlugin);
             String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
@@ -66,10 +67,10 @@ public class Analyzer {
                                         repoName = repoNameWithGit;
                                     }
 
-                                    File tempFolder = new File("repo-for-analysis");
+                                    File tempFolder = new File("repo");
                                     File repoDir = new File(tempFolder, repoName);
                                     File clonedRepo = refDiffUniversal.cloneGitRepository(repoDir, repoUrl);
-                                    clonedReposByLang.computeIfAbsent(lang, k -> new HashMap<>()).put(repoName, clonedRepo);
+                                    clonedReposByLang.computeIfAbsent(lang, _ -> new HashMap<>()).put(repoName, clonedRepo);
                                     System.out.println("Cloned " + repoName + " (" + lang + ") to " + clonedRepo.getAbsolutePath());
                             } catch (Exception e) {
                                     System.err.println("Failed to clone " + repoUrl + ": " + e.getMessage());
@@ -92,7 +93,7 @@ public class Analyzer {
                                     } else {
                                         commits = getRecentCommits(repoDir, COMMIT_COUNT);
                                     }
-                                     repoCommitsByLang.computeIfAbsent(lang, k -> new HashMap<>()).put(repoName, commits);
+                                     repoCommitsByLang.computeIfAbsent(lang, _ -> new HashMap<>()).put(repoName, commits);
                             } catch (Exception e) {
                                     System.err.println("Failed to get recent commits for " + repoName + ": " + e.getMessage());
                             }
@@ -108,7 +109,7 @@ public class Analyzer {
                             File repoDir = entry.getValue();
                             List<String> commits = repoCommitsByLang.getOrDefault(lang, Map.of()).get(repoName);
 
-                            Path outPath = Paths.get("result", "analysis", "mid", lang, repoName, time + ".txt");
+                            Path outPath = Paths.get("result", lang, repoName + "-" + time + ".txt");
                             Files.createDirectories(outPath.getParent());
 
                             StringBuilder sb = new StringBuilder();
@@ -119,13 +120,13 @@ public class Analyzer {
                                                 CstDiff diff = refDiffUniversal.computeDiffForCommit(repoDir, commitSha);
                                                 String result = buildRefactoringsText(repoName, commitSha, diff);
                                                 sb.append(result);
-                                                System.out.println(result);
+                                                // System.out.println(result);
                                         } catch (Exception e) {
-                                                System.err.println("Failed to analyze commit " + commitSha + " in " + repoName + ": " + e.getMessage());
+                                                // System.err.println("Failed to analyze commit " + commitSha + " in " + repoName + ": " + e.getMessage());
                                         }
                                 }
                             } else {
-                                sb.append("No commits retrieved for ").append(repoName).append(System.lineSeparator());
+                                // sb.append("No commits retrieved for ").append(repoName).append(System.lineSeparator());
                             }
 
                             Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -135,16 +136,16 @@ public class Analyzer {
 
     private static String buildRefactoringsText(String repoName, String commitSha, CstDiff diff) {
         StringBuilder lines = new StringBuilder();
-        lines.append("Commit: ").append(commitSha).append(System.lineSeparator());
+        // lines.append("Commit: ").append(commitSha).append(System.lineSeparator());
 
         if (diff == null || diff.getRefactoringRelationships().isEmpty()) {
-            lines.append("No refactorings found.").append(System.lineSeparator());
+            // lines.append("No refactorings found.").append(System.lineSeparator());
         } else {
             for (Relationship rel : diff.getRefactoringRelationships()) {
                 lines.append(rel.getDescriptionWithLOC()).append(System.lineSeparator());
             }
         }
-        lines.append(System.lineSeparator());
+        // lines.append(System.lineSeparator());
 
         return lines.toString();
     }
