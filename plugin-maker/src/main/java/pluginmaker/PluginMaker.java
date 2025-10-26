@@ -24,7 +24,8 @@ public class PluginMaker {
     PYTHON("python", ".py", "--kinds-Python=cfm", () -> new TreeSitterPython()),
     GO("go", ".go", "--kinds-Go=f", () -> new TreeSitterGo()),
     PHP("php", ".php", "--php-kinds=f", () -> new TreeSitterPhp()),
-    JAVA("java", ".java", "--kinds-Java=pigacm", () -> new TreeSitterJava());
+    JAVA("java", ".java", "--kinds-Java=pigacm", () -> new TreeSitterJava()),
+    C("c", ".c", "--kinds-C=fp", () -> new TreeSitterC());
 
     private final String name;
     private final String extension;
