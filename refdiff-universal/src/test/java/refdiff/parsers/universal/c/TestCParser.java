@@ -22,7 +22,7 @@ import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.UniversalPlugin;
 
-public class TestParser {
+public class TestCParser {
     private static final LanguagePlugin parser = new UniversalPlugin();
 
     private CstNode findNode(List<CstNode> nodes, String name, int line) {

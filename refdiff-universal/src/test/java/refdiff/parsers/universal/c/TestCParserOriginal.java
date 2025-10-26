@@ -22,7 +22,7 @@ import refdiff.core.cst.CstNodeRelationship;
 import refdiff.core.cst.CstNodeRelationshipType;
 import refdiff.core.cst.CstRoot;
 
-public class TestParserOriginal {
+public class TestCParserOriginal {
 
 	private LanguagePlugin  parser = new UniversalPlugin();
 

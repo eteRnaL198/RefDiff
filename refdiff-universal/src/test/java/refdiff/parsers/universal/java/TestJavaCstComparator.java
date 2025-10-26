@@ -18,7 +18,7 @@ import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.UniversalPlugin;
 
-public class TestCstComparator {
+public class TestJavaCstComparator {
 
     private static final LanguagePlugin parser = new UniversalPlugin();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/java/refactor";

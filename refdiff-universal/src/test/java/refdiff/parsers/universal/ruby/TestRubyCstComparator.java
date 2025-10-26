@@ -20,7 +20,7 @@ import refdiff.core.diff.Relationship;
 import refdiff.core.diff.RelationshipType;
 
 
-public class TestCstComparator {
+public class TestRubyCstComparator {
   
     private static final LanguagePlugin parser = new UniversalPlugin();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/ruby/refactor";
