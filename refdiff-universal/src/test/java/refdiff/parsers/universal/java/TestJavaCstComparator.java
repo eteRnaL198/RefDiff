@@ -76,7 +76,7 @@ public class TestJavaCstComparator {
             relationship(RelationshipType.SAME, node("pkg.User"), node("pkg.User")),
             relationship(RelationshipType.RENAME, node("pkg.Foo", "hello()"), node("pkg.Foo", "greet()")),
             relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo")),
-            relationship(RelationshipType.SAME, node("pkg.User", "User(int)"), node("pkg.User", "User(int)"))
+            relationship(RelationshipType.SAME, node("pkg.User", "new(int)"), node("pkg.User", "new(int)"))
         ));
     }
 
