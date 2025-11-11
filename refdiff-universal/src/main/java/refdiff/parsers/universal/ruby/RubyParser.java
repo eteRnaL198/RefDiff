@@ -22,6 +22,7 @@ import refdiff.core.cst.Parameter;
 import refdiff.core.cst.TokenizedSource;
 import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
+import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
 import refdiff.parsers.universal.common.Parser;
@@ -118,7 +119,7 @@ public class RubyParser implements Parser {
 
       CstNode methodCstNode = new CstNode(cstId++);
       methodCstNode.setType(RubyNodeTypes.METHOD);
-      String methodName = new String(sourceBytes, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
+      String methodName = NodeUtils.getNodeText(nameNode, sourceBytes);
       methodCstNode.setSimpleName(methodName);
       methodCstNode.setNamespace(filePath + "/");
 
@@ -169,19 +170,19 @@ public class RubyParser implements Parser {
 
     switch (nodeType) {
         case "identifier": // e.g., def m(a)
-            return new String(sourceBytes, paramNode.getStartByte(), paramNode.getEndByte() - paramNode.getStartByte(), StandardCharsets.UTF_8);
+            return NodeUtils.getNodeText(paramNode, sourceBytes);
 
         case "splat_parameter": // e.g., def m(*a)
         case "hash_splat_parameter": // e.g., def m(**a)
         case "block_parameter": // e.g., def m(&a)
             // The full text of the node gives the desired representation (e.g., "*args", "&block").
-            return new String(sourceBytes, paramNode.getStartByte(), paramNode.getEndByte() - paramNode.getStartByte(), StandardCharsets.UTF_8);
+            return NodeUtils.getNodeText(paramNode, sourceBytes);
 
         case "keyword_parameter": // e.g., def m(a: val)
         case "optional_parameter": { // e.g., def m(a = val)
             TSNode nameField = paramNode.getChildByFieldName("name"); // tree-sitter-ruby uses 'name' for the identifier part
             if (nameField != null) {
-                return new String(sourceBytes, nameField.getStartByte(), nameField.getEndByte() - nameField.getStartByte(), StandardCharsets.UTF_8);
+                return NodeUtils.getNodeText(nameField, sourceBytes);
             }
             break;
         }

@@ -80,9 +80,9 @@ public class InheritanceTreeGenerator {
                         if (superclassNameNode.getChildCount() > 1) {
                             superclassNameNode = superclassNameNode.getChild(0); // In case of generic superclass, e.g., extends Base<T>
                         }
-                        String superclassName = new String(sourceBytes, extendsToken.getEndByte(), superclassNameNode.getEndByte() - extendsToken.getEndByte()).trim();
+                        String superclassName = NodeUtils.getNodeText(superclassNameNode, sourceBytes).trim();
                         TSNode identifier = superclass.getParent().getChildByFieldName("name");
-                        String className = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte());
+                        String className = NodeUtils.getNodeText(identifier, sourceBytes);
                         if (participatingTypeNodeMap.containsKey(className) && participatingTypeNodeMap.containsKey(superclassName)) {
                             root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, participatingTypeNodeMap.get(className).getId(), participatingTypeNodeMap.get(superclassName).getId()));
                         }
@@ -92,10 +92,10 @@ public class InheritanceTreeGenerator {
                     case "extends_interfaces": { // e.g., interface A extends B, C
                         TSNode interfacesNode = tsNode;
                         TSNode subTypeNameNode = interfacesNode.getParent().getChildByFieldName("name");
-                        String subTypeName = new String(sourceBytes, subTypeNameNode.getStartByte(), subTypeNameNode.getEndByte() - subTypeNameNode.getStartByte());
+                        String subTypeName = NodeUtils.getNodeText(subTypeNameNode, sourceBytes);
                         TSNode implementsOrExtends = interfacesNode.getChild(0); // e.g., 'implements' or 'extends' token
                         List<String> superTypeNames = java.util.Arrays.stream(
-                            new String(sourceBytes, implementsOrExtends.getEndByte(), interfacesNode.getEndByte() - implementsOrExtends.getEndByte())
+                            NodeUtils.getNodeText(implementsOrExtends, sourceBytes)
                             .split(",")) // Split by commas
                             .map(String::trim)
                             .map(s -> s.split("<")[0]) // Remove generic type parameters if any, e.g., B<T> -> B

@@ -22,6 +22,7 @@ import refdiff.core.cst.Parameter;
 import refdiff.core.cst.TokenizedSource;
 import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
+import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
 import java.util.stream.Collectors;
@@ -110,7 +111,7 @@ public class PythonParser implements Parser {
       CstNode functionCstNode = new CstNode(cstId++);
       functionCstNode.setType(PythonNodeTypes.FUNCTION);
       
-      String functionName = new String(sourceBytes, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
+      String functionName = NodeUtils.getNodeText(nameNode, sourceBytes);
       functionCstNode.setSimpleName(functionName);
 
       functionCstNode.setNamespace(filePath + "/");
@@ -150,21 +151,21 @@ public class PythonParser implements Parser {
         String nodeType = paramChildNode.getType();
 
         if (nodeType.equals("identifier") || nodeType.equals("list_splat_pattern") || nodeType.equals("dictionary_splat_pattern")) {
-            paramNames.add(new Parameter(new String(sourceBytes, paramChildNode.getStartByte(), paramChildNode.getEndByte() - paramChildNode.getStartByte(), StandardCharsets.UTF_8)));
+            paramNames.add(new Parameter(NodeUtils.getNodeText(paramChildNode, sourceBytes)));
         } else if (nodeType.equals("typed_parameter")) {
             TSNode identifierNode = paramChildNode.getChild(0);
             if (identifierNode.getType().equals("identifier")) {
-                paramNames.add(new Parameter(new String(sourceBytes, identifierNode.getStartByte(), identifierNode.getEndByte() - identifierNode.getStartByte(), StandardCharsets.UTF_8)));
+                paramNames.add(new Parameter(NodeUtils.getNodeText(identifierNode, sourceBytes)));
             }
         } else if (nodeType.equals("default_parameter")) {
             TSNode identifierNode = paramChildNode.getChildByFieldName("name");
             if (identifierNode != null) {
-                paramNames.add(new Parameter(new String(sourceBytes, identifierNode.getStartByte(), identifierNode.getEndByte() - identifierNode.getStartByte(), StandardCharsets.UTF_8)));
+                paramNames.add(new Parameter(NodeUtils.getNodeText(identifierNode, sourceBytes)));
             }
         } else if (nodeType.equals("typed_default_parameter")) {
             TSNode identifierNode = paramChildNode.getChild(0);
             if (identifierNode.getType().equals("identifier")) {
-                paramNames.add(new Parameter(new String(sourceBytes, identifierNode.getStartByte(), identifierNode.getEndByte() - identifierNode.getStartByte(), StandardCharsets.UTF_8)));
+                paramNames.add(new Parameter(NodeUtils.getNodeText(identifierNode, sourceBytes)));
             }
         }
     }

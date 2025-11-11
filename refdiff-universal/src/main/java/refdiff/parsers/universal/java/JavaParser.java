@@ -30,6 +30,7 @@ import refdiff.core.cst.Location;
 import refdiff.core.cst.Stereotype;
 import refdiff.core.cst.TokenizedSource;
 import refdiff.parsers.universal.common.CallGraphGenerator;
+import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.InheritanceTreeGenerator;
 import refdiff.parsers.universal.common.Parser;
 
@@ -55,7 +56,7 @@ public class JavaParser implements Parser {
     for (Map.Entry<String, TSTree> treeEntry : parsedTreeMap.entrySet()) {
       String filePath = treeEntry.getKey();
       TSTree tree = treeEntry.getValue();
-      String sourceCode = sourceCodeMap.get(filePath); // Get source code for context
+      String sourceCode = sourceCodeMap.get(filePath);
       byte[] sourceBytes = sourceCode.getBytes(StandardCharsets.UTF_8);
       addNodes(tree, tsLang, root, filePath, sourceBytes);
       
@@ -84,8 +85,11 @@ public class JavaParser implements Parser {
     if (packageCursor.nextMatch(packageMatch)) {
       for (TSQueryCapture capture : packageMatch.getCaptures()) {
         TSNode capturedNode = capture.getNode();
-        packageName = new String(sourceBytes, capturedNode.getStartByte(),
-            capturedNode.getEndByte() - capturedNode.getStartByte(), StandardCharsets.UTF_8);
+        try {
+          packageName = NodeUtils.getNodeText(capturedNode, sourceBytes);
+        } catch (Exception e) {
+          packageName = "";
+        }
         break;
       }
     }
@@ -109,7 +113,7 @@ public class JavaParser implements Parser {
         cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, body.getStartByte(), body.getEndByte()));
         
         TSNode identifier = tsNode.getChildByFieldName("name");
-        String className = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
+        String className = NodeUtils.getNodeText(identifier, sourceBytes);
         cstNode.setLocalName(className);
         cstNode.setSimpleName(className);
 
@@ -126,7 +130,7 @@ public class JavaParser implements Parser {
         cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, body.getStartByte(), body.getEndByte()));
 
         TSNode identifier = tsNode.getChildByFieldName("name");
-        String interfaceName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
+        String interfaceName = NodeUtils.getNodeText(identifier, sourceBytes);
         cstNode.setLocalName(interfaceName);
         cstNode.setSimpleName(interfaceName);
 
@@ -170,7 +174,7 @@ public class JavaParser implements Parser {
         }
 
         TSNode identifier = tsNode.getChildByFieldName("name");
-        String methodName = new String(sourceBytes, identifier.getStartByte(), identifier.getEndByte() - identifier.getStartByte(), StandardCharsets.UTF_8);
+        String methodName = NodeUtils.getNodeText(identifier, sourceBytes);
         cstNode.setSimpleName(methodName);
 
         TSNode parameters = tsNode.getChildByFieldName("parameters");
@@ -223,12 +227,12 @@ public class JavaParser implements Parser {
         if (parameter.getType().equals("formal_parameter")) {
             TSNode typeNode = parameter.getChildByFieldName("type");
             if (typeNode != null && !typeNode.isNull()) {
-                paramTypeString = new String(sourceBytes, typeNode.getStartByte(), typeNode.getEndByte() - typeNode.getStartByte(), StandardCharsets.UTF_8).split("<")[0]; // Remove generic type parameters if any, e.g., List<String> -> List
+                paramTypeString = NodeUtils.getNodeText(typeNode, sourceBytes).split("<")[0]; // Remove generic type parameters if any, e.g., List<String> -> List
             }
         } else if (parameter.getType().equals("spread_parameter")) {
             TSNode typeNode = parameter.getChild(0); // The first child is the type for spread parameters
             if (typeNode != null && !typeNode.isNull()) {
-                paramTypeString = new String(sourceBytes, typeNode.getStartByte(), typeNode.getEndByte() - typeNode.getStartByte(), StandardCharsets.UTF_8).split("<")[0] + "..."; // For spread parameters, the type is followed by "..."
+                paramTypeString = NodeUtils.getNodeText(typeNode, sourceBytes).split("<")[0] + "..."; // For spread parameters, the type is followed by "..."
             }
         } else if (parameter.getType().equals("receiver_parameter")) {
             // Receiver parameters (e.g., `Outer.this`) are generally not included in RefDiff's localName.
@@ -243,7 +247,7 @@ public class JavaParser implements Parser {
         } else {
             System.out.println("Warning: Could not determine type for parameter: " + parameter.getType() +
                 " at " + parameter.getStartPoint().getRow() + "-" + parameter.getEndPoint().getRow() +
-                " in source code: " + new String(sourceBytes, parametersNode.getStartByte(), parametersNode.getEndByte() - parametersNode.getStartByte(), StandardCharsets.UTF_8));
+                " in source code: " + NodeUtils.getNodeText(parametersNode, sourceBytes));
         }
     }
     paramsStr.append(String.join(", ", paramTypes));

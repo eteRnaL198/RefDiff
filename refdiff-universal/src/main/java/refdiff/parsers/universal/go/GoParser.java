@@ -26,6 +26,7 @@ import refdiff.core.cst.TokenizedSource;
 import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.SourceFileReader;
+import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.Tokenizer;
 import refdiff.parsers.universal.common.Parser;
 
@@ -74,7 +75,7 @@ public class GoParser implements Parser {
     if (packageCursor.nextMatch(packageMatch)) {
         for (TSQueryCapture capture : packageMatch.getCaptures()) {
             TSNode capturedNode = capture.getNode();
-            namespace = new String(sourceCode, capturedNode.getStartByte(), capturedNode.getEndByte() - capturedNode.getStartByte(), StandardCharsets.UTF_8);
+            namespace = NodeUtils.getNodeText(capturedNode, sourceCode);
             break;
         }
     }
@@ -127,7 +128,7 @@ public class GoParser implements Parser {
             CstNode cstNode = new CstNode(cstId++);
             cstNode.setType(nodeType);
             
-            String simpleName = new String(sourceCode, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
+            String simpleName = NodeUtils.getNodeText(nameNode, sourceCode);
             cstNode.setSimpleName(simpleName);
             cstNode.setNamespace(namespace + ".");
 
@@ -141,7 +142,7 @@ public class GoParser implements Parser {
 
             String paramsString = "()";
             if (paramsNode != null) {
-                paramsString = new String(sourceCode, paramsNode.getStartByte(), paramsNode.getEndByte() - paramsNode.getStartByte(), StandardCharsets.UTF_8);
+                paramsString = NodeUtils.getNodeText(paramsNode, sourceCode);
             }
             cstNode.setLocalName(simpleName + paramsString);
             cstNode.setParameters(extractParameters(paramsNode, sourceCode));
@@ -167,7 +168,7 @@ public class GoParser implements Parser {
                   for (int j = 0; j < namedChildCount - 1; j++) {
                       TSNode nameNode = paramDecl.getNamedChild(j);
                       if (nameNode.getType().equals("identifier")) {
-                          String paramName = new String(sourceCode, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
+                          String paramName = NodeUtils.getNodeText(nameNode, sourceCode);
                           parameters.add(new Parameter(paramName));
                       }
                   }
@@ -175,7 +176,7 @@ public class GoParser implements Parser {
           } else if (nodeType.equals("variadic_parameter_declaration")) {
               if (paramDecl.getNamedChildCount() > 0) {
                   TSNode nameNode = paramDecl.getNamedChild(0);
-                  String paramName = new String(sourceCode, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
+                  String paramName = NodeUtils.getNodeText(nameNode, sourceCode);
                   parameters.add(new Parameter(paramName));
               }
           }

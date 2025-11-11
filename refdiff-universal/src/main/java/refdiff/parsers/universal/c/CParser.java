@@ -24,6 +24,7 @@ import refdiff.core.cst.TokenizedSource;
 import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.Parser;
+import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
 
@@ -212,7 +213,7 @@ public class CParser implements Parser {
             paramTypes.add("...");
             cstParameters.add(new Parameter("..."));
         } else if (typeNode != null) {
-            String typeStr = getNodeText(typeNode, sourceBytes);
+            String typeStr = NodeUtils.getNodeText(typeNode, sourceBytes);
             if (typeStr.startsWith("struct ")) {
                 typeStr = typeStr.substring(7);
             }
@@ -223,7 +224,7 @@ public class CParser implements Parser {
 
             String paramName = null;
             if (declaratorNode != null) {
-                paramName = getNodeText(declaratorNode, sourceBytes);
+                paramName = NodeUtils.getNodeText(declaratorNode, sourceBytes);
             }
             
             if (paramName != null) {
@@ -255,9 +256,5 @@ public class CParser implements Parser {
       return filePath.substring(lastSeparator + 1);
     }
     return filePath;
-  }
-
-  private String getNodeText(TSNode node, byte[] sourceBytes) {
-    return new String(sourceBytes, node.getStartByte(), node.getEndByte() - node.getStartByte(), StandardCharsets.UTF_8);
   }
 }

@@ -23,6 +23,7 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
+import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.Parser;
 
 public class PhpParser implements Parser {
@@ -119,8 +120,7 @@ public class PhpParser implements Parser {
         CstNode cstNode = new CstNode(cstId++);
         cstNode.setType(nodeType);
 
-        String simpleName = new String(sourceBytes, nameNode.getStartByte(),
-            nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
+        String simpleName = NodeUtils.getNodeText(nameNode, sourceBytes);
         // strip leading $ for variable-based names
         if (simpleName.startsWith("$")) {
           simpleName = simpleName.substring(1);
@@ -217,7 +217,7 @@ public class PhpParser implements Parser {
           }
 
           if (nameNode != null && "variable_name".equals(nameNode.getType())) {
-              String name = new String(sourceBytes, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
+              String name = NodeUtils.getNodeText(nameNode, sourceBytes);
               parameters.add(new Parameter(prefix + name));
           }
       }

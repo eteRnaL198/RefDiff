@@ -8,6 +8,7 @@ import refdiff.core.cst.TokenizedSource;
 import refdiff.core.cst.Parameter;
 import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.CallGraphGenerator;
+import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
 
@@ -126,7 +127,7 @@ public class JsParser implements Parser {
         endLineNumber,
         bodyNode.getStartByte(), bodyNode.getEndByte()
       ));
-      String className = new String(sourceBytes, nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte() - nameIdentifierNode.getStartByte(), StandardCharsets.UTF_8);
+      String className = NodeUtils.getNodeText(nameIdentifierNode, sourceBytes);
       classCstNode.setSimpleName(className);
       classCstNode.setLocalName(className);
       classCstNode.setNamespace(getNamespaceFromFilePath(filePath));
@@ -221,7 +222,7 @@ public class JsParser implements Parser {
           endLineNumber,
           bodyValueNode.getStartByte(), bodyValueNode.getEndByte()
         ));
-      String funcName = new String(sourceBytes, nameIdentifierNode.getStartByte(), nameIdentifierNode.getEndByte() - nameIdentifierNode.getStartByte(), StandardCharsets.UTF_8);
+      String funcName = NodeUtils.getNodeText(nameIdentifierNode, sourceBytes);
       funcCstNode.setSimpleName(funcName);
       funcCstNode.setLocalName(funcName);
       List<refdiff.core.cst.Parameter> cstParameters = new ArrayList<>();
@@ -271,7 +272,7 @@ public class JsParser implements Parser {
             }
         }
     } else if ("identifier".equals(hostNodeType)) { // Single parameter for arrow function: param => ...
-        String paramName = new String(sourceBytes, parametersHostNode.getStartByte(), parametersHostNode.getEndByte() - parametersHostNode.getStartByte(), StandardCharsets.UTF_8);
+        String paramName = NodeUtils.getNodeText(parametersHostNode, sourceBytes);
         cstParameters.add(new Parameter(paramName));
     }
   }
@@ -279,18 +280,18 @@ public class JsParser implements Parser {
   private String extractParameterNameInternal(TSNode paramNode, byte[] sourceBytes) {
       String nodeType = paramNode.getType();
       if ("identifier".equals(nodeType)) {
-          return new String(sourceBytes, paramNode.getStartByte(), paramNode.getEndByte() - paramNode.getStartByte(), StandardCharsets.UTF_8);
+          return NodeUtils.getNodeText(paramNode, sourceBytes);
       } else if ("rest_pattern".equals(nodeType)) {
         if (paramNode.getNamedChildCount() > 0) {
             TSNode nameNode = paramNode.getNamedChild(0); // (rest_pattern (identifier))
             if (nameNode != null && "identifier".equals(nameNode.getType())) {
-                return new String(sourceBytes, nameNode.getStartByte(), nameNode.getEndByte() - nameNode.getStartByte(), StandardCharsets.UTF_8);
+                return NodeUtils.getNodeText(nameNode, sourceBytes);
             }
         }
       } else if ("assignment_pattern".equals(nodeType)) { // e.g. name = "Guest"
         TSNode leftNode = paramNode.getChildByFieldName("left");
         if (leftNode != null && "identifier".equals(leftNode.getType())) {
-            return new String(sourceBytes, leftNode.getStartByte(), leftNode.getEndByte() - leftNode.getStartByte(), StandardCharsets.UTF_8);
+            return NodeUtils.getNodeText(leftNode, sourceBytes);
         }
       }
       // Array/Object patterns (destructuring) could be handled here if needed
