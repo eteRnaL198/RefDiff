@@ -5,26 +5,27 @@ import java.util.Map;
 public final class RepoConfig {
 
     public static final String[] JAVA = {
-        // "https://github.com/iluwatar/java-design-patterns.git",
-        // "https://github.com/spring-projects/spring-boot.git",
-        // "https://github.com/Stirling-Tools/Stirling-PDF.git",
+        "https://github.com/google/iosched.git",
+        "https://github.com/nostra13/Android-Universal-Image-Loader.git",
+        "https://github.com/elastic/elasticsearch.git",
+        "https://github.com/ReactiveX/RxJava.git",
+        "https://github.com/square/okhttp.git",
     };
 
     public static final String[] C = {
+        // "https://github.com/WhisperSystems/Signal-Android.git",
+        // "https://github.com/godotengine/godot.git",
+        // "https://github.com/git/git.git",
         // "https://github.com/torvalds/linux.git",
-        "https://github.com/Genymobile/scrcpy.git",
-        // "https://github.com/netdata/netdata.git",
-        // "https://github.com/redis/redis.git",
-        // "https://github.com/obsproject/obs-studio.git",
-        // "https://github.com/curl/curl.git",
-        // "https://github.com/tmux/tmux.git",
+        // "https://github.com/facebook/css-layout.git",
     };
 
     public static final String[] JAVASCRIPT = {
-        // "https://github.com/facebook/react.git",
-        // "https://github.com/airbnb/javascript.git",
-        // "https://github.com/vercel/next.js.git",
+        // "https://github.com/adobe/brackets.git",
+        // "https://github.com/moment/moment.git",
+        // "https://github.com/gulpjs/gulp.git",
         // "https://github.com/nodejs/node.git",
+        // "https://github.com/angular/angular.js.git",
     };
 
     public static final String[] RUBY = {
