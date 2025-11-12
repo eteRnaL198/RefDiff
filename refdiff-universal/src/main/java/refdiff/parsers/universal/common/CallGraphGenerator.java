@@ -33,40 +33,36 @@ public class CallGraphGenerator {
      * @param sourceCodeMap A map where keys are file paths and values are the source code content of those files.
      */
     public void generateCallGraph(CstRoot root, Map<String, String> sourceCodeMap) {
-        List<CstNode> callableNodes = new ArrayList<>();
+        Map<String, List<Integer>> calleeCandidatesMap = new HashMap<>(); // メソッドがオーバーロードされている場合、同名メソッドが複数存在するためValueはListにしている
         root.forEachNode((node, _) -> {
             if (this.callableNodeTypes.contains(node.getType())) {
-                callableNodes.add(node);
+                calleeCandidatesMap.computeIfAbsent(node.getSimpleName(), _ -> new ArrayList<>()).add(node.getId());
             }
         });
-
-        Map<String, List<CstNode>> calleeCandidatesMap = new HashMap<>(); // メソッドがオーバーロードされている場合、同名メソッドが複数存在するためValueはListにしている
-        for (CstNode callableNode : callableNodes) {
-            calleeCandidatesMap.computeIfAbsent(callableNode.getSimpleName(), _ -> new ArrayList<>()).add(callableNode);
-        }
-        for (CstNode callerNode : callableNodes) {
-            addCallRelationship(callerNode, root, sourceCodeMap, calleeCandidatesMap);
-        }
+        root.forEachNode((node, _) -> {
+            if (this.callableNodeTypes.contains(node.getType())) {
+                addCallRelationship(node, root, sourceCodeMap, calleeCandidatesMap);
+            }
+        });
     }
 
-    private void addCallRelationship(CstNode callerNode, CstRoot root, Map<String, String> sourceCodeMap, Map<String, List<CstNode>> calleeCandidatesMap) {
+    private void addCallRelationship(CstNode callerNode, CstRoot root, Map<String, String> sourceCodeMap, Map<String, List<Integer>> calleeCandidatesMap) {
         String path = callerNode.getLocation().getFile();
         String sourceCode = sourceCodeMap.get(path);
-
-        if (sourceCode == null) {
-            // This should ideally not happen if SourceFileReader.readAllSourceFiles ensures all files are read
-            // or throws an exception. This warning is a safeguard.
-            System.err.println("Warning: Source code not found in map for path: " + path +
-                               " for CstNode: " + callerNode.getSimpleName() +
-                               " (id: " + callerNode.getId() + "). No call relationships will be added for this node.");
-            sourceCode = ""; // Use empty string to prevent NullPointerException later
-        }
-        
         List<String> tokens = CstRootHelper.retrieveTokens(root, sourceCode, callerNode, true);
-        for (String token : tokens) {
-            if (calleeCandidatesMap.containsKey(token)) {
-                for (CstNode callee : calleeCandidatesMap.get(token)) {
-                     root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.USE, callerNode.getId(), callee.getId()));
+
+        final int batchSize = 1000;
+        int totalTokens = tokens.size();
+
+        // Process tokens in batches to limit memory usage
+        for (int i = 0; i < totalTokens; i += batchSize) {
+            int end = Math.min(i + batchSize, totalTokens);
+            List<String> tokenBatch = tokens.subList(i, end);
+
+            for (String token : tokenBatch) {
+                List<Integer> calleeIds = calleeCandidatesMap.getOrDefault(token, new ArrayList<>());
+                for (Integer calleeId : calleeIds) {
+                    root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.USE, callerNode.getId(), calleeId));
                 }
             }
         }
