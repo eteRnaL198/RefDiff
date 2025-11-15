@@ -17,6 +17,7 @@ import java.util.Set;
 public class CallGraphGenerator {
 
     private final Set<String> callableNodeTypes;
+    private static final List<Integer> EMPTY_LIST = List.of();
 
     public CallGraphGenerator(String... callableNodeTypes) {
         this.callableNodeTypes = new HashSet<>(Arrays.asList(callableNodeTypes));
@@ -41,7 +42,12 @@ public class CallGraphGenerator {
         });
         root.forEachNode((node, _) -> {
             if (this.callableNodeTypes.contains(node.getType())) {
-                addCallRelationship(node, root, sourceCodeMap, calleeCandidatesMap);
+                try {
+                    addCallRelationship(node, root, sourceCodeMap, calleeCandidatesMap);
+                } catch (Exception e) {
+                    // Log the exception and continue processing other nodes
+                    System.err.println("Error occured in call graph generation at " + node.getLocation().getFile() + ":" + node.getLocation().getBeginLine() + ", Message: " + e.getMessage());
+                }
             }
         });
     }
@@ -60,7 +66,7 @@ public class CallGraphGenerator {
             List<String> tokenBatch = tokens.subList(i, end);
 
             for (String token : tokenBatch) {
-                List<Integer> calleeIds = calleeCandidatesMap.getOrDefault(token, new ArrayList<>());
+                List<Integer> calleeIds = calleeCandidatesMap.getOrDefault(token, EMPTY_LIST);
                 for (Integer calleeId : calleeIds) {
                     root.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.USE, callerNode.getId(), calleeId));
                 }
