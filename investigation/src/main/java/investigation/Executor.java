@@ -25,7 +25,7 @@ import refdiff.parsers.universal.UniversalPlugin;
 import refdiff.parsers.universal.UniversalPlugin.Language;
 
 public class Executor {
-    private static int COMMIT_DEPTH = 1000;
+    private static int COMMIT_DEPTH = 500;
     // private static int COMMIT_COUNT = 100;
     private static final int BATCH_SIZE = 10;
 
@@ -45,23 +45,10 @@ public class Executor {
                 }
             } else if (a.startsWith("--start-commit=")) {
                 startCommitSha = a.substring("--start-commit=".length());
-            } else if ("--language".equals(a) || "-l".equals(a)) { // Handle --language or -l
-                if (i + 1 < args.length) {
-                    language = args[i + 1];
-                    i++;
-                }
-            } else if (a.startsWith("--language=")) {
-                language = a.substring("--language=".length());
             }
         }
 
-        // Validate the language argument
-        if (language == null) {
-            throw new IllegalArgumentException("Language must be specified using --language or -l.");
-        }
-
-        Language langEnum = mapLanguage(language); // Convert to Language enum
-        new Executor().execute(startCommitSha, langEnum);
+        new Executor().execute(startCommitSha);
     }
 
     private void incrementCommitCount() {
@@ -72,10 +59,7 @@ public class Executor {
         currentCommitSha = sha;
     }
 
-    private void execute(String startCommitSha, Language language) throws Exception {
-        UniversalPlugin plugin = new UniversalPlugin(language);
-        RefDiff refDiffUniversal = new RefDiff(plugin);
-
+    private void execute(String startCommitSha) throws Exception {
         Map<String, Map<String, File>> clonedReposByLang = getRepos();
 
         System.out.println("\n\n----- Detect refactorings -----");
@@ -91,12 +75,19 @@ public class Executor {
 
                 StringBuilder sb = new StringBuilder();
                 setCurrentCommitSha(startCommitSha != null ? startCommitSha : "HEAD");
+                Language language = mapLanguage(lang);
+                UniversalPlugin plugin = new UniversalPlugin(language);
+                RefDiff refDiffUniversal = new RefDiff(plugin);
                 for (int attempt = 1; attempt <= 5; attempt++) {
                     try {
                         refDiffUniversal.computeDiffForCommitHistory(repoDir, currentCommitSha, COMMIT_DEPTH, (commit, diff) -> {
                             String commitSha = commit.getName();
-                            for (Relationship rel : diff.getRefactoringRelationships()) {
-                                sb.append(String.format("\"%s\",%s\n", commitSha, rel.getDescriptionWithLocInCsv()));
+                            if (diff.getRefactoringRelationships().isEmpty()) {
+                                sb.append(String.format("\"%s\"\n", commitSha));
+                            } else {
+                                for (Relationship rel : diff.getRefactoringRelationships()) {
+                                    sb.append(String.format("\"%s\",%s\n", commitSha, rel.getDescriptionWithLocInCsv()));
+                                }
                             }
                             if ((commitCount + 1) % BATCH_SIZE == 0 || commitCount + 1 == COMMIT_DEPTH) {
                                 try {
