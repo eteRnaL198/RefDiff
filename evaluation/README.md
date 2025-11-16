@@ -5,6 +5,11 @@
 ```
 
 For a specific directory:
+- Switch boolean flag `IS_FOR_REPO`
+- Modify the path in `COMMIT_PATH`
+- Switch LANGUAGE in `LANG`
+- Set the desired LanguagePlugin
+
 ```bash
 ./gradlew runDebug
 ```

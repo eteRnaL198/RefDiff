@@ -39,7 +39,12 @@ public class Executor {
         RefDiff refDiff = new RefDiff(plugin);
         
         Executor executor = new Executor();
-        String fileName = executor.getNowDateTime() + "-" + lang.toString().toLowerCase() + ".csv";
+        String fileName;
+        if (metric != null) {
+            fileName = lang.toString().toLowerCase() + "-" + metric.toString().toLowerCase() + "-" + executor.getNowDateTime() + ".csv";
+        } else {
+            fileName = lang.toString().toLowerCase() + "-" + executor.getNowDateTime() + ".csv";
+        }
         executor.runForRepo(refDiff, repoMap, commitUrls, resultDir + fileName);
     }
 

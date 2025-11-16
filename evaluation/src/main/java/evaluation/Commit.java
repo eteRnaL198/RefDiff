@@ -17,7 +17,9 @@ public class Commit {
   private static final String JAVA_COMMIT_URLS_FILE = "src/main/resources/java-commit-urls.txt";
   private static final String C_PRECISION_COMMIT_URLS_FILE = "src/main/resources/c-precision-commit-urls.txt";
   private static final String C_RECALL_COMMIT_URLS_FILE = "src/main/resources/c-recall-commit-urls.txt";
-  
+  private static final String JS_PRECISION_COMMIT_URLS_FILE = "src/main/resources/js-precision-commit-urls.txt";
+  private static final String JS_RECALL_COMMIT_URLS_FILE = "src/main/resources/js-recall-commit-urls.txt";
+
   public static String[] getCommitUrls(Language lang, Metric metric) {
     if (lang == Language.JAVA && metric == null) {
       return loadCommitUrlsFromFile(JAVA_COMMIT_URLS_FILE);
@@ -26,9 +28,9 @@ public class Commit {
     } else if (lang == Language.C && metric == Metric.RECALL) {
       return loadCommitUrlsFromFile(C_RECALL_COMMIT_URLS_FILE);
     } else if (lang == Language.JAVASCRIPT && metric == Metric.PRECISION) {
-      throw new UnsupportedOperationException("Not implemented yet.");
+      return loadCommitUrlsFromFile(JS_PRECISION_COMMIT_URLS_FILE);
     } else if (lang == Language.JAVASCRIPT && metric == Metric.RECALL) {
-      throw new UnsupportedOperationException("Not implemented yet.");
+      return loadCommitUrlsFromFile(JS_RECALL_COMMIT_URLS_FILE);
     } else {
       throw new IllegalArgumentException("Unsupported combination of language and metric.");
     }
