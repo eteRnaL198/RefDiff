@@ -1,8 +1,8 @@
 package refdiff.parsers.universal.java;
 
 public class JavaNodeTypes {
-  public static final String INTERFACE_DECLARATION = "InterfaceDeclaration";
-  public static final String CLASS_DECLARATION = "ClassDeclaration";
-  public static final String ENUM_DECLARATION = "EnumDeclaration";
-  public static final String METHOD_DECLARATION = "MethodDeclaration";
+  public static final String INTERFACE = "Interface";
+  public static final String CLASS = "Class";
+  public static final String ENUM = "Enum";
+  public static final String METHOD = "Method";
 }
