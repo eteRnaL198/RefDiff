@@ -5,8 +5,9 @@ from numpy import select, where
 
 from src.schema import result_java_schema
 
+REPO_OWNER = "icse18-refactorings"
 
-def join_table(oracle_df: DataFrame, detected_df: DataFrame, repo_owner: str, does_ignore_line: Optional[bool]=False) -> DataFrame:
+def join_table_java(oracle_df: DataFrame, detected_df: DataFrame, does_ignore_line: Optional[bool]=True) -> DataFrame:
     oracle_df = oracle_df.reset_index()
     detected_df = detected_df.reset_index()
 
@@ -18,7 +19,7 @@ def join_table(oracle_df: DataFrame, detected_df: DataFrame, repo_owner: str, do
     )
 
     detected_df["Commit URL"] = detected_df.apply(
-        lambda row: create_commit_url(repo_owner, row["repository"], row["commit"]), axis=1
+        lambda row: create_commit_url(REPO_OWNER, row["repository"], row["commit"]), axis=1
     )
 
     if does_ignore_line:

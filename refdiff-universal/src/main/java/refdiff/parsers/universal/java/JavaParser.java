@@ -24,7 +24,6 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.Tokenizer;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.core.cst.CstNode;
-import refdiff.core.cst.CstNodeRelationshipType;
 import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.Stereotype;
@@ -64,12 +63,12 @@ public class JavaParser implements Parser {
       root.addTokenizedFile(tokenizedSource);
     }
 
-    List<String> inheritanceRelatedNodeTypes = Arrays.asList(JavaNodeTypes.CLASS_DECLARATION, JavaNodeTypes.INTERFACE_DECLARATION);
+    List<String> inheritanceRelatedNodeTypes = Arrays.asList(JavaNodeTypes.CLASS, JavaNodeTypes.INTERFACE);
     String inheritanceQuery = "[(superclass) (super_interfaces) (extends_interfaces)] @node";
     InheritanceTreeGenerator inheritanceTreeGenerator = new InheritanceTreeGenerator(inheritanceRelatedNodeTypes, inheritanceQuery);
     inheritanceTreeGenerator.buildInheritanceTree(root, sourceCodeMap, parsedTreeMap, tsLang);
     
-    CallGraphGenerator callGraphGenerator = new CallGraphGenerator(JavaNodeTypes.METHOD_DECLARATION);
+    CallGraphGenerator callGraphGenerator = new CallGraphGenerator(JavaNodeTypes.METHOD);
     callGraphGenerator.generateCallGraph(root, sourceCodeMap);
 
     return root;
@@ -85,130 +84,111 @@ public class JavaParser implements Parser {
     if (packageCursor.nextMatch(packageMatch)) {
       for (TSQueryCapture capture : packageMatch.getCaptures()) {
         TSNode capturedNode = capture.getNode();
-        try {
-          packageName = NodeUtils.getNodeText(capturedNode, sourceBytes);
-        } catch (Exception e) {
-          packageName = "";
-        }
+        packageName = NodeUtils.getNodeText(capturedNode, sourceBytes);
         break;
       }
     }
 
+    String querySrc = """
+    [
+      (class_declaration
+        name: (identifier) @name
+        body: (class_body) @body
+      ) @declaration
+      (interface_declaration
+          name: (identifier) @name
+          body: (interface_body) @body
+      ) @declaration
+      (enum_declaration
+          name: (identifier) @name
+          body: (enum_body) @body
+      ) @declaration
+      (constructor_declaration
+          name: (identifier) @name
+          parameters: (formal_parameters) @parameters
+          body: (constructor_body) @body
+      ) @declaration
+      (method_declaration
+          name: (identifier) @name
+          parameters: (formal_parameters) @parameters
+          body: ((block) @body)?
+      ) @declaration
+    ]    
+    """;
+    TSQuery query = new TSQuery(tsLang, querySrc);
+    TSQueryCursor cursor = new TSQueryCursor();
+    cursor.exec(query, tree.getRootNode());
+    TSQueryMatch match = new TSQueryMatch();
     Stack<CstNode> parentStack = new Stack<>();
-    walkTree(tree.getRootNode(), parentStack, root, path, sourceBytes, packageName);
-  }
-
-  private void walkTree(TSNode tsNode, Stack<CstNode> parentStack, CstRoot root, String path, byte[] sourceBytes, String packageName) {
-    CstNode cstNode = null;
-    boolean isContainer = false;
-
-    switch(tsNode.getType()) {
-      case "class_declaration": {
-        cstNode = new CstNode(cstId++);
-        cstNode.setType(JavaNodeTypes.CLASS_DECLARATION);
-
-        TSNode body = tsNode.getChildByFieldName("body");
-        int lineNumber = tsNode.getStartPoint().getRow() + 1;
-        int endLineNumber = tsNode.getEndPoint().getRow() + 1;
-        cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, body.getStartByte(), body.getEndByte()));
-        
-        TSNode identifier = tsNode.getChildByFieldName("name");
-        String className = NodeUtils.getNodeText(identifier, sourceBytes);
-        cstNode.setLocalName(className);
-        cstNode.setSimpleName(className);
-
-        cstNode.setNamespace(packageName + ".");
-        isContainer = true;
-        break; }
-      case "interface_declaration": {
-        cstNode = new CstNode(cstId++);
-        cstNode.setType(JavaNodeTypes.INTERFACE_DECLARATION);
-
-        TSNode body = tsNode.getChildByFieldName("body");
-        int lineNumber = tsNode.getStartPoint().getRow() + 1;
-        int endLineNumber = tsNode.getEndPoint().getRow() + 1;
-        cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, body.getStartByte(), body.getEndByte()));
-
-        TSNode identifier = tsNode.getChildByFieldName("name");
-        String interfaceName = NodeUtils.getNodeText(identifier, sourceBytes);
-        cstNode.setLocalName(interfaceName);
-        cstNode.setSimpleName(interfaceName);
-
-        cstNode.setNamespace(packageName + ".");
-        cstNode.addStereotypes(Stereotype.ABSTRACT);
-        isContainer = true;
-        break; }
-      case "constructor_declaration": {
-        cstNode = new CstNode(cstId++);
-        cstNode.setType(JavaNodeTypes.METHOD_DECLARATION);
-
-        TSNode block = tsNode.getChildByFieldName("body");
-        int lineNumber = tsNode.getStartPoint().getRow() + 1;
-        int endLineNumber = tsNode.getEndPoint().getRow() + 1;
-        cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber, endLineNumber, block.getStartByte(), block.getEndByte()));
-
-        String constructorName = "new";
-        cstNode.setSimpleName(constructorName);
-
-        TSNode parameters = tsNode.getChildByFieldName("parameters");
-        String paramsSignature = extractSignatureParameters(parameters, sourceBytes);
-        cstNode.setLocalName(constructorName + paramsSignature);
-
-        cstNode.addStereotypes(Stereotype.TYPE_CONSTRUCTOR);
-        isContainer = true;
-        break; }
-      case "method_declaration": {
-        cstNode = new CstNode(cstId++);
-        cstNode.setType(JavaNodeTypes.METHOD_DECLARATION);
-
-        int lineNumber = tsNode.getStartPoint().getRow() + 1;
-        int endLineNumber = tsNode.getEndPoint().getRow() + 1;
-        try {
-          TSNode block = tsNode.getChildByFieldName("body");
-          cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber,
-              endLineNumber, block.getStartByte(), block.getEndByte()));
-          } catch (TSException e) { // body is null for abstract methods
-          cstNode.setLocation(new Location(path, tsNode.getStartByte(), tsNode.getEndByte(), lineNumber,
-              endLineNumber, tsNode.getStartByte(), tsNode.getEndByte()));
-          cstNode.addStereotypes(Stereotype.ABSTRACT);
+    while (cursor.nextMatch(match)) {
+      TSNode name = null;
+      TSNode parameters = null;
+      TSNode body = null;
+      TSNode declaration = null;
+      for (TSQueryCapture capture : match.getCaptures()) {
+        TSNode capturedNode = capture.getNode();
+        String captureName = query.getCaptureNameForId(capture.getIndex());
+        switch (captureName) {
+          case "name" -> name = capturedNode;
+          case "parameters" -> parameters = capturedNode;
+          case "body" -> body = capturedNode;
+          case "declaration" -> declaration = capturedNode;
         }
+      }
 
-        TSNode identifier = tsNode.getChildByFieldName("name");
-        String methodName = NodeUtils.getNodeText(identifier, sourceBytes);
-        cstNode.setSimpleName(methodName);
+      CstNode cstNode = new CstNode(cstId++);
+      cstNode.setLocation(NodeUtils.generateLocation(declaration, body, path));
+      cstNode.setSimpleName(NodeUtils.getNodeText(name, sourceBytes));
+      cstNode.setLocalName(NodeUtils.getNodeText(name, sourceBytes));
+      switch (declaration.getType()) {
+        case "class_declaration":
+          cstNode.setType(JavaNodeTypes.CLASS);
+          cstNode.setNamespace(packageName + "."); // TODO 簡略化
+          break;
+        case "interface_declaration":
+          cstNode.setType(JavaNodeTypes.INTERFACE);
+          cstNode.setNamespace(packageName + ".");
+          cstNode.addStereotypes(Stereotype.ABSTRACT);
+          break;
+        case "enum_declaration":
+          cstNode.setType(JavaNodeTypes.ENUM);
+          cstNode.setNamespace(packageName + ".");
+          break;
+        case "constructor_declaration":
+          cstNode.setType(JavaNodeTypes.METHOD);
+          String constructorName = "new";
+          cstNode.setSimpleName(constructorName);
+          String constructorParamsSignature = extractSignatureParameters(parameters, sourceBytes);
+          cstNode.setLocalName(constructorName + constructorParamsSignature);
+          cstNode.addStereotypes(Stereotype.TYPE_CONSTRUCTOR);
+          break;
+        case "method_declaration":
+          cstNode.setType(JavaNodeTypes.METHOD);
+          String methodParamsSignature = extractSignatureParameters(parameters, sourceBytes);
+          cstNode.setLocalName(NodeUtils.getNodeText(name, sourceBytes) + methodParamsSignature);
+          cstNode.addStereotypes(Stereotype.TYPE_MEMBER);
+          break;
+        default:
+          System.out.println("Warning: Unhandled declaration type: " + declaration.getType() + " at " + declaration.getStartPoint().getRow() + "-" + declaration.getEndPoint().getRow() + " in source code: " + NodeUtils.getNodeText(declaration, sourceBytes));
+          break;
+      }
 
-        TSNode parameters = tsNode.getChildByFieldName("parameters");
-        String paramsSignature = extractSignatureParameters(parameters, sourceBytes);
-        cstNode.setLocalName(methodName + paramsSignature);
-
-        cstNode.addStereotypes(Stereotype.TYPE_MEMBER);
-        isContainer = true;
-        break; }
-      default:
-        break;
-    }
-
-    if (cstNode != null) {
+      // Determine parent-child relationship based on source code location
+      while (!parentStack.isEmpty() && parentStack.peek().getLocation().getEnd() < cstNode.getLocation().getBegin()) {
+        parentStack.pop();
+      }
       if (parentStack.isEmpty()) {
-        root.addNode(cstNode);
+        root.getNodes().add(cstNode);
       } else {
-        parentStack.peek().addNode(cstNode);
+        CstNode parentNode = parentStack.peek();
+        parentNode.addNode(cstNode);
       }
-      if (isContainer) {
-        parentStack.push(cstNode);
-      }
-    }
+      parentStack.push(cstNode);
 
-    for (int i = 0; i < tsNode.getChildCount(); i++) {
-      walkTree(tsNode.getChild(i), parentStack, root, path, sourceBytes, packageName);
-    }
-
-    if (cstNode != null && isContainer) {
-      parentStack.pop();
     }
   }
 
-    /**
+  /**
    * Extracts parameter types from a parameters TSNode and builds a signature string.
    * e.g., "(String, int[])"
    * @param parametersNode The TSNode representing the parameters list (e.g., content of formal_parameters).

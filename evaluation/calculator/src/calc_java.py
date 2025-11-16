@@ -2,15 +2,10 @@ from pandas import DataFrame
 from typing import Dict, Any
 import math
 
-
-def _calc_precision(tp: float, fp: float) -> float:
-  return float(tp) / (tp + fp) if (tp + fp) > 0 else 0.0
-
-def _calc_recall(tp: float, fn: float) -> float:
-  return float(tp) / (tp + fn) if (tp + fn) > 0 else 0.0
+from src.calc_util import calc_precision, calc_recall
 
 
-def calc_precision_recall(
+def calc_java_precision_recall(
     result_df: DataFrame,
 ) -> Dict[str, Any]:
     count = (
@@ -41,10 +36,8 @@ def calc_precision_recall(
         tp = v.get("TP", 0)
         fp = v.get("FP", 0)
         fn = v.get("FN", 0)
-        v["precision"] = _calc_precision(tp=tp, fp=fp)
-        v["recall"] = _calc_recall(tp=tp, fn=fn)
-    
-
+        v["precision"] = calc_precision(tp=tp, fp=fp)
+        v["recall"] = calc_recall(tp=tp, fn=fn)
 
     return {
         key: count[key]

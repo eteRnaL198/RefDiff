@@ -5,7 +5,8 @@ Basically, run this script after running detection for oracle data.
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-python3 -m src.main -i -d ../detection-result/0123/universal.csv -o ./result_0123.csv
+python3 -m src.main -l java -d ../detection-result/1027-1130-java.csv
+venv/bin/python -m src.main -l c -m precision -d ../detection-result/1027-0837-c-precision.csv
 # or venv/bin/python
 ```
 
