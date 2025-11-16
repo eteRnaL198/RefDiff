@@ -1,11 +1,7 @@
 package tmp;
 
 public class Bar {
-  public static void main(String[] args) {
-    hello(args);
-  }
-
-  public static void hello(String[] args) {
+  public static void hello() {
     System.out.println("Hello, World!");
   }
 }

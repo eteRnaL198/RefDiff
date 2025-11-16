@@ -1,6 +1,6 @@
-package pkg.v1;
+package java.refactor.moveClass.v1.Moved;
 
-public class Bar {
+public class Foo {
   public static void main(String[] args) {
     System.out.println("Hello, World!");
   }
