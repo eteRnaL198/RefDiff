@@ -9,7 +9,7 @@ import refdiff.core.RefDiff;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
 import refdiff.parsers.universal.UniversalPlugin;
-import refdiff.parsers.universal.UniversalPlugin.Language;
+import refdiff.parsers.universal.Language;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

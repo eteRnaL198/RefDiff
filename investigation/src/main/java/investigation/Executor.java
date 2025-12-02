@@ -22,7 +22,7 @@ import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
 import refdiff.core.io.GitHelper;
 import refdiff.parsers.universal.UniversalPlugin;
-import refdiff.parsers.universal.UniversalPlugin.Language;
+import refdiff.parsers.universal.Language;
 
 public class Executor {
     private static int COMMIT_DEPTH = 500;
