@@ -4,26 +4,35 @@ import org.treesitter.TSLanguage;
 import org.treesitter.TSParser;
 import org.treesitter.TSTree;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.HashMap;
 import java.nio.charset.StandardCharsets;
 
+import refdiff.core.io.FilePathFilter;
 import refdiff.core.io.SourceFileSet;
 import refdiff.parsers.universal.common.Tokenizer;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.TokenizedSource;
+import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.InheritanceTreeGenerator;
-import refdiff.parsers.universal.common.Parser;
 import refdiff.parsers.universal.common.FilePathUtils;
 
-public abstract class BaseParser implements Parser {
+public abstract class BasePlugin implements LanguagePlugin {
 
   private CstRoot root = new CstRoot();
   Stack<CstNode> parentStack;
+
+  /**
+   * Abstract method to be implemented by subclasses to provide the file extensions associated with the language.
+   * 
+   * @return A list of file extensions.
+   */
+  public abstract FilePathFilter getAllowedFilesFilter();
 
   /**
    * Abstract method to be implemented by subclasses to provide the TSLanguage.

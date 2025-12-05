@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.UniversalPlugin;
 import refdiff.core.cst.Parameter;
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstNodeRelationship;
@@ -24,7 +23,7 @@ import refdiff.core.cst.CstRoot;
 
 public class TestCParserOriginal {
 
-	private LanguagePlugin  parser = new UniversalPlugin();
+	private LanguagePlugin  parser = new CParser();
 
 	@Test
 	public void shouldParseSimpleFile() throws Exception {

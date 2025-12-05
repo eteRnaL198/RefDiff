@@ -20,10 +20,9 @@ import refdiff.core.cst.Parameter;
 import refdiff.core.io.SourceFileSet;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.UniversalPlugin;
 
 public class TestPythonParser {
-    private static final LanguagePlugin parser = new UniversalPlugin();
+    private static final LanguagePlugin parser = new PythonParser();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/python/syntax";
 
     private CstNode findNode(List<CstNode> nodes, String name, int line) {

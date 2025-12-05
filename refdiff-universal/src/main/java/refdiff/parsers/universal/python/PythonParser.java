@@ -20,18 +20,23 @@ import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.Parameter;
 import refdiff.core.cst.TokenizedSource;
+import refdiff.core.io.FilePathFilter;
 import refdiff.core.io.SourceFileSet;
+import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
 import java.util.stream.Collectors;
-import refdiff.parsers.universal.common.Parser;
-
 import java.util.ArrayList;
 
-public class PythonParser implements Parser {
+public class PythonParser implements LanguagePlugin {
   private int cstId = 0;
+
+  public FilePathFilter getAllowedFilesFilter() {
+    return new FilePathFilter(List.of(".py"));
+  }
+  
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();
     TSLanguage tsLang = new TreeSitterPython();

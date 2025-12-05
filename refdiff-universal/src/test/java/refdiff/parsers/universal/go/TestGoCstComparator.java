@@ -15,13 +15,12 @@ import refdiff.core.diff.CstComparator;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.UniversalPlugin;
 import refdiff.core.diff.Relationship;
 import refdiff.core.diff.RelationshipType;
 
 
 public class TestGoCstComparator {
-  private static final LanguagePlugin parser = new UniversalPlugin();
+    private static final LanguagePlugin parser = new GoParser();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/go/refactor";
 
     private CstDiff diff(String folderName) throws Exception {

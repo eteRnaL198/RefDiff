@@ -22,10 +22,9 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.core.cst.Parameter;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.UniversalPlugin;
 
 public class TestJsParser {
-  private static final LanguagePlugin parser = new UniversalPlugin();
+  private static final LanguagePlugin parser = new JsParser();
   private static final String TEST_DATA_BASE_PATH = "src/test/resources/js/syntax";
 
   private CstNode findNode(List<CstNode> nodes, String name, int line) {

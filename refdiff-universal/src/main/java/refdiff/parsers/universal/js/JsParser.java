@@ -6,7 +6,9 @@ import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.TokenizedSource;
 import refdiff.core.cst.Parameter;
+import refdiff.core.io.FilePathFilter;
 import refdiff.core.io.SourceFileSet;
+import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.common.CallGraphGenerator;
 import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.SourceFileReader;
@@ -27,11 +29,14 @@ import org.treesitter.TSQueryCursor;
 import org.treesitter.TSQueryMatch;
 import org.treesitter.TSTree;
 import org.treesitter.TreeSitterJavascript;
-import refdiff.parsers.universal.common.Parser;
 
-public class JsParser implements Parser {
+public class JsParser implements LanguagePlugin {
 
   private int cstId = 0;
+
+  public FilePathFilter getAllowedFilesFilter() {
+    return new FilePathFilter(List.of(".js", ".jsx"));
+  }
 
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();

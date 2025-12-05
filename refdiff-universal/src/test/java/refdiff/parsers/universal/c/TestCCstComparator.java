@@ -16,10 +16,9 @@ import refdiff.core.diff.RelationshipType;
 import refdiff.core.diff.Relationship;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.UniversalPlugin;
 
 public class TestCCstComparator {
-  private static final LanguagePlugin parser = new UniversalPlugin();
+  private static final LanguagePlugin parser = new CParser();
   private static final String TEST_DATA_BASE_PATH = "src/test/resources/c/refactor";
 
   private CstDiff diff(String folderName) throws Exception {

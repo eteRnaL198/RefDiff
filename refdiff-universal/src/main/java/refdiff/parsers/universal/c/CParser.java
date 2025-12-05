@@ -21,16 +21,22 @@ import refdiff.core.cst.CstRoot;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.Parameter;
 import refdiff.core.cst.TokenizedSource;
+import refdiff.core.io.FilePathFilter;
 import refdiff.core.io.SourceFileSet;
+import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.common.CallGraphGenerator;
-import refdiff.parsers.universal.common.Parser;
 import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.common.SourceFileReader;
 import refdiff.parsers.universal.common.Tokenizer;
+import refdiff.parsers.universal.common.FilePathUtils;
 
-public class CParser implements Parser {
+public class CParser implements LanguagePlugin {
 
   private int cstId = 0;
+
+  public FilePathFilter getAllowedFilesFilter() {
+    return new FilePathFilter(List.of(".c", ".h"));
+  }
 
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();
@@ -102,75 +108,80 @@ public class CParser implements Parser {
             fileCstNode.setType(CNodeTypes.FILE);
             fileCstNode.setSimpleName(getFileNameFromFilePath(filePath));
             fileCstNode.setLocalName(getFileNameFromFilePath(filePath));
-            fileCstNode.setNamespace(getNamespaceFromFilePath(filePath));
+            fileCstNode.setNamespace(FilePathUtils.extractDirectoryFromFilePath(filePath));
             int startLine = fileTsNode.getStartPoint().getRow() + 1;
             int endLine = fileTsNode.getEndPoint().getRow() + 1;
             fileCstNode.setLocation(new Location(filePath, fileTsNode.getStartByte(), fileTsNode.getEndByte(), startLine, endLine, fileTsNode.getStartByte(), fileTsNode.getEndByte()));
             cstRoot.addNode(fileCstNode);
         } else { // Function match
-            if (fileCstNode == null) {
-                fileCstNode = new CstNode(cstId++);
-                fileCstNode.setType(CNodeTypes.FILE);
-                fileCstNode.setSimpleName(getFileNameFromFilePath(filePath));
-                fileCstNode.setLocalName(getFileNameFromFilePath(filePath));
-                fileCstNode.setNamespace(getNamespaceFromFilePath(filePath));
-                fileCstNode.setLocation(new Location(filePath, rootNode.getStartByte(), rootNode.getEndByte(), rootNode.getStartPoint().getRow() + 1, rootNode.getEndPoint().getRow() + 1, rootNode.getStartByte(), rootNode.getEndByte()));
-                cstRoot.addNode(fileCstNode);
-            }
-
-            TSNode functionNode = null;
-            TSNode nameNode = null;
-            TSNode paramsNode = null;
-            TSNode bodyNode = null;
-
-            for (TSQueryCapture capture : match.getCaptures()) {
-                TSNode capturedNode = capture.getNode();
-                String captureName = tsQuery.getCaptureNameForId(capture.getIndex());
-                switch (captureName) {
-                    case "function_node": functionNode = capturedNode; break;
-                    case "function_name": nameNode = capturedNode; break;
-                    case "function_params": paramsNode = capturedNode; break;
-                    case "function_body": bodyNode = capturedNode; break;
+            try {
+                if (fileCstNode == null) {
+                    fileCstNode = new CstNode(cstId++);
+                    fileCstNode.setType(CNodeTypes.FILE);
+                    fileCstNode.setSimpleName(getFileNameFromFilePath(filePath));
+                    fileCstNode.setLocalName(getFileNameFromFilePath(filePath));
+                    fileCstNode.setNamespace(FilePathUtils.extractDirectoryFromFilePath(filePath));
+                    fileCstNode.setLocation(new Location(filePath, rootNode.getStartByte(), rootNode.getEndByte(), rootNode.getStartPoint().getRow() + 1, rootNode.getEndPoint().getRow() + 1, rootNode.getStartByte(), rootNode.getEndByte()));
+                    cstRoot.addNode(fileCstNode);
                 }
+
+                TSNode functionNode = null;
+                TSNode nameNode = null;
+                TSNode paramsNode = null;
+                TSNode bodyNode = null;
+
+                for (TSQueryCapture capture : match.getCaptures()) {
+                    TSNode capturedNode = capture.getNode();
+                    String captureName = tsQuery.getCaptureNameForId(capture.getIndex());
+                    switch (captureName) {
+                        case "function_node": functionNode = capturedNode; break;
+                        case "function_name": nameNode = capturedNode; break;
+                        case "function_params": paramsNode = capturedNode; break;
+                        case "function_body": bodyNode = capturedNode; break;
+                    }
+                }
+
+                if (functionNode == null || nameNode == null) {
+                    continue;
+                }
+
+                CstNode functionCstNode = new CstNode(cstId++);
+                functionCstNode.setType(CNodeTypes.FUNCTION);
+
+                String functionName = NodeUtils.getNodeText(nameNode, sourceBytes);
+                functionCstNode.setSimpleName(functionName);
+                functionCstNode.setNamespace(null);
+
+                int defStartByte = functionNode.getStartByte();
+                int defEndByte = functionNode.getEndByte();
+                int bodyStartByte;
+                int bodyEndByte;
+
+                if (bodyNode == null) {
+                    bodyStartByte = defStartByte;
+                    bodyEndByte = defEndByte;
+                } else {
+                    bodyStartByte = bodyNode.getStartByte();
+                    bodyEndByte = bodyNode.getEndByte();
+                }
+
+                int funcLineNumber = functionNode.getStartPoint().getRow() + 1;
+                int funcEndLineNumber = functionNode.getEndPoint().getRow() + 1;
+                functionCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, funcLineNumber, funcEndLineNumber, bodyStartByte, bodyEndByte));
+
+                List<Parameter> cstParameters = new ArrayList<>();
+                List<String> paramTypes = new ArrayList<>();
+                extractParams(paramsNode, sourceBytes, cstParameters, paramTypes, tsLang);
+
+                functionCstNode.setParameters(cstParameters);
+                String localName = functionName + "(" + String.join(", ", paramTypes) + ")";
+                functionCstNode.setLocalName(localName);
+
+                fileCstNode.addNode(functionCstNode);
+            } catch (Exception e) {
+                System.err.println("Error processing function in file " + filePath + ": " + e.getMessage());
+                e.printStackTrace();
             }
-
-            if (functionNode == null || nameNode == null) {
-                continue;
-            }
-
-            CstNode functionCstNode = new CstNode(cstId++);
-            functionCstNode.setType(CNodeTypes.FUNCTION);
-
-            String functionName = getNodeText(nameNode, sourceBytes);
-            functionCstNode.setSimpleName(functionName);
-            functionCstNode.setNamespace(null);
-
-            int defStartByte = functionNode.getStartByte();
-            int defEndByte = functionNode.getEndByte();
-            int bodyStartByte;
-            int bodyEndByte;
-
-            if (bodyNode == null) {
-                bodyStartByte = defStartByte;
-                bodyEndByte = defEndByte;
-            } else {
-                bodyStartByte = bodyNode.getStartByte();
-                bodyEndByte = bodyNode.getEndByte();
-            }
-
-            int funcLineNumber = functionNode.getStartPoint().getRow() + 1;
-            int funcEndLineNumber = functionNode.getEndPoint().getRow() + 1;
-            functionCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, funcLineNumber, funcEndLineNumber, bodyStartByte, bodyEndByte));
-
-            List<Parameter> cstParameters = new ArrayList<>();
-            List<String> paramTypes = new ArrayList<>();
-            extractParams(paramsNode, sourceBytes, cstParameters, paramTypes, tsLang);
-
-            functionCstNode.setParameters(cstParameters);
-            String localName = functionName + "(" + String.join(", ", paramTypes) + ")";
-            functionCstNode.setLocalName(localName);
-
-            fileCstNode.addNode(functionCstNode);
         }
     }
   }
@@ -234,17 +245,6 @@ public class CParser implements Parser {
             }
         }
     }
-  }
-
-  private String getNamespaceFromFilePath(String filePath) {
-    int lastSlash = filePath.lastIndexOf('/');
-    int lastBackslash = filePath.lastIndexOf('\\');
-    int lastSeparator = Math.max(lastSlash, lastBackslash);
-
-    if (lastSeparator != -1) {
-      return filePath.substring(0, lastSeparator + 1);
-    }
-    return "";
   }
 
   private String getFileNameFromFilePath(String filePath) {

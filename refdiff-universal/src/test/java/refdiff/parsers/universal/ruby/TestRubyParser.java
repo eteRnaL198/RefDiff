@@ -19,10 +19,9 @@ import refdiff.core.cst.Parameter;
 import refdiff.core.io.SourceFileSet;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.UniversalPlugin;
 
 public class TestRubyParser {
-    private static final LanguagePlugin parser = new UniversalPlugin();
+    private static final LanguagePlugin parser = new RubyParser();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/ruby/syntax";
 
     private CstNode findMethod(List<CstNode> nodes, String name, int line) {

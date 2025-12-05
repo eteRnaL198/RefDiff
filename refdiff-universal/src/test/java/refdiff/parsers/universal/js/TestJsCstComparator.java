@@ -17,11 +17,10 @@ import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.RelationshipType;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.UniversalPlugin;
 
 public class TestJsCstComparator {
 
-    private static final LanguagePlugin parser = new UniversalPlugin();
+    private static final LanguagePlugin parser = new JsParser();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/js/refactor";
 
     private CstDiff diff(String folderName) throws Exception {
