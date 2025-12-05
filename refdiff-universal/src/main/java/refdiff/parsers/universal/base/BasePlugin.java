@@ -24,7 +24,7 @@ import refdiff.parsers.universal.common.FilePathUtils;
 
 public abstract class BasePlugin implements LanguagePlugin {
 
-  private CstRoot root = new CstRoot();
+  CstRoot root;
   Stack<CstNode> parentStack;
 
   /**
@@ -66,6 +66,8 @@ public abstract class BasePlugin implements LanguagePlugin {
   protected abstract void buildCst(TSTree tree, TSLanguage tsLang, String path, byte[] sourceBytes);
 
   public CstRoot parse(SourceFileSet folder) {
+    initRoot(); // Initialize the CST root each time parse is called
+
     TSParser parser = new TSParser();
     TSLanguage tsLang = getLanguage(); // Keep tsLang instance for reuse
     parser.setLanguage(tsLang);
@@ -119,5 +121,9 @@ public abstract class BasePlugin implements LanguagePlugin {
       parentNode.addNode(cstNode);
     }
     parentStack.push(cstNode);
+  }
+
+  private void initRoot() {
+    this.root = new CstRoot();
   }
 }
