@@ -1,8 +1,6 @@
 package refdiff.parsers.universal.php;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstRoot;
@@ -22,7 +20,7 @@ import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
 
 public class TestPhpParser {
-    private static final LanguagePlugin parser = new PhpParser();
+    private static final LanguagePlugin parser = new PhpPlugin();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/php/syntax";
 
     private CstNode findNode(List<CstNode> nodes, String name, int line) {
@@ -51,11 +49,12 @@ public class TestPhpParser {
         SourceFileSet sources = SourceFolder.from(baseFolderPath, ".php");
         CstRoot cstRoot = parser.parse(sources);
 
-        List<CstNode> functionNodes = cstRoot.getNodes().stream()
-            .filter(node -> PhpNodeTypes.METHOD.equals(node.getType()) || PhpNodeTypes.FUNCTION.equals(node.getType()))
-            .collect(Collectors.toList());
-
-        // assertThat("Should find 27 function/method nodes", functionNodes.size(), is(equalTo(27)));
+        List<CstNode> functionNodes = new ArrayList<>();
+        cstRoot.forEachNode((node, depth) -> {
+            if (PhpNodeTypes.METHOD.equals(node.getType()) || PhpNodeTypes.FUNCTION.equals(node.getType())) {
+                functionNodes.add(node);
+            }
+        });
 
         List<ExpectedNode> expectedFunctions = Arrays.asList(
             // new ExpectedNode("sample.php", PhpNodeTypes.FILE, 1, "sample.php",  ""),
@@ -90,18 +89,18 @@ public class TestPhpParser {
 
         for (ExpectedNode expected : expectedFunctions) {
             CstNode actualNode = findNode(functionNodes, expected.name(), expected.line());
-            assertThat(actualNode.getType(), is(equalTo(expected.type())));
-            assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
-            assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+            assertEquals(expected.type(), actualNode.getType());
+            assertEquals(expected.name(), actualNode.getSimpleName());
+            assertEquals(expected.localName(), actualNode.getLocalName());
             if (expected.namespace() != null) {
-                assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+                assertEquals(expected.namespace(), actualNode.getNamespace());
             }
             Location location = actualNode.getLocation();
-            assertThat(location.getBeginLine(), is(equalTo(expected.line())));
+            assertEquals(expected.line(), location.getBeginLine());
             List<String> actualParamNames = actualNode.getParameters().stream()
                 .map(Parameter::getName)
                 .collect(Collectors.toList());
-            assertThat(actualParamNames, is(equalTo(expected.params())));
+            assertEquals(expected.params(), actualParamNames);
         }
     }
 }

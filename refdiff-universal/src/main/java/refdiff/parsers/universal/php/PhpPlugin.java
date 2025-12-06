@@ -17,10 +17,9 @@ import refdiff.core.cst.Parameter;
 import refdiff.core.cst.Stereotype;
 import refdiff.core.io.FilePathFilter;
 import refdiff.parsers.universal.common.NodeUtils;
-import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.base.BasePlugin;
 
-public class PhpParser extends BasePlugin {
+public class PhpPlugin extends BasePlugin {
 
   private int cstId = 0;
 
@@ -140,22 +139,58 @@ public class PhpParser extends BasePlugin {
         return parameters;
     }
 
-    for (int i = 0; i < parametersNode.getChildCount(); i++) {
-        TSNode parameterNode = parametersNode.getChild(i);
-        TSNode typeNode = parameterNode.getChildByFieldName("type");
+    for (int i = 0; i < parametersNode.getNamedChildCount(); i++) {
+        TSNode paramNode = parametersNode.getNamedChild(i);
+        String type = paramNode.getType();
+        String prefix = "";
+        TSNode nameNode = paramNode.getChildByFieldName("name");
 
-        if (typeNode != null) {
-            String paramType = NodeUtils.getNodeText(typeNode, sourceBytes);
-            parameters.add(new Parameter(paramType));
-        } else if (parameterNode.getType().equals("property_promotion_parameter")) {
-            // For property promotion, the type is not a named field but a direct child.
-            for (int j = 0; j < parameterNode.getChildCount(); j++) {
-                TSNode child = parameterNode.getChild(j);
-                String childType = child.getType();
-                if (childType.equals("primitive_type") || childType.equals("name")) {
-                    parameters.add(new Parameter(NodeUtils.getNodeText(child, sourceBytes)));
-                    break;
+        if (nameNode == null) {
+            // fallback: try to find a descendant variable_name
+            for (int j = 0; j < paramNode.getNamedChildCount() && nameNode == null; j++) {
+                TSNode child = paramNode.getNamedChild(j);
+                if ("variable_name".equals(child.getType())) {
+                    nameNode = child;
+                } else if ("name".equals(child.getType())) {
+                    // some AST variants wrap variable_name inside a name node
+                    nameNode = child;
                 }
+            }
+        }
+
+        if (nameNode != null) {
+            // inspect raw text before the name to detect '...' or '&'
+            int preStart = paramNode.getStartByte();
+            int preEnd = nameNode.getStartByte();
+            if (preEnd > preStart) {
+                String preText = new String(sourceBytes, preStart, preEnd - preStart, java.nio.charset.StandardCharsets.UTF_8);
+                if (preText.contains("...")) {
+                    prefix = "...";
+                } else if (preText.contains("&")) {
+                    prefix = "&";
+                }
+            }
+
+            // for explicit variadic node types, ensure '...' prefix
+            if ("variadic_parameter".equals(type)) {
+                prefix = "...";
+            }
+
+            // If nameNode itself isn't the variable_name (e.g. it's a wrapper), try to find descendant variable_name
+            TSNode finalNameNode = nameNode;
+            if (!"variable_name".equals(nameNode.getType())) {
+                for (int j = 0; j < nameNode.getNamedChildCount(); j++) {
+                    TSNode child = nameNode.getNamedChild(j);
+                    if ("variable_name".equals(child.getType())) {
+                        finalNameNode = child;
+                        break;
+                    }
+                }
+            }
+
+            if ("variable_name".equals(finalNameNode.getType())) {
+                String name = NodeUtils.getNodeText(finalNameNode, sourceBytes);
+                parameters.add(new Parameter(prefix + name));
             }
         }
     }
