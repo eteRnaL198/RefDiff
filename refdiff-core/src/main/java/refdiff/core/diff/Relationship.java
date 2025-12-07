@@ -82,8 +82,18 @@ public class Relationship {
 		return String.format("\"%s\",\"{%s}\",\"{%s})\"", this.type, formatWithLineNum(this.nodeBefore), formatWithLineNum(this.nodeAfter));
 	}
 
-	public String getDescriptionWithLOC() {
-		return String.format("%s\t{%s}\t{%s})", this.type, formatWithLineNumAndLoc(this.nodeBefore), formatWithLineNumAndLoc(this.nodeAfter));
+	/**
+	 * e.g. "RENAME_METHOD","{Method foo at FileA.java:10}","{Method bar at FileB.java:12}","15","20"
+	 */
+	public String getDescriptionWithLocInCsv() {
+		return String.format(
+			"\"%s\",\"{%s}\",\"{%s}\",\"%s\",\"%s\"",
+			this.type,
+			formatWithLineNum(this.nodeBefore),
+			formatWithLineNum(this.nodeAfter),
+			this.nodeBefore.getLocation().getLoc(),
+			this.nodeAfter.getLocation().getLoc()
+		);
 	}
 	
 	public String getDescriptionWithScore() {
@@ -97,10 +107,6 @@ public class Relationship {
 		return String.format("%s %s at %s:%d", node.getType().replace("Declaration", ""), node.getLocalName(), node.getLocation().getFile(), node.getLocation().getBeginLine());
 	}
 
-	private String formatWithLineNumAndLoc(CstNode node) {
-		return String.format("%s %s at %s:%d LOC:%d", node.getType().replace("Declaration", ""), node.getLocalName(),node.getLocation().getFile(), node.getLocation().getBeginLine(), node.getLocation().getLoc());
-	}
-	
 	private String format(CstNode node) {
 		return String.join(" ", CstRootHelper.getNodePath(node));
 	}
