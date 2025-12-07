@@ -79,12 +79,12 @@ public final class RepoConfig {
     };
 
     public static final Map<String, String[]> REPOS_BY_LANGUAGE = Map.of(
-        "Java", JAVA,
-        "C", C,
-        "JavaScript", JAVASCRIPT,
-        "Ruby", RUBY,
-        "Go", GO,
-        "PHP", PHP,
+        // "Java", JAVA,
+        // "C", C,
+        // "JavaScript", JAVASCRIPT,
+        // "Ruby", RUBY,
+        // "Go", GO,
+        // "PHP", PHP,
         "Python", PYTHON
     );
 
