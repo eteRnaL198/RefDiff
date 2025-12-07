@@ -21,8 +21,14 @@ import refdiff.core.RefDiff;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
 import refdiff.core.io.GitHelper;
-import refdiff.parsers.universal.UniversalPlugin;
-import refdiff.parsers.universal.Language;
+import refdiff.parsers.LanguagePlugin;
+import refdiff.parsers.universal.java.JavaParser;
+import refdiff.parsers.universal.c.CPlugin;
+import refdiff.parsers.universal.js.JsParser;
+import refdiff.parsers.universal.go.GoParser;
+import refdiff.parsers.universal.python.PythonParser;
+import refdiff.parsers.universal.ruby.RubyParser;
+import refdiff.parsers.universal.php.PhpPlugin;
 
 public class Executor {
     private static int COMMIT_DEPTH = 500;
@@ -33,9 +39,9 @@ public class Executor {
     private String currentCommitSha = "";
 
     public static void main(String[] args) throws Exception {
-        // CLI option: --start-commit <sha> or -s <sha>
+        // CLI option: --start-commit <sha> or -s <sha>, and --language <lang> or -l <lang>
         String startCommitSha = null;
-        String language = null; // Add a variable to store the language
+        String languageArg = null;
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
             if ("--start-commit".equals(a) || "-s".equals(a)) {
@@ -45,10 +51,17 @@ public class Executor {
                 }
             } else if (a.startsWith("--start-commit=")) {
                 startCommitSha = a.substring("--start-commit=".length());
+            } else if ("--language".equals(a) || "-l".equals(a)) {
+                if (i + 1 < args.length) {
+                    languageArg = args[i + 1];
+                    i++;
+                }
+            } else if (a.startsWith("--language=")) {
+                languageArg = a.substring("--language=".length());
             }
         }
 
-        new Executor().execute(startCommitSha);
+        new Executor().execute(startCommitSha, languageArg);
     }
 
     private void incrementCommitCount() {
@@ -59,12 +72,20 @@ public class Executor {
         currentCommitSha = sha;
     }
 
-    private void execute(String startCommitSha) throws Exception {
+    private void execute(String startCommitSha, String selectedLanguage) throws Exception {
         Map<String, Map<String, File>> clonedReposByLang = getRepos();
 
         System.out.println("\n\n----- Detect refactorings -----");
         for (Map.Entry<String, Map<String, File>> langEntry : clonedReposByLang.entrySet()) {
             String lang = langEntry.getKey();
+
+            // If user specified a language, skip other languages
+            if (selectedLanguage != null && !selectedLanguage.trim().isEmpty()) {
+                if (!lang.equalsIgnoreCase(selectedLanguage.trim())) {
+                    continue;
+                }
+            }
+
             Map<String, File> repos = langEntry.getValue();
             for (Map.Entry<String, File> entry : repos.entrySet()) {
                 String repoName = entry.getKey();
@@ -76,7 +97,7 @@ public class Executor {
                 StringBuilder sb = new StringBuilder();
                 setCurrentCommitSha(startCommitSha != null ? startCommitSha : "HEAD");
                 Language language = mapLanguage(lang);
-                UniversalPlugin plugin = new UniversalPlugin(language);
+                LanguagePlugin plugin = mapPlugin(language);
                 RefDiff refDiffUniversal = new RefDiff(plugin);
                 for (int attempt = 1; attempt <= 5; attempt++) {
                     try {
@@ -190,6 +211,27 @@ public class Executor {
                 return Language.PHP;
             default:
                 throw new IllegalArgumentException("Unsupported language: " + lang);
+        }
+    }
+
+    private static LanguagePlugin mapPlugin(Language language) {
+        switch (language) {
+            case JAVA:
+                return new JavaParser();
+            case C:
+                return new CPlugin();
+            case JAVASCRIPT:
+                return new JsParser();
+            case GO:
+                return new GoParser();
+            case PYTHON:
+                return new PythonParser();
+            case RUBY:
+                return new RubyParser();
+            case PHP:
+                return new PhpPlugin();
+            default:
+                throw new IllegalArgumentException("Unsupported language: " + language);
         }
     }
 }

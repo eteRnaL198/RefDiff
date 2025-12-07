@@ -1,11 +1,8 @@
 package investigation;
 
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.treesitter.TSLanguage;
 import org.treesitter.TSNode;
@@ -17,19 +14,7 @@ import org.treesitter.TSQueryMatch;
 import org.treesitter.TSTree;
 import org.treesitter.TreeSitterRuby;
 
-import refdiff.core.RefDiff;
-import refdiff.core.cst.CstRoot;
-import refdiff.core.diff.CstComparator;
-import refdiff.core.diff.CstComparatorMonitor;
-import refdiff.core.diff.CstDiff;
-import refdiff.core.diff.Relationship;
-import refdiff.core.diff.CstComparator.DiffBuilder;
-import refdiff.core.diff.similarity.TfIdfSourceRepresentation;
-import refdiff.core.diff.similarity.TfIdfSourceRepresentationBuilder;
 import refdiff.core.io.SourceFolder;
-import refdiff.core.io.SourceFile;
-import refdiff.core.io.SourceFileSet;
-import refdiff.parsers.universal.UniversalPlugin;
 
 public class Ast {
   public static void main(String[] args) throws Exception {
