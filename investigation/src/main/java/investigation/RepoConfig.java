@@ -21,32 +21,61 @@ public final class RepoConfig {
     };
 
     public static final String[] JAVASCRIPT = {
-        "https://github.com/adobe/brackets.git",
-        "https://github.com/moment/moment.git",
-        "https://github.com/gulpjs/gulp.git",
-        "https://github.com/nodejs/node.git",
-        "https://github.com/angular/angular.js.git",
+        // "https://github.com/adobe/brackets.git",
+        // "https://github.com/moment/moment.git",
+        // "https://github.com/gulpjs/gulp.git",
+        // "https://github.com/nodejs/node.git",
+        // "https://github.com/angular/angular.js.git",
     };
 
     public static final String[] RUBY = {
         // "https://github.com/rails/rails.git",
         // "https://github.com/maybe-finance/maybe.git",
+
+        // Borges
+        "https://github.com/jekyll/jekyll.git", // App
+        "https://github.com/plataformatec/devise.git", // Non-web library
+        "https://github.com/gitlabhq/gitlabhq", // Software tool
+        "https://github.com/ruby/ruby.git", // System
+        "https://github.com/rails/rails.git", // Web
     };
+
 
     public static final String[] GO = {
         // "https://github.com/ollama/ollama.git",
         // "https://github.com/golang/go.git",
+
+        // Borges
+        "https://github.com/getlantern/lantern.git", // App
+        "https://github.com/golang/groupcache.git", // Non-web
+        "https://github.com/kubernetes/kubernetes.git", // Software tool
+        "https://github.com/moby/moby.git", // System
+        "https://github.com/go-martini/martini.git", // Web
     };
 
     public static final String[] PHP = {
         // "https://github.com/laravel/framework.git",
         // "https://github.com/nextcloud/server.git",
+
+        // Borges
+        "https://github.com/WordPress/WordPress.git", // App
+        "https://github.com/PHPMailer/PHPMailer.git", // Non-web library
+        "https://github.com/composer/composer.git", // Software tool
+        // System category is not available for PHP
+        "https://github.com/bcit-ci/CodeIgniter.git", // Web
     };
 
     public static final String[] PYTHON = {
         // "https://github.com/Significant-Gravitas/AutoGPT.git",
         // "https://github.com/huggingface/transformers.git",
         // "https://github.com/ytdl-org/youtube-dl.git"
+
+        // Borges
+        "https://github.com/ytdl-org/youtube-dl.git", // App
+        "https://github.com/scrapy/scrapy.git", // Non-web library
+        "https://github.com/jkbrzt/httpie.git", // Software tool
+        "https://github.com/apenwarr/sshuttle.git", // System
+        "https://github.com/django/django.git", // Web"
     };
 
     public static final Map<String, String[]> REPOS_BY_LANGUAGE = Map.of(
