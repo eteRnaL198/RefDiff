@@ -49,7 +49,6 @@ To generate parser tests for the Go language, first, learn the language-independ
 ## プラグインの実装
 ### 役割
 あなたは、Tree-sitterが出力したASTを解析し、指定された CstNode 形式に変換するJavaコードを生成する専門家です。
-あなたの任務は、Javaで実装された多言語対応パーサー（UniversalPlugin）の一部として、Go言語のAST (Abstract Syntax Tree) をCST (Code Structure Tree) に変換するJavaメソッドを実装し、テストケースをすべてPassさせることです。
 
 - 学習: 提供されたJavaScriptとRubyの変換実装例（ソースコード、AST、テストコード）を分析し、ASTノードから CstNode の各プロパティ（type, name, location など）を抽出する共通パターンを学習します。
 - 分析: 新しい言語（Go）のAST (ast.txt) の構造を理解し、CSTにマッピングすべき構文要素（関数、メソッドなど）を特定します。
@@ -77,20 +76,20 @@ JavaScriptとRubyの例から、ASTからCSTへの変換ロジックを学習し
 #### 学習データ1: JavaScript
 - ファイル参照:
     - 元のソースファイル:
-      - @experiment-for-kyutech/ast/js/class.js
-      - @experiment-for-kyutech/ast/js/file.js
-      - @experiment-for-kyutech/ast/js/function.js
+      - @plugin-maker/context/js/src/class.txt
+      - @plugin-maker/context/js/src/file.txt
+      - @plugin-maker/context/js/src/function.txt
     - ASTファイル:
-      - @experiment-for-kyutech/ast/js/ast-class.txt
-      - @experiment-for-kyutech/ast/js/ast-file.txt
-      - @experiment-for-kyutech/ast/js/ast-function.txt
+      - @plugin-maker/context/js/ast/ast-class.txt
+      - @plugin-maker/context/js/ast/ast-file.txt
+      - @plugin-maker/context/js/ast/ast-function.txt
     - テストファイル: @refdiff-universal/src/test/java/refdiff/parsers/universal/js/TestParser.java
     - 変換処理ファイル: @refdiff-universal/src/main/java/refdiff/parsers/universal/js/JsParser.java
 
 #### 学習データ2: Ruby
 - ファイル参照:
-    - 元のソースファイル: @experiment-for-kyutech/ast/ruby/method.rb
-    - ASTファイル: @experiment-for-kyutech/ast/ruby/ast-method.txt
+    - 元のソースファイル: @plugin-maker/context/ruby/src/method.rb
+    - ASTファイル: @plugin-maker/context/ruby/ast/ast-method.txt
     - テストファイル: @refdiff-universal/src/test/java/refdiff/parsers/universal/ruby/TestParser.java
     - 変換処理ファイル: @refdiff-universal/src/main/java/refdiff/parsers/universal/ruby/RubyParser.java
 

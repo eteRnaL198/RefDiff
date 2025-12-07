@@ -1,6 +1,7 @@
 package refdiff.parsers.universal.c;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import static refdiff.test.util.CstDiffMatchers.containsOnly;
 import static refdiff.test.util.CstDiffMatchers.node;
 import static refdiff.test.util.CstDiffMatchers.relationship;
@@ -8,7 +9,7 @@ import static refdiff.test.util.CstDiffMatchers.relationship;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import refdiff.core.diff.CstComparator;
 import refdiff.core.diff.CstDiff;
@@ -18,7 +19,7 @@ import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
 
 public class TestCCstComparator {
-  private static final LanguagePlugin parser = new CParser();
+  private static final LanguagePlugin parser = new CPlugin();
   private static final String TEST_DATA_BASE_PATH = "src/test/resources/c/refactor";
 
   private CstDiff diff(String folderName) throws Exception {

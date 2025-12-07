@@ -40,7 +40,6 @@ public class GoParser implements LanguagePlugin {
     return new FilePathFilter(List.of(".go"));
   }
 
-
   public CstRoot parse(SourceFileSet folder) {
     TSParser parser = new TSParser();
     TSLanguage tsLang = new TreeSitterGo();

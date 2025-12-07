@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PluginMaker {
+public class PluginGenerator {
   public static void main(String[] args) throws Exception {
     String pluginDir = System.getProperty("plugin.dir");
     if (pluginDir == null || pluginDir.isEmpty()) {

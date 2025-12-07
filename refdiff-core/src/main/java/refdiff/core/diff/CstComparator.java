@@ -348,6 +348,10 @@ public class CstComparator {
 					if (sameRootNode(n1, n2)) {
 						return Optional.of(RelationshipType.INTERNAL_MOVE_RENAME);
 					} else {
+						if (n1.getSimpleName().equals("buffer_full") && n2.getSimpleName().equals("rb_full")) { // TODO remove
+							System.out.println(n1.getSimpleName() + " -> " + n2.getSimpleName());
+							System.out.println(computeHardSimilarityScore(n1, n2));
+						}
 						return Optional.of(RelationshipType.MOVE_RENAME);
 					}
 				}

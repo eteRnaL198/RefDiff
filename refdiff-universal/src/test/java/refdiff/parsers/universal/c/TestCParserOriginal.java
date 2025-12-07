@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
@@ -23,7 +23,7 @@ import refdiff.core.cst.CstRoot;
 
 public class TestCParserOriginal {
 
-	private LanguagePlugin  parser = new CParser();
+	private LanguagePlugin  parser = new CPlugin();
 
 	@Test
 	public void shouldParseSimpleFile() throws Exception {
