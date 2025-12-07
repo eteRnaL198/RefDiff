@@ -270,6 +270,9 @@ public class Sandbox {
     //     """;
         String preciseQuery = """
         [
+              (program
+                (_) @body
+              ) @declaration
               (class_declaration
                 name: (identifier) @name
                 body: (class_body) @body
@@ -359,34 +362,60 @@ public class Sandbox {
                 case "name" -> name = capturedNode;
                 case "body" -> body = capturedNode;
                 case "params" -> params = capturedNode;
-                case "decl" -> decl = capturedNode;
+                case "declaration" -> decl = capturedNode;
                 default -> {}
             }
         }
-        if (decl != null && name != null && body != null) {
-            NodeInfo node = new NodeInfo(
+
+        NodeInfo node = null;
+        switch (decl.getType()) {
+          case "program":
+            node = new NodeInfo(
+                decl.getType(),
+                "sample.php",
+                decl.getStartByte(),
+                decl.getEndByte()
+            );
+            break;
+          case "class_declaration":
+          case "interface_declaration":
+          case "enum_declaration":
+            node = new NodeInfo(
                 decl.getType(),
                 source.substring(name.getStartByte(), name.getEndByte()),
                 body.getStartByte(),
                 body.getEndByte()
             );
+            break;
+          case "constructor_declaration":
+          case "method_declaration":
+            node = new NodeInfo(
+                decl.getType(),
+                source.substring(name.getStartByte(), name.getEndByte()),
+                body.isNull() ? decl.getStartByte() : body.getStartByte(),
+                body.isNull() ? decl.getEndByte() : body.getEndByte()
+            );
             if (params != null) {
-              System.out.println("Params: " + source.substring(params.getStartByte(), params.getEndByte()) + ", " + params.getType());
               String paramStr = source.substring(params.getStartByte(), params.getEndByte());
               node.addParameter(paramStr);
             }
-
-            // スタックを使って親子関係を構築
-            while (!stack.isEmpty() && stack.peek().end < node.start) {
-                stack.pop(); // スタックのトップが現在のノードの親でない場合、スタックから削除
-            }
-            if (!stack.isEmpty()) {
-                stack.peek().addChild(node); // スタックのトップが親ノード
-            } else {
-                root.addChild(node); // スタックが空ならルートノードに追加
-            }
-            stack.push(node); // 現在のノードをスタックに追加
+            break;
         }
+
+        if (node == null) {
+          continue;
+        }
+
+        // スタックを使って親子関係を構築
+        while (!stack.isEmpty() && stack.peek().end < node.start) {
+            stack.pop(); // スタックのトップが現在のノードの親でない場合、スタックから削除
+        }
+        if (!stack.isEmpty()) {
+            stack.peek().addChild(node); // スタックのトップが親ノード
+        } else {
+            root.addChild(node); // スタックが空ならルートノードに追加
+        }
+        stack.push(node); // 現在のノードをスタックに追加
         // } else if (params != null && !stack.isEmpty()) {
         //     // パラメータノードの場合、現在のスタックトップにパラメータ情報を追加
         //     String paramStr = source.substring(params.getStartByte(), params.getEndByte());

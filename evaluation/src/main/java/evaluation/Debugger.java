@@ -17,20 +17,24 @@ import refdiff.core.io.SourceFolder;
 import refdiff.core.util.PairBeforeAfter;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.c.CPlugin;
-import refdiff.parsers.universal.UniversalPlugin;
-import refdiff.parsers.universal.UniversalPlugin.Language;
+import refdiff.parsers.java.JavaPlugin;
+import refdiff.parsers.universal.c.CPlugin;
+import refdiff.parsers.universal.java.JavaParser;
+import refdiff.parsers.universal.js.JsParser;
 
 public class Debugger {
-    // private static final Boolean IS_FOR_REPO = true;
-    private static final Boolean IS_FOR_REPO = false;
+    private static final Boolean IS_FOR_REPO = true;
+    // private static final Boolean IS_FOR_REPO = false;
     private static final String COMMIT_URL = 
-        "https://github.com/refdiff-study/toxcore/commit/2465f486acd90ed8395c8a83a13af09ecd024c98";
+        // "https://github.com/refdiff-study/toxcore/commit/2465f486acd90ed8395c8a83a13af09ecd024c98";
+        "https://github.com/icse18-refactorings/hazelcast/commit/4d05a3b1168441216dcaea8282c39338285182af";
 
     private static final String DIR_NAME = "hazelcast";
 
-    private static final Language LANG = Language.JAVA;
-    // private static final Language LANG = Language.C;
-    // private static final Language LANG = Language.JAVASCRIPT;
+    private static final LanguagePlugin plugin = new JavaParser();
+    // private static final LanguagePlugin plugin = new CParser();
+    // private static final LanguagePlugin plugin = new CPlugin();
+    // private static final LanguagePlugin plugin = new JsParser();
 
     private CstDiff diff(LanguagePlugin plugin, Path path) throws Exception {
         SourceFolder sourcesBefore = SourceFolder.from(path.resolve("v0"), ".java");
@@ -43,14 +47,14 @@ public class Debugger {
         Repository repo = GitHelper.openRepository(gitRepository);
         FilePathFilter fileFilter = plugin.getAllowedFilesFilter();
         PairBeforeAfter<SourceFileSet> beforeAndAfter = GitHelper.getSourcesBeforeAndAfterCommit(repo, commitSha1, fileFilter); 
+        // LanguagePlugin javaPlugin = new JavaPlugin(gitRepository);
+        // CstComparator comparator = new CstComparator(javaPlugin);
         CstComparator comparator = new CstComparator(plugin);
         return comparator.compare(beforeAndAfter);
     }
 
     public static void main(String[] args) throws Exception {
         Debugger debugger = new Debugger();
-        LanguagePlugin plugin = new UniversalPlugin(LANG);
-        // LanguagePlugin plugin = new CPlugin();
         CstDiff diff = null;
 
         if (IS_FOR_REPO) {
@@ -63,9 +67,9 @@ public class Debugger {
         }
         
         for (Relationship r : diff.getRelationships()) {
-            if (r.isRefactoring()) {
+            // if (r.isRefactoring()) {
                 System.out.println(r.toString());
-            }
+            // }
         }
     }
 }

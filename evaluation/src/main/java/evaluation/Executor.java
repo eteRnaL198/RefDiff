@@ -8,8 +8,10 @@ import java.time.format.DateTimeFormatter;
 import refdiff.core.RefDiff;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
-import refdiff.parsers.universal.UniversalPlugin;
-import refdiff.parsers.universal.Language;
+import refdiff.parsers.LanguagePlugin;
+import refdiff.parsers.universal.java.JavaParser;
+import refdiff.parsers.universal.c.CPlugin;
+import refdiff.parsers.universal.js.JsParser;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -35,7 +37,7 @@ public class Executor {
         File clonedRepositoryBaseDir = new File("repository");
         Map<String, File> repoMap = Commit.cloneRepos(commitUrls, clonedRepositoryBaseDir);
         
-        UniversalPlugin plugin = new UniversalPlugin(lang);
+        LanguagePlugin plugin = mapPlugin(lang);
         RefDiff refDiff = new RefDiff(plugin);
         
         Executor executor = new Executor();
@@ -103,6 +105,19 @@ public class Executor {
             case "javascript":
             case "js":
                 return Language.JAVASCRIPT;
+            default:
+                throw new IllegalArgumentException("Unsupported language: " + lang);
+        }
+    }
+
+    private static LanguagePlugin mapPlugin(Language lang) {
+        switch (lang) {
+            case JAVA:
+                return new JavaParser();
+            case C:
+                return new CPlugin();
+            case JAVASCRIPT:
+                return new JsParser();
             default:
                 throw new IllegalArgumentException("Unsupported language: " + lang);
         }

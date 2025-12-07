@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 
 
 import refdiff.core.io.GitHelper;
-import refdiff.parsers.universal.Language;
 
 public class Commit {
   private static final String JAVA_COMMIT_URLS_FILE = "src/main/resources/java-commit-urls.txt";
