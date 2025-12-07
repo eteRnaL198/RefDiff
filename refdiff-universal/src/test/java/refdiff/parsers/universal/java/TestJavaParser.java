@@ -54,7 +54,7 @@ public class TestJavaParser {
         CstRoot cstRoot = parser.parse(sources);
 
         List<CstNode> classNodes = new ArrayList<>();
-        cstRoot.forEachNode((node, _) -> {
+        cstRoot.forEachNode((node, ignored) -> {
             if (JavaNodeTypes.CLASS.equals(node.getType())) {
                 classNodes.add(node);
             }

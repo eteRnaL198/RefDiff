@@ -177,7 +177,7 @@ public class Executor {
                     File tempFolder = new File("repo");
                     File repoDir = new File(tempFolder, repoName);
                     File clonedRepo = GitHelper.cloneBareRepository(repoDir, repoUrl);
-                    clonedReposByLang.computeIfAbsent(lang, _ -> new HashMap<>()).put(repoName, clonedRepo);
+                    clonedReposByLang.computeIfAbsent(lang, ignored -> new HashMap<>()).put(repoName, clonedRepo);
                     System.out.println("Cloned " + repoName + " (" + lang + ") to " + clonedRepo.getAbsolutePath());
                 } catch (Exception e) {
                     System.err.println("Failed to clone " + repoUrl + ": " + e.getMessage());

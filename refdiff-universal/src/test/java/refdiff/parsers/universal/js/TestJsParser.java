@@ -82,7 +82,7 @@ public class TestJsParser {
     CstRoot cstRoot = parser.parse(sources);
 
     List<CstNode> classNodes = new ArrayList<>();
-    cstRoot.forEachNode((node, _) -> {
+    cstRoot.forEachNode((node, ignored) -> {
       if (JsNodeTypes.CLASS.equals(node.getType())) {
         classNodes.add(node);
       }
@@ -114,7 +114,7 @@ public class TestJsParser {
     CstRoot cstRoot = parser.parse(sources);
 
     List<CstNode> actualFunctionNodes = new ArrayList<>();
-    cstRoot.forEachNode((node, _) -> {
+    cstRoot.forEachNode((node, ignored) -> {
       if (JsNodeTypes.FUNCTION.equals(node.getType())) {
         actualFunctionNodes.add(node);
       }
