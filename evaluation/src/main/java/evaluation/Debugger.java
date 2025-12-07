@@ -16,7 +16,6 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.core.io.SourceFolder;
 import refdiff.core.util.PairBeforeAfter;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.c.CPlugin;
 import refdiff.parsers.java.JavaPlugin;
 import refdiff.parsers.universal.c.CPlugin;
 import refdiff.parsers.universal.java.JavaParser;
@@ -32,8 +31,8 @@ public class Debugger {
     private static final String DIR_NAME = "hazelcast";
 
     private static final LanguagePlugin plugin = new JavaParser();
-    // private static final LanguagePlugin plugin = new CParser();
     // private static final LanguagePlugin plugin = new CPlugin();
+    // private static final LanguagePlugin plugin = new refdiff.parsers.c.CPlugin(); // refdiff-c
     // private static final LanguagePlugin plugin = new JsParser();
 
     private CstDiff diff(LanguagePlugin plugin, Path path) throws Exception {
