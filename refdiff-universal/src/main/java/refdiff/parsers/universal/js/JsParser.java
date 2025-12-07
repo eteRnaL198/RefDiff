@@ -35,7 +35,7 @@ public class JsParser implements LanguagePlugin {
   private int cstId = 0;
 
   public FilePathFilter getAllowedFilesFilter() {
-    return new FilePathFilter(List.of(".js", ".jsx"));
+    return new FilePathFilter(List.of(".js", ".jsx"), List.of(".min.js"));
   }
 
   public CstRoot parse(SourceFileSet folder) {

@@ -23,6 +23,7 @@ public class JavaParser extends BasePlugin {
 
   private int cstId = 0;
 
+  @Override
   public FilePathFilter getAllowedFilesFilter() {
     return new FilePathFilter(List.of(".java"));
   }
@@ -96,7 +97,6 @@ public class JavaParser extends BasePlugin {
       cstNode.setLocalName(NodeUtils.getNodeText(name, sourceBytes));
       switch (declaration.getType()) {
         case "class_declaration":
-          System.out.println("Detected class: " + cstNode.getSimpleName() + " at " + declaration.getStartPoint().getRow() + "-" + declaration.getEndPoint().getRow()); // TODO remove
           cstNode.setType(JavaNodeTypes.CLASS);
           break;
         case "interface_declaration":
@@ -121,9 +121,6 @@ public class JavaParser extends BasePlugin {
           cstNode.setParameters(method_params);
           cstNode.setLocalName(NodeUtils.getNodeText(name, sourceBytes) + NodeUtils.generateParams(method_params));
           cstNode.addStereotypes(Stereotype.TYPE_MEMBER);
-          if (cstNode.getSimpleName().equals("notify")) {
-            System.out.println("Detected method: " + cstNode.getLocalName() + " at " + declaration.getStartPoint().getRow() + "-" + declaration.getEndPoint().getRow()); // TODO remove 
-          }
           break;
         default:
           System.out.println("Warning: Unhandled declaration type: " + declaration.getType() + " at " + declaration.getStartPoint().getRow() + "-" + declaration.getEndPoint().getRow() + " in source code: " + NodeUtils.getNodeText(declaration, sourceBytes));
