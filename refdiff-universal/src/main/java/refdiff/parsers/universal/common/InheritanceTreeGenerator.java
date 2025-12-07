@@ -22,7 +22,7 @@ public class InheritanceTreeGenerator {
      */
     public static void generate(CstRoot cstRoot, Map<String, String> sourceCodeMap, String... inheritableNodeTypes) {
         Map<String, List<CstNode>> inheritableNodeMap = new HashMap<>(); // class name -> CstNode list
-        cstRoot.forEachNode((node, _) -> {
+        cstRoot.forEachNode((node, ignored) -> {
             String nodeType = node.getType();
             if (List.of(inheritableNodeTypes).contains(nodeType)) {
                 inheritableNodeMap.computeIfAbsent(node.getSimpleName(), k -> new ArrayList<>()).add(node); // Handle duplicated class names
@@ -35,7 +35,6 @@ public class InheritanceTreeGenerator {
             for (String token : classHeaderTokens) {
                 if (inheritableNodeMap.containsKey(token) && !token.equals(node.getSimpleName())) { // Avoid self-inheritance
                     for (CstNode superNode : inheritableNodeMap.get(token)) {
-                        System.out.println("Detected inheritance: " + node.getSimpleName() + " -> " + superNode.getSimpleName()); // TODO remove
                         cstRoot.getRelationships().add(new CstNodeRelationship(CstNodeRelationshipType.SUBTYPE, node.getId(), superNode.getId()));
                     }
                 }
