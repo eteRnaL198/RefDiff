@@ -46,10 +46,10 @@ public final class RepoConfig {
         // "https://github.com/golang/go.git",
 
         // Borges
-        "https://github.com/getlantern/lantern.git", // App
+         "https://github.com/getlantern/lantern.git", // App
         "https://github.com/golang/groupcache.git", // Non-web
-        "https://github.com/kubernetes/kubernetes.git", // Software tool
-        "https://github.com/moby/moby.git", // System
+         "https://github.com/kubernetes/kubernetes.git", // Software tool
+       "https://github.com/moby/moby.git", // System
         "https://github.com/go-martini/martini.git", // Web
     };
 
@@ -61,7 +61,7 @@ public final class RepoConfig {
         "https://github.com/WordPress/WordPress.git", // App
         "https://github.com/PHPMailer/PHPMailer.git", // Non-web library
         "https://github.com/composer/composer.git", // Software tool
-        // System category is not available for PHP
+      //  System category is not available for PHP
         "https://github.com/bcit-ci/CodeIgniter.git", // Web
     };
 
@@ -79,13 +79,13 @@ public final class RepoConfig {
     };
 
     public static final Map<String, String[]> REPOS_BY_LANGUAGE = Map.of(
-        "Java", JAVA,
-        "C", C,
-        "JavaScript", JAVASCRIPT,
-        "Ruby", RUBY,
-        "Go", GO,
-        "PHP", PHP,
-        "Python", PYTHON
+     //   "Java", JAVA,
+     // "C", C,
+     //   "JavaScript", JAVASCRIPT,
+     //   "Ruby", RUBY,
+     //   "Go", GO
+        "PHP", PHP
+    //    "Python", PYTHON
     );
 
     private RepoConfig() {}
