@@ -9,7 +9,7 @@ import static refdiff.test.util.CstDiffMatchers.relationship;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import refdiff.core.diff.CstComparator;
 import refdiff.core.diff.CstDiff;
