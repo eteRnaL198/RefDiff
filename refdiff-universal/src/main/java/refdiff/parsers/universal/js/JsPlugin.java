@@ -138,9 +138,7 @@ public class JsPlugin extends BasePlugin {
         cstNode.setSimpleName(className);
         cstNode.setLocalName(className);
         cstNode.setNamespace(FilePathUtils.extractDirectoryFromFilePath(path));
-      } else if (nodeType.equals("function_declaration")
-          || nodeType.equals("generator_function_declaration")
-          || nodeType.equals("lexical_declaration")) {
+      } else {
         cstNode.setType(JsNodeTypes.FUNCTION);
         String funcName = NodeUtils.getNodeText(name, sourceBytes);
         cstNode.setSimpleName(funcName);
@@ -148,7 +146,7 @@ public class JsPlugin extends BasePlugin {
 
         List<Parameter> cstParameters = new ArrayList<>();
         if (parameters != null) {
-          extractParameters(parameters, sourceBytes, cstParameters);
+          extractParameters(parameters, sourceBytes, cstParameters, tsLang);
         }
         cstNode.setParameters(cstParameters);
       }
@@ -156,45 +154,65 @@ public class JsPlugin extends BasePlugin {
     }
   }
 
-  private void extractParameters(TSNode parametersHostNode, byte[] sourceBytes, List<Parameter> cstParameters) {
-    String hostNodeType = parametersHostNode.getType();
+  private void extractParameters(TSNode parametersHostNode, byte[] sourceBytes, List<Parameter> cstParameters, TSLanguage tsLang) {
+    if (parametersHostNode == null) {
+        return;
+    }
 
-    if ("formal_parameters".equals(hostNodeType)) {
-      for (int i = 0; i < parametersHostNode.getChildCount(); i++) {
-        TSNode paramElementNode = parametersHostNode.getChild(i);
-        if (paramElementNode.isNamed()) { // Process only named nodes like identifier, rest_pattern, etc.
-          String paramName = extractParameterNameInternal(paramElementNode, sourceBytes);
-          if (paramName != null) {
+    String hostNodeType = parametersHostNode.getType();
+    if ("identifier".equals(hostNodeType)) { // Single parameter for arrow function: param => ...
+        cstParameters.add(new Parameter(NodeUtils.getNodeText(parametersHostNode, sourceBytes)));
+        return;
+    }
+
+    if (!"formal_parameters".equals(hostNodeType)) {
+        return;
+    }
+
+    for (int i = 0; i < parametersHostNode.getNamedChildCount(); i++) {
+        TSNode paramChildNode = parametersHostNode.getNamedChild(i);
+        String paramName = queryParameterName(paramChildNode, sourceBytes, tsLang);
+        if (paramName != null) {
             cstParameters.add(new Parameter(paramName));
-          }
         }
-      }
-    } else if ("identifier".equals(hostNodeType)) { // Single parameter for arrow function: param => ...
-      String paramName = NodeUtils.getNodeText(parametersHostNode, sourceBytes);
-      cstParameters.add(new Parameter(paramName));
     }
   }
 
-  private String extractParameterNameInternal(TSNode paramNode, byte[] sourceBytes) {
+  private String queryParameterName(TSNode paramNode, byte[] sourceBytes, TSLanguage tsLang) {
     String nodeType = paramNode.getType();
-    if ("identifier".equals(nodeType)) {
-      return NodeUtils.getNodeText(paramNode, sourceBytes);
-    } else if ("rest_pattern".equals(nodeType)) {
-      if (paramNode.getNamedChildCount() > 0) {
-        TSNode nameNode = paramNode.getNamedChild(0); // (rest_pattern (identifier))
-        if (nameNode != null && "identifier".equals(nameNode.getType())) {
-          return "..." + NodeUtils.getNodeText(nameNode, sourceBytes);
-        }
-      }
-    } else if ("assignment_pattern".equals(nodeType)) { // e.g. name = "Guest"
-      TSNode leftNode = paramNode.getChildByFieldName("left");
-      if (leftNode != null && "identifier".equals(leftNode.getType())) {
-        return NodeUtils.getNodeText(leftNode, sourceBytes);
-      }
+    String querySrc;
+    String nameCapture = "name";
+    boolean isRest = false;
+
+    switch (nodeType) {
+        case "identifier":
+            return NodeUtils.getNodeText(paramNode, sourceBytes);
+        case "assignment_pattern":
+            querySrc = "(assignment_pattern left: (identifier) @name)";
+            break;
+        case "rest_pattern":
+            querySrc = "(rest_pattern (identifier) @name)";
+            isRest = true;
+            break;
+        default:
+            return null;
     }
-    // Array/Object patterns (destructuring) could be handled here if needed
-    // For now, they will result in null and won't be added as simple named
-    // parameters.
+
+    TSQuery query = new TSQuery(tsLang, querySrc);
+    TSQueryCursor cursor = new TSQueryCursor();
+    cursor.exec(query, paramNode);
+    TSQueryMatch match = new TSQueryMatch();
+
+    if (cursor.nextMatch(match)) {
+        for (TSQueryCapture capture : match.getCaptures()) {
+            if (nameCapture.equals(query.getCaptureNameForId(capture.getIndex()))) {
+                TSNode nameNode = capture.getNode();
+                String name = NodeUtils.getNodeText(nameNode, sourceBytes);
+                return isRest ? "..." + name : name;
+            }
+        }
+    }
+
     return null;
   }
 }
