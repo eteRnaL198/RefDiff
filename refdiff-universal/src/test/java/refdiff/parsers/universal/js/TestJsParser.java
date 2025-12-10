@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import refdiff.core.cst.Location;
 import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstRoot;
@@ -132,7 +132,7 @@ public class TestJsParser {
         new ExpectedNode("higherOrderFunction", JsNodeTypes.FUNCTION, 32, "higherOrderFunction", null, "function.js", List.of("callback")),
         new ExpectedNode("outerFunction", JsNodeTypes.FUNCTION, 39, "outerFunction", null, "function.js", List.of("outerVar")),
         new ExpectedNode("innerFunction", JsNodeTypes.FUNCTION, 41, "innerFunction", null, "function.js", List.of("innerParam")),
-        new ExpectedNode("processArguments", JsNodeTypes.FUNCTION, 50, "processArguments", null, "function.js", List.of("firstArg", "restArgs")),
+        new ExpectedNode("processArguments", JsNodeTypes.FUNCTION, 50, "processArguments", null, "function.js", List.of("firstArg", "...restArgs")),
         new ExpectedNode("greet", JsNodeTypes.FUNCTION, 58, "greet", null, "function.js", List.of("name")),
         new ExpectedNode("performAsyncOperation", JsNodeTypes.FUNCTION, 65, "performAsyncOperation", null, "function.js", List.of("success")),
         new ExpectedNode("idGenerator", JsNodeTypes.FUNCTION, 91, "idGenerator", null, "function.js", List.of()),
