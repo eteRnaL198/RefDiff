@@ -23,8 +23,8 @@ import refdiff.core.cst.Parameter;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
 
-public class TestJsParser {
-  private static final LanguagePlugin parser = new JsParser();
+public class TestJsPlugin {
+  private static final LanguagePlugin parser = new JsPlugin();
   private static final String TEST_DATA_BASE_PATH = "src/test/resources/js/syntax";
 
   private CstNode findNode(List<CstNode> nodes, String name, int line) {

@@ -19,7 +19,7 @@ import refdiff.parsers.universal.base.BasePlugin;
 import refdiff.parsers.universal.common.FilePathUtils;
 import refdiff.parsers.universal.common.NodeUtils;
 
-public class JsParser extends BasePlugin {
+public class JsPlugin extends BasePlugin {
 
   private int cstId = 0;
 

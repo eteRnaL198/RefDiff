@@ -22,8 +22,8 @@ import refdiff.core.io.SourceFileSet;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
 
-public class TestJavaParser {
-    private static final LanguagePlugin parser = new JavaParser();
+public class TestJavaPlugin {
+    private static final LanguagePlugin parser = new JavaPlugin();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/java/syntax";
 
     private CstNode findNode(List<CstNode> nodes, String name, int line) {

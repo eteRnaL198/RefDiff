@@ -9,9 +9,9 @@ import refdiff.core.RefDiff;
 import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.java.JavaParser;
+import refdiff.parsers.universal.java.JavaPlugin;
 import refdiff.parsers.universal.c.CPlugin;
-import refdiff.parsers.universal.js.JsParser;
+import refdiff.parsers.universal.js.JsPlugin;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -113,11 +113,11 @@ public class Executor {
     private static LanguagePlugin mapPlugin(Language lang) {
         switch (lang) {
             case JAVA:
-                return new JavaParser();
+                return new JavaPlugin();
             case C:
                 return new CPlugin();
             case JAVASCRIPT:
-                return new JsParser();
+                return new JsPlugin();
             default:
                 throw new IllegalArgumentException("Unsupported language: " + lang);
         }

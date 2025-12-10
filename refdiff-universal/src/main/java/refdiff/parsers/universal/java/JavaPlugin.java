@@ -19,7 +19,7 @@ import refdiff.core.io.FilePathFilter;
 import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.base.BasePlugin;
 
-public class JavaParser extends BasePlugin {
+public class JavaPlugin extends BasePlugin {
 
   private int cstId = 0;
 

@@ -18,8 +18,7 @@ import refdiff.core.util.PairBeforeAfter;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.java.JavaPlugin;
 import refdiff.parsers.universal.c.CPlugin;
-import refdiff.parsers.universal.java.JavaParser;
-import refdiff.parsers.universal.js.JsParser;
+import refdiff.parsers.universal.js.JsPlugin;
 
 public class Debugger {
     private static final Boolean IS_FOR_REPO = true;
@@ -30,10 +29,10 @@ public class Debugger {
 
     private static final String DIR_NAME = "hazelcast";
 
-    private static final LanguagePlugin plugin = new JavaParser();
+    private static final LanguagePlugin plugin = new JavaPlugin();
     // private static final LanguagePlugin plugin = new CPlugin();
     // private static final LanguagePlugin plugin = new refdiff.parsers.c.CPlugin(); // refdiff-c
-    // private static final LanguagePlugin plugin = new JsParser();
+    // private static final LanguagePlugin plugin = new JsPlugin();
 
     private CstDiff diff(LanguagePlugin plugin, Path path) throws Exception {
         SourceFolder sourcesBefore = SourceFolder.from(path.resolve("v0"), ".java");

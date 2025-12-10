@@ -19,7 +19,7 @@ import refdiff.parsers.LanguagePlugin;
 
 public class TestJavaCstComparator {
 
-    private static final LanguagePlugin parser = new JavaParser();
+    private static final LanguagePlugin parser = new JavaPlugin();
     private static final String TEST_DATA_BASE_PATH = "src/test/resources/java/refactor";
 
     private CstDiff diff(String folderName) throws Exception {
