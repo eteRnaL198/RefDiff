@@ -54,7 +54,7 @@ public class TestJavaPlugin {
         CstRoot cstRoot = parser.parse(sources);
 
         List<CstNode> classNodes = new ArrayList<>();
-        cstRoot.forEachNode((node, ignored) -> {
+        cstRoot.forEachNode((node, depth) -> {
             if (JavaNodeTypes.CLASS.equals(node.getType())) {
                 classNodes.add(node);
             }

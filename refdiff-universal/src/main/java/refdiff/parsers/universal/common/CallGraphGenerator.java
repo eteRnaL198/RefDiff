@@ -35,12 +35,12 @@ public class CallGraphGenerator {
      */
     public void generateCallGraph(CstRoot root, Map<String, String> sourceCodeMap) {
         Map<String, List<Integer>> calleeCandidatesMap = new HashMap<>(); // メソッドがオーバーロードされている場合、同名メソッドが複数存在するためValueはListにしている
-        root.forEachNode((node, ignored) -> {
+        root.forEachNode((node, depth) -> {
             if (this.callableNodeTypes.contains(node.getType())) {
                 calleeCandidatesMap.computeIfAbsent(node.getSimpleName(), k -> new ArrayList<>()).add(node.getId());
             }
         });
-        root.forEachNode((node, ignored) -> {
+        root.forEachNode((node, depth) -> {
             if (this.callableNodeTypes.contains(node.getType())) {
                 try {
                     addCallRelationship(node, root, sourceCodeMap, calleeCandidatesMap);

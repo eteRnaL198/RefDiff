@@ -461,7 +461,7 @@ public class Sandbox {
     //   while (!stack.isEmpty() && stack.peek().end < n.start)
     //     stack.pop();
     //   if (!stack.isEmpty()) {
-    //     treeMap.computeIfAbsent(stack.peek(), ignored -> new ArrayList<>()).add(n);
+    //     treeMap.computeIfAbsent(stack.peek(), depth -> new ArrayList<>()).add(n);
     //   }
     //   stack.push(n);
     // }

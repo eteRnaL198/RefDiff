@@ -22,7 +22,7 @@ public class InheritanceTreeGenerator {
      */
     public static void generate(CstRoot cstRoot, Map<String, String> sourceCodeMap, String... inheritableNodeTypes) {
         Map<String, List<CstNode>> inheritableNodeMap = new HashMap<>(); // class name -> CstNode list
-        cstRoot.forEachNode((node, ignored) -> {
+        cstRoot.forEachNode((node, depth) -> {
             String nodeType = node.getType();
             if (List.of(inheritableNodeTypes).contains(nodeType)) {
                 inheritableNodeMap.computeIfAbsent(node.getSimpleName(), k -> new ArrayList<>()).add(node); // Handle duplicated class names
