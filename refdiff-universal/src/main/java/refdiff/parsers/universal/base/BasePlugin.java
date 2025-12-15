@@ -106,14 +106,14 @@ public abstract class BasePlugin implements LanguagePlugin {
    * Adds a CST node to its appropriate parent based on location.
    * 
    * @param cstNode The CST node to be added.
+   * @param namespace The namespace to set for top-level nodes.
    */
-  protected void addNodeToParent(CstNode cstNode) {
+  protected void addNodeToParent(CstNode cstNode, String namespace) {
     while (!parentStack.isEmpty() && parentStack.peek().getLocation().getEnd() < cstNode.getLocation().getBegin()) {
       parentStack.pop();
     }
     if (parentStack.isEmpty()) {
-      String pathToDirectory = FilePathUtils.extractDirectoryFromFilePath(cstNode.getLocation().getFile());
-      cstNode.setNamespace(pathToDirectory); // Set namespace for top-level nodes
+      cstNode.setNamespace(namespace); // Set namespace for top-level nodes
       root.addNode(cstNode);
     } else {
       CstNode parentNode = parentStack.peek();

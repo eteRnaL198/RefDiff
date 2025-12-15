@@ -45,6 +45,7 @@ public class CPlugin extends BasePlugin {
 
   @Override
   protected void buildCst(TSTree tree, TSLanguage tsLang, String path, byte[] sourceBytes) {
+    String namespace = FilePathUtils.extractDirectoryFromFilePath(path);
     String querySrc = """
         (translation_unit) @declaration
 
@@ -101,13 +102,11 @@ public class CPlugin extends BasePlugin {
                 cstNode.setType(CNodeTypes.FILE);
                 cstNode.setSimpleName(FilePathUtils.extractFileNameFromFilePath(path));
                 cstNode.setLocalName(FilePathUtils.extractFileNameFromFilePath(path));
-                cstNode.setNamespace(FilePathUtils.extractDirectoryFromFilePath(path));
                 cstNode.setLocation(NodeUtils.generateLocation(declaration, null, path));
                 break;
             case 1: // Function match
             case 2: // Function match
                 cstNode.setType(CNodeTypes.FUNCTION);
-                cstNode.setNamespace(null);
                 cstNode.setLocation(NodeUtils.generateLocation(declaration, body, path));
                 String functionName = NodeUtils.getNodeText(name, sourceBytes);
                 cstNode.setSimpleName(functionName);
@@ -122,7 +121,7 @@ public class CPlugin extends BasePlugin {
                 System.err.println("Warning: Unhandled declaration type: " + declaration.getType() + " at " + declaration.getStartPoint().getRow() + "-" + declaration.getEndPoint().getRow() + " in source code: " + NodeUtils.getNodeText(declaration, sourceBytes));
                 continue;
         }
-        addNodeToParent(cstNode);
+        addNodeToParent(cstNode, namespace);
     }
   }
 
