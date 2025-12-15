@@ -82,7 +82,7 @@ public class TestJsPlugin {
     CstRoot cstRoot = parser.parse(sources);
 
     List<CstNode> classNodes = new ArrayList<>();
-    cstRoot.forEachNode((node, ignored) -> {
+    cstRoot.forEachNode((node, depth) -> {
       if (JsNodeTypes.CLASS.equals(node.getType())) {
         classNodes.add(node);
       }
@@ -91,8 +91,8 @@ public class TestJsPlugin {
     assertThat("Should find 2 class declarations", classNodes.size(), is(equalTo(2)));
 
     List<ExpectedNode> expectedNodes = Arrays.asList(
-        new ExpectedNode("Animal", JsNodeTypes.CLASS, 2, "Animal", "dir/", "dir/class.js"),
-        new ExpectedNode("Dog", JsNodeTypes.CLASS, 65, "Dog", "dir/", "dir/class.js")
+        new ExpectedNode("Animal", JsNodeTypes.CLASS, 2, "Animal", null, "dir/class.js"),
+        new ExpectedNode("Dog", JsNodeTypes.CLASS, 65, "Dog", null, "dir/class.js")
     );
 
     for (ExpectedNode expected : expectedNodes) {
@@ -114,7 +114,7 @@ public class TestJsPlugin {
     CstRoot cstRoot = parser.parse(sources);
 
     List<CstNode> actualFunctionNodes = new ArrayList<>();
-    cstRoot.forEachNode((node, ignored) -> {
+    cstRoot.forEachNode((node, depth) -> {
       if (JsNodeTypes.FUNCTION.equals(node.getType())) {
         actualFunctionNodes.add(node);
       }

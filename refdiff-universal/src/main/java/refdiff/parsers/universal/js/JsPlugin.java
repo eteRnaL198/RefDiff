@@ -45,38 +45,40 @@ public class JsPlugin extends BasePlugin {
 
   @Override
   protected void buildCst(TSTree tree, TSLanguage tsLang, String path, byte[] sourceBytes) {
+    String namespace = FilePathUtils.extractDirectoryFromFilePath(path);
+    System.out.println("Namespace: " + namespace); // TODO remove
     String querySrc = """
         [
-          (program) @program
+          (program) @file_declaration
           (class_declaration
             name: (identifier) @name
-            body: (class_body) @body) @declaration
+            body: (class_body) @body) @class_declaration
           (function_declaration
             name: (identifier) @name
             parameters: (formal_parameters) @parameters
-            body: (statement_block) @body) @declaration
+            body: (statement_block) @body) @function_declaration
           (generator_function_declaration
             name: (identifier) @name
             parameters: (formal_parameters) @parameters
-            body: (statement_block) @body) @declaration
+            body: (statement_block) @body) @function_declaration
           (lexical_declaration
             (variable_declarator
               name: (identifier) @name
               value: (function_expression
                 parameters: (formal_parameters) @parameters
-                body: (statement_block) @body))) @declaration
+                body: (statement_block) @body))) @function_declaration
           (lexical_declaration
             (variable_declarator
               name: (identifier) @name
               value: (arrow_function
                 parameters: (formal_parameters) @parameters
-                body: (_) @body))) @declaration
+                body: (_) @body))) @function_declaration
           (lexical_declaration
             (variable_declarator
               name: (identifier) @name
               value: (arrow_function
                 parameter: (identifier) @parameters
-                body: (_) @body))) @declaration
+                body: (_) @body))) @function_declaration
         ]""";
 
     TSQuery tsQuery = new TSQuery(tsLang, querySrc);
@@ -89,68 +91,61 @@ public class JsPlugin extends BasePlugin {
       TSNode parameters = null;
       TSNode body = null;
       TSNode declaration = null;
-      TSNode program = null;
+      String nodeType = null;
 
       for (TSQueryCapture capture : match.getCaptures()) {
         TSNode capturedNode = capture.getNode();
         String captureName = tsQuery.getCaptureNameForId(capture.getIndex());
         switch (captureName) {
-        case "name":
-          name = capturedNode;
-          break;
-        case "parameters":
-          parameters = capturedNode;
-          break;
-        case "body":
-          body = capturedNode;
-          break;
-        case "declaration":
-          declaration = capturedNode;
-          break;
-        case "program":
-          program = capturedNode;
-          break;
+          case "name" -> name = capturedNode;
+          case "parameters" -> parameters = capturedNode;
+          case "body" -> body = capturedNode;
+
+          case "file_declaration" -> {
+            declaration = capturedNode;
+            nodeType = JsNodeTypes.FILE;
+          }
+          case "class_declaration" -> {
+            declaration = capturedNode;
+            nodeType = JsNodeTypes.CLASS;
+          }
+          case "function_declaration" -> {
+            declaration = capturedNode;
+            nodeType = JsNodeTypes.FUNCTION;
+          }
         }
       }
 
       CstNode cstNode = new CstNode(cstId++);
-
-      if (program != null) {
-        cstNode.setType(JsNodeTypes.FILE);
-        cstNode.setSimpleName(FilePathUtils.extractFileNameFromFilePath(path));
-        cstNode.setLocalName(FilePathUtils.extractFileNameFromFilePath(path));
-        cstNode.setNamespace(FilePathUtils.extractDirectoryFromFilePath(path));
-        cstNode.setLocation(NodeUtils.generateLocation(program, null, path));
-        addNodeToParent(cstNode);
-        continue;
-      }
-
-      if (declaration == null) {
-        continue;
-      }
-
-      String nodeType = declaration.getType();
-      cstNode.setLocation(NodeUtils.generateLocation(declaration, body, path));
-      
-      if (nodeType.equals("class_declaration")) {
-        cstNode.setType(JsNodeTypes.CLASS);
-        String className = NodeUtils.getNodeText(name, sourceBytes);
-        cstNode.setSimpleName(className);
-        cstNode.setLocalName(className);
-        cstNode.setNamespace(FilePathUtils.extractDirectoryFromFilePath(path));
-      } else {
-        cstNode.setType(JsNodeTypes.FUNCTION);
-        String funcName = NodeUtils.getNodeText(name, sourceBytes);
-        cstNode.setSimpleName(funcName);
-        cstNode.setLocalName(funcName);
-
-        List<Parameter> cstParameters = new ArrayList<>();
-        if (parameters != null) {
-          extractParameters(parameters, sourceBytes, cstParameters, tsLang);
+      switch (nodeType) {
+        case JsNodeTypes.FILE -> {
+          cstNode.setType(JsNodeTypes.FILE);
+          cstNode.setSimpleName(FilePathUtils.extractFileNameFromFilePath(path));
+          cstNode.setLocalName(FilePathUtils.extractFileNameFromFilePath(path));
+          cstNode.setLocation(NodeUtils.generateLocation(declaration, null, path));
         }
-        cstNode.setParameters(cstParameters);
+        case JsNodeTypes.CLASS -> {
+          cstNode.setType(JsNodeTypes.CLASS);
+          cstNode.setLocation(NodeUtils.generateLocation(declaration, body, path));
+          String className = NodeUtils.getNodeText(name, sourceBytes);
+          cstNode.setSimpleName(className);
+          cstNode.setLocalName(className);
+        }
+        case JsNodeTypes.FUNCTION -> {
+          cstNode.setType(JsNodeTypes.FUNCTION);
+          cstNode.setLocation(NodeUtils.generateLocation(declaration, body, path));
+          String funcName = NodeUtils.getNodeText(name, sourceBytes);
+          cstNode.setSimpleName(funcName);
+          cstNode.setLocalName(funcName);
+
+          List<Parameter> cstParameters = new ArrayList<>();
+          if (parameters != null) {
+            extractParameters(parameters, sourceBytes, cstParameters, tsLang);
+          }
+          cstNode.setParameters(cstParameters);
+        }
       }
-      addNodeToParent(cstNode);
+      addNodeToParent(cstNode, namespace);
     }
   }
 
