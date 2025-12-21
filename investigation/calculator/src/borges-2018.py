@@ -3,7 +3,7 @@ import csv
 import json
 from collections import defaultdict
 
-CSV_PATH = '../borges-repos-2018.csv'
+CSV_PATH = './borges-repos-2018.csv'
 ALLOWED_LANGUAGES = {'Java', 'C', 'JavaScript', 'Go', 'Python', 'PHP', 'Ruby'}
 TOP_N = 5
 
