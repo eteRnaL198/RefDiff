@@ -41,16 +41,30 @@ public final class RepoConfig { // TODO: Read repos from json
         // "https://github.com/gulpjs/gulp.git",
         // "https://github.com/nodejs/node.git",
         // "https://github.com/angular/angular.js.git",
+
+        // Borges 2018
+        "https://github.com/adobe/brackets.git", // App
+        "https://github.com/moment/moment.git", // Non-web
+        "https://github.com/gulpjs/gulp.git", // Software tool
+        "https://github.com/nodejs/node.git", // System
+        "https://github.com/facebook/react.git", // Web
     };
 
     public static final String[] RUBY = {
         // "https://github.com/rails/rails.git",
         // "https://github.com/maybe-finance/maybe.git",
 
-        // Borges
+        // Borges 2016
+        // "https://github.com/jekyll/jekyll.git", // App
+        // "https://github.com/plataformatec/devise.git", // Non-web library
+        // "https://github.com/gitlabhq/gitlabhq", // Software tool
+        // "https://github.com/ruby/ruby.git", // System
+        // "https://github.com/rails/rails.git", // Web
+
+        // Borges 2018
         "https://github.com/jekyll/jekyll.git", // App
         "https://github.com/plataformatec/devise.git", // Non-web library
-        "https://github.com/gitlabhq/gitlabhq", // Software tool
+        "https://github.com/gitlabhq/gitlabhq.git", // Software tool
         "https://github.com/ruby/ruby.git", // System
         "https://github.com/rails/rails.git", // Web
     };
@@ -60,11 +74,18 @@ public final class RepoConfig { // TODO: Read repos from json
         // "https://github.com/ollama/ollama.git",
         // "https://github.com/golang/go.git",
 
-        // Borges
-         "https://github.com/getlantern/lantern.git", // App
-        "https://github.com/golang/groupcache.git", // Non-web
-         "https://github.com/kubernetes/kubernetes.git", // Software tool
-       "https://github.com/moby/moby.git", // System
+        // Borges 2016
+        // "https://github.com/getlantern/lantern.git", // App
+        // "https://github.com/golang/groupcache.git", // Non-web
+        // "https://github.com/kubernetes/kubernetes.git", // Software tool
+        // "https://github.com/moby/moby.git", // System
+        // "https://github.com/go-martini/martini.git", // Web
+
+        // Borges 2018
+        "https://github.com/getlantern/lantern.git", // App
+        "https://github.com/labstack/echo.git", // Non-web library
+        "https://github.com/kubernetes/kubernetes.git", // Software tool
+        "https://github.com/docker/docker.git", // System
         "https://github.com/go-martini/martini.git", // Web
     };
 
@@ -72,12 +93,19 @@ public final class RepoConfig { // TODO: Read repos from json
         // "https://github.com/laravel/framework.git",
         // "https://github.com/nextcloud/server.git",
 
-        // Borges
-        "https://github.com/WordPress/WordPress.git", // App
-        "https://github.com/PHPMailer/PHPMailer.git", // Non-web library
+        // Borges 2016
+        // "https://github.com/WordPress/WordPress.git", // App
+        // "https://github.com/PHPMailer/PHPMailer.git", // Non-web library
+        // "https://github.com/composer/composer.git", // Software tool
+        //  System category is not available for PHP
+        // "https://github.com/bcit-ci/CodeIgniter.git", // Web
+
+        // Borges 2018
+        "https://github.com/wordpress/wordpress.git", // App
+        "https://github.com/phpmailer/phpmailer.git", // Non-web library
         "https://github.com/composer/composer.git", // Software tool
-      //  System category is not available for PHP
-        "https://github.com/bcit-ci/CodeIgniter.git", // Web
+        "https://github.com/thephpleague/oauth2-server.git", // System
+        "https://github.com/symfony/symfony.git", // Web
     };
 
     public static final String[] PYTHON = {
@@ -85,22 +113,29 @@ public final class RepoConfig { // TODO: Read repos from json
         // "https://github.com/huggingface/transformers.git",
         // "https://github.com/ytdl-org/youtube-dl.git"
 
-        // Borges
-        "https://github.com/ytdl-org/youtube-dl.git", // App
+        // Borges 2016
+        // "https://github.com/ytdl-org/youtube-dl.git", // App
+        // "https://github.com/scrapy/scrapy.git", // Non-web library
+        // "https://github.com/jkbrzt/httpie.git", // Software tool
+        // "https://github.com/apenwarr/sshuttle.git", // System
+        // "https://github.com/django/django.git", // Web"
+
+        // Borges 2018
+        "https://github.com/rg3/youtube-dl.git", // App
         "https://github.com/scrapy/scrapy.git", // Non-web library
         "https://github.com/jkbrzt/httpie.git", // Software tool
         "https://github.com/apenwarr/sshuttle.git", // System
-        // "https://github.com/django/django.git", // Web"
+        "https://github.com/pallets/flask.git", // Web
     };
 
     public static final Map<String, String[]> REPOS_BY_LANGUAGE = Map.of(
         "Java", JAVA,
-        "C", C
-        // "JavaScript", JAVASCRIPT,
-        // "Ruby", RUBY,
-        // "Go", GO,
-        // "PHP", PHP,
-        // "Python", PYTHON
+        "C", C,
+        "JavaScript", JAVASCRIPT,
+        "Ruby", RUBY,
+        "Go", GO,
+        "PHP", PHP,
+        "Python", PYTHON
     );
 
     private RepoConfig() {}
