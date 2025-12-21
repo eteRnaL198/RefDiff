@@ -94,12 +94,15 @@ public class Executor {
                 Path outPath = Paths.get("result", lang, repoName + "-" + getNowDateTime() + ".csv");
                 Files.createDirectories(outPath.getParent());
 
+                String header = "\"Commit\",\"RefactoringType\",\"Before\",\"After\",\"BeforeLOC\",\"AfterLOC\"\n";
+                Files.write(outPath, header.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
                 StringBuilder sb = new StringBuilder();
                 setCurrentCommitSha(startCommitSha != null ? startCommitSha : "HEAD");
                 Language language = mapLanguage(lang);
                 LanguagePlugin plugin = mapPlugin(language);
                 RefDiff refDiffUniversal = new RefDiff(plugin);
-                for (int attempt = 1; attempt <= 5; attempt++) {
+                for (int attempt = 1; attempt <= 3; attempt++) {
                     try {
                         refDiffUniversal.computeDiffForCommitHistory(repoDir, currentCommitSha, COMMIT_DEPTH, (commit, diff) -> {
                             String commitSha = commit.getName();

@@ -6,11 +6,18 @@ public final class RepoConfig {
 
     public static final String[] JAVA = {
         // App
-        "https://github.com/HannahMitt/HomeMirror.git",
-        "https://github.com/nostra13/Android-Universal-Image-Loader.git",
-        "https://github.com/elastic/elasticsearch.git",
-        "https://github.com/ReactiveX/RxJava.git",
-        "https://github.com/spring-projects/spring-framework.git",
+        // "https://github.com/HannahMitt/HomeMirror.git",
+        // "https://github.com/nostra13/Android-Universal-Image-Loader.git",
+        // "https://github.com/elastic/elasticsearch.git",
+        // "https://github.com/ReactiveX/RxJava.git",
+        // "https://github.com/spring-projects/spring-framework.git",
+
+        // Borges 2018
+        "https://github.com/pockethub/pockethub.git", // App
+        "https://github.com/nostra13/android-universal-image-loader.git", // Non-web library
+        "https://github.com/elastic/elasticsearch.git", // Software tool
+        "https://github.com/reactivex/rxjava.git", // System
+        "https://github.com/bumptech/glide.git", // Web
     };
 
     public static final String[] C = {
@@ -76,17 +83,17 @@ public final class RepoConfig {
         "https://github.com/scrapy/scrapy.git", // Non-web library
         "https://github.com/jkbrzt/httpie.git", // Software tool
         "https://github.com/apenwarr/sshuttle.git", // System
-        "https://github.com/django/django.git", // Web"
+        // "https://github.com/django/django.git", // Web"
     };
 
     public static final Map<String, String[]> REPOS_BY_LANGUAGE = Map.of(
-        // "Java", JAVA,
+        "Java", JAVA
         // "C", C,
         // "JavaScript", JAVASCRIPT,
         // "Ruby", RUBY,
         // "Go", GO,
         // "PHP", PHP,
-        "Python", PYTHON
+        // "Python", PYTHON
     );
 
     private RepoConfig() {}
