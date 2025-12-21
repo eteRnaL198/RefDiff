@@ -97,6 +97,8 @@ public class Executor {
                 String header = "\"Commit\",\"RefactoringType\",\"Before\",\"After\",\"BeforeLOC\",\"AfterLOC\"\n";
                 Files.write(outPath, header.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
+                commitCount = 0;
+
                 StringBuilder sb = new StringBuilder();
                 setCurrentCommitSha(startCommitSha != null ? startCommitSha : "HEAD");
                 Language language = mapLanguage(lang);
