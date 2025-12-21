@@ -36,7 +36,7 @@ public class Executor {
     private static final int BATCH_SIZE = 10;
 
     private int commitCount = 0;
-    private String currentCommitSha = "";
+    private String currentCommitSha = ""; // TODO: read last commit from output file if exists
 
     public static void main(String[] args) throws Exception {
         // CLI option: --start-commit <sha> or -s <sha>, and --language <lang> or -l <lang>
@@ -73,7 +73,7 @@ public class Executor {
     }
 
     private void execute(String startCommitSha, String selectedLanguage) throws Exception {
-        Map<String, Map<String, File>> clonedReposByLang = getRepos();
+        Map<String, Map<String, File>> clonedReposByLang = getRepos(selectedLanguage);
 
         System.out.println("\n\n----- Detect refactorings -----");
         for (Map.Entry<String, Map<String, File>> langEntry : clonedReposByLang.entrySet()) {
@@ -156,10 +156,16 @@ public class Executor {
     /**
      * Map: language -> (repoName -> repoDir)
      */
-    private Map<String, Map<String, File>> getRepos() {
-        Map<String, Map<String, File>> clonedReposByLang = new HashMap<>();
+    private Map<String, Map<String, File>> getRepos(String selectedLanguage) {
+        Map<String, Map<String, File>> clonedReposByLang = new HashMap<>(); // TODO: Make a hash map which has just a single language
         for (Map.Entry<String, String[]> langEntry : RepoConfig.REPOS_BY_LANGUAGE.entrySet()) {
             String lang = langEntry.getKey();
+            // If a specific language is requested, skip other languages
+            if (selectedLanguage != null && !selectedLanguage.trim().isEmpty()) {
+                if (!lang.equalsIgnoreCase(selectedLanguage.trim())) {
+                    continue;
+                }
+            }
             String[] repoUrls = langEntry.getValue();
             if (repoUrls == null) {
                 continue;
