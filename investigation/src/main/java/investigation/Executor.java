@@ -13,9 +13,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import refdiff.core.RefDiff;
 import refdiff.core.diff.CstDiff;
@@ -36,21 +39,16 @@ public class Executor {
     private static final int BATCH_SIZE = 10;
 
     private int commitCount = 0;
-    private String currentCommitSha = ""; // TODO: read last commit from output file if exists
+    private String currentCommitSha = "";
 
     public static void main(String[] args) throws Exception {
-        // CLI option: --start-commit <sha> or -s <sha>, and --language <lang> or -l <lang>
-        String startCommitSha = null;
+        // CLI option: --resume and --language <lang> or -l <lang>
+        boolean resume = false;
         String languageArg = null;
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
-            if ("--start-commit".equals(a) || "-s".equals(a)) {
-                if (i + 1 < args.length) {
-                    startCommitSha = args[i + 1];
-                    i++;
-                }
-            } else if (a.startsWith("--start-commit=")) {
-                startCommitSha = a.substring("--start-commit=".length());
+            if ("--resume".equals(a)) {
+                resume = true;
             } else if ("--language".equals(a) || "-l".equals(a)) {
                 if (i + 1 < args.length) {
                     languageArg = args[i + 1];
@@ -61,7 +59,7 @@ public class Executor {
             }
         }
 
-        new Executor().execute(startCommitSha, languageArg);
+        new Executor().execute(resume, languageArg);
     }
 
     private void incrementCommitCount() {
@@ -72,7 +70,7 @@ public class Executor {
         currentCommitSha = sha;
     }
 
-    private void execute(String startCommitSha, String selectedLanguage) throws Exception {
+    private void execute(boolean resume, String selectedLanguage) throws Exception {
         Map<String, Map<String, File>> clonedReposByLang = getRepos(selectedLanguage);
 
         System.out.println("\n\n----- Detect refactorings -----");
@@ -91,11 +89,17 @@ public class Executor {
                 String repoName = entry.getKey();
                 File repoDir = entry.getValue();
 
+                String startCommitSha = null;
+                if (resume) {
+                    startCommitSha = getLatestCommitSha(lang, repoName);
+                }
+
                 Path outPath = Paths.get("result", lang, repoName + "-" + getNowDateTime() + ".csv");
                 Files.createDirectories(outPath.getParent());
 
                 String header = "\"Commit\",\"RefactoringType\",\"Before\",\"After\",\"BeforeLOC\",\"AfterLOC\"\n";
-                Files.write(outPath, header.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                Files.write(outPath, header.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
+                        StandardOpenOption.APPEND);
 
                 commitCount = 0;
 
@@ -104,38 +108,52 @@ public class Executor {
                 Language language = mapLanguage(lang);
                 LanguagePlugin plugin = mapPlugin(language);
                 RefDiff refDiffUniversal = new RefDiff(plugin);
+                final String startCommitShaFinal = startCommitSha;
                 for (int attempt = 1; attempt <= 3; attempt++) {
                     try {
-                        refDiffUniversal.computeDiffForCommitHistory(repoDir, currentCommitSha, COMMIT_DEPTH, (commit, diff) -> {
-                            String commitSha = commit.getName();
-                            if (diff.getRefactoringRelationships().isEmpty()) {
-                                sb.append(String.format("\"%s\"\n", commitSha));
-                            } else {
-                                for (Relationship rel : diff.getRefactoringRelationships()) {
-                                    sb.append(String.format("\"%s\",%s\n", commitSha, rel.getDescriptionWithLocInCsv()));
-                                }
-                            }
-                            if ((commitCount + 1) % BATCH_SIZE == 0 || commitCount + 1 == COMMIT_DEPTH) {
-                                System.out.println("Processed " + (commitCount + 1) + " commits for " + repoName + ". Writing results to file...");
-                                try {
-                                    Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                                    sb.setLength(0); // clear the StringBuilder
-                                } catch (IOException e) {
-                                    System.err.println("Failed to write results for " + repoName + ": " + e.getMessage());
-                                }
-                            }
-                            incrementCommitCount();
-                            setCurrentCommitSha(commitSha);
-                        });
+                        refDiffUniversal.computeDiffForCommitHistory(repoDir, currentCommitSha, COMMIT_DEPTH,
+                                (commit, diff) -> {
+                                    String commitSha = commit.getName();
+                                    // Skip the last processed commit when resuming to avoid duplication
+                                    if (startCommitShaFinal != null && startCommitShaFinal.equals(commitSha)) {
+                                        System.out.println("Skipping already processed commit " + commitSha + " for " + repoName);
+                                        return;
+                                    }
+                                    if (diff.getRefactoringRelationships().isEmpty()) {
+                                        sb.append(String.format("\"%s\"\n", commitSha));
+                                    } else {
+                                        for (Relationship rel : diff.getRefactoringRelationships()) {
+                                            sb.append(String.format("\"%s\",%s\n", commitSha,
+                                                    rel.getDescriptionWithLocInCsv()));
+                                        }
+                                    }
+                                    if ((commitCount + 1) % BATCH_SIZE == 0 || commitCount + 1 == COMMIT_DEPTH) {
+                                        System.out.println("Processed " + (commitCount + 1) + " commits for " + repoName
+                                                + ". Writing results to file...");
+                                        try {
+                                            Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8),
+                                                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                                            sb.setLength(0); // clear the StringBuilder
+                                        } catch (IOException e) {
+                                            System.err.println(
+                                                    "Failed to write results for " + repoName + ": " + e.getMessage());
+                                        }
+                                    }
+                                    incrementCommitCount();
+                                    setCurrentCommitSha(commitSha);
+                                });
                     } catch (Exception e) {
-                        System.err.println("Error processing repository " + repoName + " (attempt " + attempt + "): " + e.getMessage());
+                        System.err.println("Error processing repository " + repoName + " (attempt " + attempt + "): "
+                                + e.getMessage());
                         try {
-                            Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8),StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                            Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8),
+                                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                             sb.setLength(0); // clear the StringBuilder
                         } catch (IOException ioException) {
-                            System.err.println("Failed to write error log for " + repoName + ": " + ioException.getMessage());
+                            System.err.println(
+                                    "Failed to write error log for " + repoName + ": " + ioException.getMessage());
                         }
-                        if (attempt == 5) {
+                        if (attempt == 3) {
                             System.err.println("Max attempts reached for repository " + repoName + ". Skipping.");
                         } else {
                             System.out.println("Retrying...");
@@ -148,11 +166,56 @@ public class Executor {
 
                 // Write any remaining results
                 if (sb.length() > 0) {
-                    Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8), 
+                    Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8),
                             StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 }
             }
         }
+    }
+
+    private String getLatestCommitSha(String lang, String repoName) {
+        Path resultDir = Paths.get("result", lang);
+        if (!Files.exists(resultDir)) {
+            return null;
+        }
+
+        try (Stream<Path> stream = Files.list(resultDir)) {
+            Optional<Path> latestCsv = stream
+                    .filter(p -> p.getFileName().toString().startsWith(repoName + "-")
+                            && p.getFileName().toString().endsWith(".csv"))
+                    .max(Comparator.comparingLong(p -> {
+                        try {
+                            return Files.getLastModifiedTime(p).toMillis();
+                        } catch (IOException e) {
+                            return 0L;
+                        }
+                    }));
+
+            if (latestCsv.isPresent()) {
+                Path csvPath = latestCsv.get();
+                List<String> lines = Files.readAllLines(csvPath);
+                if (!lines.isEmpty()) {
+                    for (int i = lines.size() - 1; i >= 0; i--) {
+                        String lastLine = lines.get(i);
+                        if (lastLine != null && !lastLine.trim().isEmpty()) {
+                            String[] columns = lastLine.split(",");
+                            if (columns.length > 0) {
+                                String commitSha = columns[0].replace("\"", "");
+                                if (!commitSha.trim().isEmpty()) {
+                                    System.out.println("Resuming from commit " + commitSha + " for repo " + repoName
+                                            + " from file " + csvPath.getFileName());
+                                    return commitSha;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error finding latest commit for " + repoName + ": " + e.getMessage());
+        }
+
+        return null;
     }
 
     /**
