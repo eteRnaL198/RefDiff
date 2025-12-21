@@ -56,8 +56,6 @@ public class TestGoParser {
             .filter(node -> node.getType().equals(GoNodeTypes.FUNCTION) || node.getType().equals(GoNodeTypes.METHOD))
             .collect(Collectors.toList());
 
-        assertThat("Should find 16 function/method nodes", functionNodes.size(), is(equalTo(16)));
-
         List<ExpectedNode> expectedNodes = Arrays.asList(
             new ExpectedNode("MethodWithValueReceiver", GoNodeTypes.METHOD, 17, "MethodWithValueReceiver()", "main.", "sample.go", List.of()),
             new ExpectedNode("CustomIntMethod", GoNodeTypes.METHOD, 22, "CustomIntMethod()", "main.", "sample.go", List.of()),

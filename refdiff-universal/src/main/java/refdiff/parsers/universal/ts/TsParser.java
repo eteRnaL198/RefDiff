@@ -16,6 +16,7 @@ import refdiff.core.cst.CstNode;
 import refdiff.core.cst.Parameter;
 import refdiff.core.cst.Stereotype;
 import refdiff.core.io.FilePathFilter;
+import refdiff.parsers.universal.common.FilePathUtils;
 import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.base.BasePlugin;
 
@@ -44,6 +45,7 @@ public class TsParser extends BasePlugin {
 
   @Override
   protected void buildCst(TSTree tree, TSLanguage tsLang, String path, byte[] sourceBytes) {
+    String namespace = FilePathUtils.extractDirectoryFromFilePath(path);
     String querySrc = """
       [
         (class_declaration
@@ -134,7 +136,7 @@ public class TsParser extends BasePlugin {
         //       + NodeUtils.getNodeText(declaration, sourceBytes));
         //   break;
       }
-      addNodeToParent(cstNode);
+      addNodeToParent(cstNode, namespace);
     }
   }
 
