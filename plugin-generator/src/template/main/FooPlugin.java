@@ -18,7 +18,7 @@ import refdiff.core.cst.Stereotype;
 import refdiff.parsers.universal.common.NodeUtils;
 import refdiff.parsers.universal.base.BaseParser;
 
-public class FooParser extends BaseParser {
+public class FooPlugin extends BasePlugin {
   private int cstId = 0;
 
   @Override

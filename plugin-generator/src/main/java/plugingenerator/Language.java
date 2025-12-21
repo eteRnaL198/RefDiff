@@ -5,11 +5,14 @@ import java.util.function.Supplier;
 import org.treesitter.*;
 
 public enum Language {
-  PYTHON("python", ".py", "--kinds-Python=cfm", () -> new TreeSitterPython()),
-  GO("go", ".go", "--kinds-Go=f", () -> new TreeSitterGo()),
-  PHP("php", ".php", "--php-kinds=f", () -> new TreeSitterPhp()),
   JAVA("java", ".java", "--kinds-Java=pigacm", () -> new TreeSitterJava()),
-  TS("ts", ".ts", "--kinds-TypeScript=fmGa", () -> new TreeSitterTypescript());
+  C("c", ".c", "--kinds-C=cfm", () -> new TreeSitterC()),
+  JS("js", ".js", "--kinds-JavaScript=pfmGa", () -> new TreeSitterJavaScript()),
+  PYTHON("python", ".py", "--kinds-Python=cfm", () -> new TreeSitterPython()),
+  GO("go", ".go", "--kinds-Go=pfm", () -> new TreeSitterGo()),
+  PHP("php", ".php", "--php-kinds=f", () -> new TreeSitterPhp()),
+  RUBY("ruby", ".rb", "--kinds-Ruby=cfm", () -> new TreeSitterRuby());
+  // TS("ts", ".ts", "--kinds-TypeScript=fmGa", () -> new TreeSitterTypescript());
   // CS("cs", ".cs", "--kinds-CSharp=cfm", () -> new TreeSitterCSharp()),
   // CPP("cpp", ".cpp", "--kinds-C++=cfm", () -> new TreeSitterCpp());
 

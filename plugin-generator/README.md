@@ -5,6 +5,6 @@
 - Run Plugin Maker with argument "{language}"
 For example, to generate a plugin for C language, run:
 ```bash
-./gradlew :plugin-maker:run --args="c"
+./gradlew :plugin-generator:run --args="c"
 ```
 This will create a AST 

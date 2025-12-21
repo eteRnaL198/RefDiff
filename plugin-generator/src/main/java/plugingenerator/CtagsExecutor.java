@@ -25,7 +25,7 @@ public class CtagsExecutor {
         "--output-format=json",
         "--pseudo-tags",
         "--sort=no",
-        "--fields=+n",
+        "--fields=+neb",
         languageOption,
         sourceFileName
     );
