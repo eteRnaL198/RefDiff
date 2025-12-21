@@ -46,7 +46,6 @@ public class JsPlugin extends BasePlugin {
   @Override
   protected void buildCst(TSTree tree, TSLanguage tsLang, String path, byte[] sourceBytes) {
     String namespace = FilePathUtils.extractDirectoryFromFilePath(path);
-    System.out.println("Namespace: " + namespace); // TODO remove
     String querySrc = """
         [
           (program) @file_declaration
