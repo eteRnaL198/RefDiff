@@ -114,6 +114,7 @@ public class Executor {
                                 }
                             }
                             if ((commitCount + 1) % BATCH_SIZE == 0 || commitCount + 1 == COMMIT_DEPTH) {
+                                System.out.println("Processed " + (commitCount + 1) + " commits for " + repoName + ". Writing results to file...");
                                 try {
                                     Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                                     sb.setLength(0); // clear the StringBuilder
