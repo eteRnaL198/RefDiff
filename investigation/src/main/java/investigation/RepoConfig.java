@@ -2,7 +2,7 @@ package investigation;
 
 import java.util.Map;
 
-public final class RepoConfig {
+public final class RepoConfig { // TODO: Read repos from json
 
     public static final String[] JAVA = {
         // App
@@ -26,6 +26,13 @@ public final class RepoConfig {
         // "https://github.com/git/git.git",
         // "https://github.com/torvalds/linux.git",
         // "https://github.com/vmg/redcarpet.git",
+
+        // Borges 2018
+        "https://github.com/ffmpeg/ffmpeg.git", // App
+        "https://github.com/bilibili/ijkplayer.git", // Non-web library
+        "https://github.com/firehol/netdata.git", // Software tool
+        "https://github.com/torvalds/linux.git", // System
+        "https://github.com/phpredis/phpredis.git", // Web
     };
 
     public static final String[] JAVASCRIPT = {
@@ -87,8 +94,8 @@ public final class RepoConfig {
     };
 
     public static final Map<String, String[]> REPOS_BY_LANGUAGE = Map.of(
-        "Java", JAVA
-        // "C", C,
+        "Java", JAVA,
+        "C", C
         // "JavaScript", JAVASCRIPT,
         // "Ruby", RUBY,
         // "Go", GO,

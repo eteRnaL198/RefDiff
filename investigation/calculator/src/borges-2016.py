@@ -6,10 +6,10 @@ TOP_N = 5
 
 def load_borges_data():
     """
-    Loads data from ../borges-repos-2016.csv.
+    Loads data from ./borges-repos-2016.csv.
     This function is inspired by load_csv_files in main.py.
     """
-    csv_path = '../borges-repos-2016.csv'
+    csv_path = './borges-repos-2016.csv'
     
     try:
         df = pd.read_csv(csv_path)

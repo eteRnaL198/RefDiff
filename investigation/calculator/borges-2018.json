@@ -2,16 +2,6 @@
   "C": {
     "Application software": [
       {
-        "name": "WhisperSystems/Signal-Android",
-        "stars": 7281,
-        "url": "https://github.com/whispersystems/signal-android.git"
-      },
-      {
-        "name": "DrKLO/Telegram",
-        "stars": 6462,
-        "url": "https://github.com/drklo/telegram.git"
-      },
-      {
         "name": "FFmpeg/FFmpeg",
         "stars": 6045,
         "url": "https://github.com/ffmpeg/ffmpeg.git"
@@ -61,16 +51,6 @@
         "url": "https://github.com/bilibili/ijkplayer.git"
       },
       {
-        "name": "bang590/JSPatch",
-        "stars": 8572,
-        "url": "https://github.com/bang590/jspatch.git"
-      },
-      {
-        "name": "grpc/grpc",
-        "stars": 8377,
-        "url": "https://github.com/grpc/grpc.git"
-      },
-      {
         "name": "torch/torch7",
         "stars": 6241,
         "url": "https://github.com/torch/torch7.git"
@@ -91,11 +71,6 @@
         "name": "git/git",
         "stars": 15988,
         "url": "https://github.com/git/git.git"
-      },
-      {
-        "name": "kripken/emscripten",
-        "stars": 11384,
-        "url": "https://github.com/kripken/emscripten.git"
       },
       {
         "name": "ggreer/the_silver_searcher",
@@ -292,24 +267,9 @@
         "name": "mholt/caddy",
         "stars": 9775,
         "url": "https://github.com/mholt/caddy.git"
-      },
-      {
-        "name": "influxdata/influxdb",
-        "stars": 9667,
-        "url": "https://github.com/influxdata/influxdb.git"
       }
     ],
     "Web libraries and frameworks": [
-      {
-        "name": "grafana/grafana",
-        "stars": 14080,
-        "url": "https://github.com/grafana/grafana.git"
-      },
-      {
-        "name": "astaxie/beego",
-        "stars": 9441,
-        "url": "https://github.com/astaxie/beego.git"
-      },
       {
         "name": "go-martini/martini",
         "stars": 9041,
@@ -330,19 +290,9 @@
   "Java": {
     "Application software": [
       {
-        "name": "google/iosched",
-        "stars": 12650,
-        "url": "https://github.com/google/iosched.git"
-      },
-      {
         "name": "pockethub/PocketHub",
         "stars": 8482,
         "url": "https://github.com/pockethub/pockethub.git"
-      },
-      {
-        "name": "nickbutcher/plaid",
-        "stars": 8092,
-        "url": "https://github.com/nickbutcher/plaid.git"
       },
       {
         "name": "HannahMitt/HomeMirror",
@@ -372,22 +322,12 @@
         "url": "https://github.com/android10/android-cleanarchitecture.git"
       },
       {
-        "name": "googlesamples/android-UniversalMusicPlayer",
-        "stars": 6975,
-        "url": "https://github.com/googlesamples/android-universalmusicplayer.git"
-      },
-      {
         "name": "daimajia/AndroidViewAnimations",
         "stars": 6657,
         "url": "https://github.com/daimajia/androidviewanimations.git"
       }
     ],
     "Non-web libraries and frameworks": [
-      {
-        "name": "square/retrofit",
-        "stars": 18399,
-        "url": "https://github.com/square/retrofit.git"
-      },
       {
         "name": "nostra13/Android-Universal-Image-Loader",
         "stars": 14746,
@@ -416,11 +356,6 @@
         "url": "https://github.com/elastic/elasticsearch.git"
       },
       {
-        "name": "square/leakcanary",
-        "stars": 13256,
-        "url": "https://github.com/square/leakcanary.git"
-      },
-      {
         "name": "spring-projects/spring-boot",
         "stars": 9738,
         "url": "https://github.com/spring-projects/spring-boot.git"
@@ -443,11 +378,6 @@
         "url": "https://github.com/reactivex/rxjava.git"
       },
       {
-        "name": "JetBrains/kotlin",
-        "stars": 6892,
-        "url": "https://github.com/jetbrains/kotlin.git"
-      },
-      {
         "name": "clojure/clojure",
         "stars": 6033,
         "url": "https://github.com/clojure/clojure.git"
@@ -465,11 +395,6 @@
     ],
     "Web libraries and frameworks": [
       {
-        "name": "square/okhttp",
-        "stars": 17037,
-        "url": "https://github.com/square/okhttp.git"
-      },
-      {
         "name": "bumptech/glide",
         "stars": 12974,
         "url": "https://github.com/bumptech/glide.git"
@@ -478,11 +403,6 @@
         "name": "spring-projects/spring-framework",
         "stars": 12009,
         "url": "https://github.com/spring-projects/spring-framework.git"
-      },
-      {
-        "name": "afollestad/material-dialogs",
-        "stars": 8448,
-        "url": "https://github.com/afollestad/material-dialogs.git"
       },
       {
         "name": "Bearded-Hen/Android-Bootstrap",
@@ -521,16 +441,6 @@
     ],
     "Documentation": [
       {
-        "name": "freeCodeCamp/freeCodeCamp",
-        "stars": 224136,
-        "url": "https://github.com/freecodecamp/freecodecamp.git"
-      },
-      {
-        "name": "getify/You-Dont-Know-JS",
-        "stars": 49828,
-        "url": "https://github.com/getify/you-dont-know-js.git"
-      },
-      {
         "name": "airbnb/javascript",
         "stars": 46155,
         "url": "https://github.com/airbnb/javascript.git"
@@ -539,19 +449,9 @@
         "name": "tastejs/todomvc",
         "stars": 19871,
         "url": "https://github.com/tastejs/todomvc.git"
-      },
-      {
-        "name": "justjavac/free-programming-books-zh_CN",
-        "stars": 16140,
-        "url": "https://github.com/justjavac/free-programming-books-zh_cn.git"
       }
     ],
     "Non-web libraries and frameworks": [
-      {
-        "name": "socketio/socket.io",
-        "stars": 30067,
-        "url": "https://github.com/socketio/socket.io.git"
-      },
       {
         "name": "moment/moment",
         "stars": 29595,
@@ -585,11 +485,6 @@
         "url": "https://github.com/yarnpkg/yarn.git"
       },
       {
-        "name": "babel/babel",
-        "stars": 19549,
-        "url": "https://github.com/babel/babel.git"
-      },
-      {
         "name": "adam-p/markdown-here",
         "stars": 17013,
         "url": "https://github.com/adam-p/markdown-here.git"
@@ -620,24 +515,9 @@
         "name": "Microsoft/ChakraCore",
         "stars": 5972,
         "url": "https://github.com/microsoft/chakracore.git"
-      },
-      {
-        "name": "deepstreamIO/deepstream.io",
-        "stars": 4723,
-        "url": "https://github.com/deepstreamio/deepstream.io.git"
       }
     ],
     "Web libraries and frameworks": [
-      {
-        "name": "twbs/bootstrap",
-        "stars": 105991,
-        "url": "https://github.com/twbs/bootstrap.git"
-      },
-      {
-        "name": "d3/d3",
-        "stars": 59462,
-        "url": "https://github.com/d3/d3.git"
-      },
       {
         "name": "facebook/react",
         "stars": 58176,
@@ -647,11 +527,6 @@
         "name": "angular/angular.js",
         "stars": 54439,
         "url": "https://github.com/angular/angular.js.git"
-      },
-      {
-        "name": "facebook/react-native",
-        "stars": 43151,
-        "url": "https://github.com/facebook/react-native.git"
       }
     ]
   },
@@ -671,11 +546,6 @@
         "name": "getgrav/grav",
         "stars": 5891,
         "url": "https://github.com/getgrav/grav.git"
-      },
-      {
-        "name": "twostairs/paperwork",
-        "stars": 5624,
-        "url": "https://github.com/twostairs/paperwork.git"
       },
       {
         "name": "octobercms/october",
@@ -703,11 +573,6 @@
         "name": "magento/magento2",
         "stars": 4036,
         "url": "https://github.com/magento/magento2.git"
-      },
-      {
-        "name": "subtlepatterns/SubtlePatterns",
-        "stars": 3802,
-        "url": "https://github.com/subtlepatterns/subtlepatterns.git"
       }
     ],
     "Non-web libraries and frameworks": [
@@ -773,11 +638,6 @@
     ],
     "Web libraries and frameworks": [
       {
-        "name": "laravel/laravel",
-        "stars": 28856,
-        "url": "https://github.com/laravel/laravel.git"
-      },
-      {
         "name": "symfony/symfony",
         "stars": 13693,
         "url": "https://github.com/symfony/symfony.git"
@@ -817,11 +677,6 @@
         "url": "https://github.com/soimort/you-get.git"
       },
       {
-        "name": "equinusocio/material-theme",
-        "stars": 8508,
-        "url": "https://github.com/equinusocio/material-theme.git"
-      },
-      {
         "name": "powerline/powerline",
         "stars": 6922,
         "url": "https://github.com/powerline/powerline.git"
@@ -842,11 +697,6 @@
         "name": "minimaxir/big-list-of-naughty-strings",
         "stars": 19083,
         "url": "https://github.com/minimaxir/big-list-of-naughty-strings.git"
-      },
-      {
-        "name": "isocpp/CppCoreGuidelines",
-        "stars": 12789,
-        "url": "https://github.com/isocpp/cppcoreguidelines.git"
       },
       {
         "name": "tensorflow/models",
@@ -920,11 +770,6 @@
         "url": "https://github.com/samshadwell/trumpscript.git"
       },
       {
-        "name": "phusion/baseimage-docker",
-        "stars": 5048,
-        "url": "https://github.com/phusion/baseimage-docker.git"
-      },
-      {
         "name": "nylas/sync-engine",
         "stars": 3254,
         "url": "https://github.com/nylas/sync-engine.git"
@@ -950,11 +795,6 @@
         "name": "tomchristie/django-rest-framework",
         "stars": 7169,
         "url": "https://github.com/tomchristie/django-rest-framework.git"
-      },
-      {
-        "name": "bokeh/bokeh",
-        "stars": 5311,
-        "url": "https://github.com/bokeh/bokeh.git"
       },
       {
         "name": "channelcat/sanic",
@@ -1003,11 +843,6 @@
         "url": "https://github.com/thibaut/devdocs.git"
       },
       {
-        "name": "jondot/awesome-react-native",
-        "stars": 9728,
-        "url": "https://github.com/jondot/awesome-react-native.git"
-      },
-      {
         "name": "kilimchoi/engineering-blogs",
         "stars": 9723,
         "url": "https://github.com/kilimchoi/engineering-blogs.git"
@@ -1038,19 +873,9 @@
         "name": "teamcapybara/capybara",
         "stars": 7561,
         "url": "https://github.com/teamcapybara/capybara.git"
-      },
-      {
-        "name": "elastic/logstash",
-        "stars": 6932,
-        "url": "https://github.com/elastic/logstash.git"
       }
     ],
     "Software tools": [
-      {
-        "name": "Homebrew/legacy-homebrew",
-        "stars": 29324,
-        "url": "https://github.com/homebrew/legacy-homebrew.git"
-      },
       {
         "name": "gitlabhq/gitlabhq",
         "stars": 18939,
@@ -1084,11 +909,6 @@
         "url": "https://github.com/jruby/jruby.git"
       },
       {
-        "name": "rubinius/rubinius",
-        "stars": 2662,
-        "url": "https://github.com/rubinius/rubinius.git"
-      },
-      {
         "name": "lg/murder",
         "stars": 2376,
         "url": "https://github.com/lg/murder.git"
@@ -1104,11 +924,6 @@
         "name": "rails/rails",
         "stars": 34188,
         "url": "https://github.com/rails/rails.git"
-      },
-      {
-        "name": "twbs/bootstrap-sass",
-        "stars": 11734,
-        "url": "https://github.com/twbs/bootstrap-sass.git"
       },
       {
         "name": "sinatra/sinatra",

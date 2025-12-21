@@ -1,3 +1,7 @@
+# Premise
+To run borges-2018.py, you need to set your GitHub token in the `.env` file.
+Because this script accesses the GitHub API to get the repository language information.
+
 ```
 python3 -m venv venv
 venv/bin/pip install -r requirements.txt
