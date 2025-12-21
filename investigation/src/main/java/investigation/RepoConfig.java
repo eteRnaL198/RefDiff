@@ -5,11 +5,12 @@ import java.util.Map;
 public final class RepoConfig {
 
     public static final String[] JAVA = {
-        // "https://github.com/HannahMitt/HomeMirror.git",
-        // "https://github.com/nostra13/Android-Universal-Image-Loader.git",
-        // "https://github.com/elastic/elasticsearch.git",
-        // "https://github.com/ReactiveX/RxJava.git",
-        // "https://github.com/spring-projects/spring-framework.git",
+        // App
+        "https://github.com/HannahMitt/HomeMirror.git",
+        "https://github.com/nostra13/Android-Universal-Image-Loader.git",
+        "https://github.com/elastic/elasticsearch.git",
+        "https://github.com/ReactiveX/RxJava.git",
+        "https://github.com/spring-projects/spring-framework.git",
     };
 
     public static final String[] C = {

@@ -5,7 +5,7 @@ import csv
 
 def load_csv_files():
     base_path = '../result'
-    languages = ['C', 'Java', 'JavaScript']
+    languages = ['C', 'Java', 'JavaScript', 'PHP', 'Python', 'Ruby', 'Go']
     all_dfs = {}
     all_commits = {}
 
@@ -51,11 +51,102 @@ def load_csv_files():
     return all_dfs, all_commits
 
 if __name__ == '__main__':
+
     dataframes, commits = load_csv_files()
+
+
+
+    # Step 1: Calculate percentages and absolute counts
+    all_counts = {}
+    all_absolute_counts = {}
+    allowed_refactoring_types = ['CHANGE_SIGNATURE', 'EXTRACT', 'EXTRACT_MOVE', 'INLINE', 'MOVE', 'RENAME', 'MOVE_RENAME']
+
     for lang, df in dataframes.items():
-        print(f"--- {lang} Refactoring Type Counts ---")
         if 'RefactoringType' in df.columns:
-            print(df['RefactoringType'].value_counts())
-        else:
-            print("RefactoringType column not found.")
-        print("\n")
+            df['RefactoringType'] = df['RefactoringType'].replace(['INTERNAL_MOVE'], 'MOVE')
+            df['RefactoringType'] = df['RefactoringType'].replace(['INTERNAL_MOVE_RENAME'], 'MOVE_RENAME')
+
+            # Filter the DataFrame to include only allowed refactoring types
+            filtered_df = df[df['RefactoringType'].isin(allowed_refactoring_types)]
+            
+            # Calculate normalized counts for the filtered DataFrame
+            counts = filtered_df['RefactoringType'].value_counts(normalize=True) * 100
+            all_counts[lang] = counts
+
+            # Calculate absolute counts
+            absolute_counts = filtered_df['RefactoringType'].value_counts()
+            all_absolute_counts[lang] = absolute_counts
+
+
+
+    # Prepare data for plotting
+
+    plot_data = pd.DataFrame(all_counts).fillna(0)
+    absolute_counts_data = pd.DataFrame(all_absolute_counts).fillna(0)
+
+
+
+    # Check if there is data to plot
+
+    if not plot_data.empty:
+
+        try:
+
+            import matplotlib.pyplot as plt
+
+
+
+            # Transpose for plotting (languages on x-axis)
+
+            ax = plot_data.T.plot(kind='bar', stacked=True, figsize=(10, 7))
+
+            # To ensure the order of counts matches the plot, we align the absolute counts dataframe
+            # with the percentage dataframe, which dictates the plot structure.
+            aligned_absolute_counts = absolute_counts_data.reindex(index=plot_data.index, columns=plot_data.columns).fillna(0).astype(int)
+
+            # Add counts on the bars
+            for container in ax.containers:
+                # The label for each container is the refactoring type
+                refactoring_type = container.get_label()
+                
+                # Get the counts for this type across all languages from the aligned absolute counts
+                if refactoring_type in aligned_absolute_counts.index:
+                    labels = aligned_absolute_counts.loc[refactoring_type].values
+                    
+                    # Create labels only for non-zero bars to avoid clutter
+                    display_labels = [f'{v}' if v > 0 else '' for v in labels]
+                    
+                    ax.bar_label(container, labels=display_labels, label_type='center', color='white', weight='bold')
+
+
+            plt.title('Distribution of Refactoring Types by Language')
+
+            plt.xlabel('Language')
+
+            plt.ylabel('Percentage (%)')
+
+            plt.xticks(rotation=0)
+
+            plt.legend(title='Refactoring Type', bbox_to_anchor=(1.05, 1), loc='upper left')
+
+            plt.tight_layout()
+
+
+
+            # Save the plot
+
+            output_filename = '../refactoring_distribution.png'
+
+            plt.savefig(output_filename)
+
+            print(f"Plot saved to {output_filename}")
+
+
+
+        except ImportError:
+
+            print("Matplotlib is not installed. Please install it using 'pip install matplotlib'")
+
+    else:
+
+        print("No data available to plot.")

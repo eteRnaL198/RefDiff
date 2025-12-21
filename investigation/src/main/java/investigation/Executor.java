@@ -22,9 +22,9 @@ import refdiff.core.diff.CstDiff;
 import refdiff.core.diff.Relationship;
 import refdiff.core.io.GitHelper;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.java.JavaParser;
+import refdiff.parsers.universal.java.JavaPlugin;
 import refdiff.parsers.universal.c.CPlugin;
-import refdiff.parsers.universal.js.JsParser;
+import refdiff.parsers.universal.js.JsPlugin;
 import refdiff.parsers.universal.go.GoParser;
 import refdiff.parsers.universal.python.PythonParser;
 import refdiff.parsers.universal.ruby.RubyParser;
@@ -217,11 +217,11 @@ public class Executor {
     private static LanguagePlugin mapPlugin(Language language) {
         switch (language) {
             case JAVA:
-                return new JavaParser();
+                return new JavaPlugin();
             case C:
                 return new CPlugin();
             case JAVASCRIPT:
-                return new JsParser();
+                return new JsPlugin();
             case GO:
                 return new GoParser();
             case PYTHON:
