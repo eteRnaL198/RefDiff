@@ -71,6 +71,9 @@ if __name__ == '__main__':
 
         combined_extract_df.dropna(subset=['BeforeLOC', 'AfterLOC'], inplace=True)
         
+        # Clip BeforeLOC to a maximum.
+        # combined_extract_df['BeforeLOC'] = combined_extract_df['BeforeLOC'].clip(upper=200)
+
         combined_extract_df['BeforeLOC'] = combined_extract_df['BeforeLOC'].astype(int)
         combined_extract_df['AfterLOC'] = combined_extract_df['AfterLOC'].astype(int)
 
