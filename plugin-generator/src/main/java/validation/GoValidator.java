@@ -2,45 +2,48 @@ package validation;
 
 import plugingenerator.Language;
 import refdiff.parsers.LanguagePlugin;
-import refdiff.parsers.universal.c.CPlugin;
-import refdiff.parsers.universal.c.CNodeTypes;
+import refdiff.parsers.universal.go.GoParser;
+import refdiff.parsers.universal.go.GoNodeTypes;
 
-public class CValidator extends BaseValidator {
+public class GoValidator extends BaseValidator {
 
   @Override
   protected LanguagePlugin getPlugin() {
-    return new CPlugin();
+    return new GoParser();
   }
 
   @Override
   protected Language getLanguage() {
-    return Language.C;
+    return Language.GO;
   }
 
   @Override
   protected String[] getRepos() {
     return new String[] {
-      // "linux",
-      "scrcpy",
-      "netdata",
-      "Ventoy",
-      "redis",
+        "ollama",
+        "go",
+        "kubernetes",
+        "frp",
+        "gin",
     };
   }
 
   @Override
   protected boolean isTypeEqual(String tagKind, String nodeType) {
     if (tagKind.equalsIgnoreCase("file")) {
-      return CNodeTypes.FILE.equals(nodeType);
+      return GoNodeTypes.FILE.equals(nodeType);
     }
     if (tagKind.equalsIgnoreCase("function")) {
-      return CNodeTypes.FUNCTION.equals(nodeType);
+      return GoNodeTypes.FUNCTION.equals(nodeType);
+    }
+    if (tagKind.equalsIgnoreCase("method")) {
+      return GoNodeTypes.METHOD.equals(nodeType);
     }
     return false;
   }
 
   public static void main(String[] args) throws Exception {
-    CValidator validator = new CValidator();
+    GoValidator validator = new GoValidator();
     validator.run();
   }
 

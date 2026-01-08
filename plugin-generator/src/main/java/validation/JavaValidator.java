@@ -20,14 +20,11 @@ public class JavaValidator extends BaseValidator {
   @Override
   protected String[] getRepos() {
     return new String[] {
-      // "JavaGuide", // TODO remove
       // "mall",
       // "spring-boot",
       "elasticsearch",
       "ghidra",
       "spring-framework",
-
-      // "scrcpy",
     };
   }
 

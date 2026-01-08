@@ -20,6 +20,11 @@ public class PythonValidator extends BaseValidator {
   @Override
   protected String[] getRepos() {
     return new String[] {
+      "AutoGPT",
+      "stable-diffusion-webui",
+      "transformers",
+      "langflow",
+      "youtube-dl",
     };
   }
 
@@ -32,7 +37,7 @@ public class PythonValidator extends BaseValidator {
   }
 
   public static void main(String[] args) throws Exception {
-    CValidator validator = new CValidator();
+    PythonValidator validator = new PythonValidator();
     validator.run();
   }
 
