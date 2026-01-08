@@ -21,12 +21,13 @@ dependencies {
     implementation("io.github.bonede:tree-sitter-typescript:0.23.2")
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.4'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.3.4'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.3.4'
     implementation 'org.json:json:20231013'
 
     testImplementation 'junit:junit:4.11' // TODO remove this line after migrating all tests to JUnit 5
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:6.0.1'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     testImplementation project(path: ':refdiff-core', configuration: 'testArtifacts')
 }
 
