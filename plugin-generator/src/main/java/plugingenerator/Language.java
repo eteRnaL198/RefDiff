@@ -5,46 +5,47 @@ import java.util.function.Supplier;
 import org.treesitter.*;
 
 public enum Language {
-  JAVA("java", ".java", "--kinds-Java=pigacm", () -> new TreeSitterJava()),
-  C("c", ".c", "--kinds-C=cfm", () -> new TreeSitterC()),
-  JS("js", ".js", "--kinds-JavaScript=pfmGa", () -> new TreeSitterJavaScript()),
-  PYTHON("python", ".py", "--kinds-Python=cfm", () -> new TreeSitterPython()),
-  GO("go", ".go", "--kinds-Go=pfm", () -> new TreeSitterGo()),
-  PHP("php", ".php", "--php-kinds=f", () -> new TreeSitterPhp()),
-  RUBY("ruby", ".rb", "--kinds-Ruby=cfm", () -> new TreeSitterRuby());
+  // JAVA("java", ".java", "--kinds-Java=pigacm", () -> new TreeSitterJava()),
+  JAVA("java", new String[]{".java"}, "--kinds-Java=igacm", () -> new TreeSitterJava()), // TODO package無視したけど後で対応する
+  C("c", new String[]{".c"}, "--kinds-C=cf", () -> new TreeSitterC()),
+  JS("javascript", new String[]{".js", ".jsx"}, "--kinds-JavaScript=pfmGa", () -> new TreeSitterJavascript()),
+  PYTHON("python", new String[]{".py"}, "--kinds-Python=cfm", () -> new TreeSitterPython()),
+  GO("go", new String[]{".go"}, "--kinds-Go=pfm", () -> new TreeSitterGo()),
+  PHP("php", new String[]{".php"}, "--php-kinds=f", () -> new TreeSitterPhp()),
+  RUBY("ruby", new String[]{".rb"}, "--kinds-Ruby=cfm", () -> new TreeSitterRuby());
   // TS("ts", ".ts", "--kinds-TypeScript=fmGa", () -> new TreeSitterTypescript());
   // CS("cs", ".cs", "--kinds-CSharp=cfm", () -> new TreeSitterCSharp()),
   // CPP("cpp", ".cpp", "--kinds-C++=cfm", () -> new TreeSitterCpp());
 
   private final String name;
-  private final String extension;
+  private final String[] extensions;
   private final String ctagsOption;
   private final Supplier<TSLanguage> tsSupplier;
 
-  Language(String name, String extension, String ctagsOption, Supplier<TSLanguage> tsSupplier) {
+  Language(String name, String[] extensions, String ctagsOption, Supplier<TSLanguage> tsSupplier) {
     this.name = name;
-    this.extension = extension;
+    this.extensions = extensions;
     this.ctagsOption = ctagsOption;
     this.tsSupplier = tsSupplier;
   }
 
-  String getName() {
+  public String getName() {
     return name;
   }
 
-  String getExtension() {
-    return extension;
+  public String[] getExtensions() {
+    return extensions;
   }
 
-  String getCtagsOption() {
+  public String getCtagsOption() {
     return ctagsOption;
   }
 
-  TSLanguage getTSLanguage() {
+  public TSLanguage getTSLanguage() {
     return tsSupplier.get();
   }
 
-  static Language fromName(String n) {
+  public static Language fromName(String n) {
     for (Language l : values()) {
       if (l.name.equalsIgnoreCase(n))
         return l;

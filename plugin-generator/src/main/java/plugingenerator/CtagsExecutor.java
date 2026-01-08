@@ -41,7 +41,14 @@ public class CtagsExecutor {
 
     int exitCode = process.waitFor();
     if (exitCode != 0) {
-      throw new RuntimeException("Ctags execution failed with exit code " + exitCode);
+      StringBuilder errorOutput = new StringBuilder();
+      try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+        String line;
+        while ((line = errorReader.readLine()) != null) {
+          errorOutput.append(line).append("\n");
+        }
+      }
+      throw new RuntimeException("Ctags execution failed with exit code " + exitCode + ". Error: " + errorOutput.toString());
     }
     return output.toString();
   }

@@ -24,11 +24,8 @@ public class TestGenerator {
         continue; // Skip empty lines
       }
 
+      // Parse to validate JSON structure but do not print to stdout.
       JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
-      System.out.println("--- JSON Object ---");
-      for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-        System.out.println(entry.getKey() + ": " + entry.getValue());
-      }
     }
   }
 }

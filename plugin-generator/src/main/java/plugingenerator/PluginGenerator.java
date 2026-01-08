@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 
 public class PluginGenerator {
   public static void main(String[] args) throws Exception {
@@ -24,9 +25,9 @@ public class PluginGenerator {
 
     Path srcDir = Paths.get("context/" + language.getName() + "/src/");
     List<Path> sourceFiles = Files.list(srcDir)
-        .filter(Files::isRegularFile)
-        .filter(p -> p.toString().endsWith(language.getExtension()))
-        .collect(Collectors.toList());
+      .filter(Files::isRegularFile)
+      .filter(p -> Arrays.stream(language.getExtensions()).anyMatch(ext -> p.toString().endsWith(ext)))
+      .collect(Collectors.toList());
     
     Path tagsDir = Paths.get(pluginDir + "/src/test/resources/" + language.getName() + "/tags/");
     if (!Files.exists(tagsDir)) {
@@ -34,13 +35,12 @@ public class PluginGenerator {
     }
     for (Path sourceFile : sourceFiles) {
       String sourceFileName = sourceFile.getFileName().toString();
-      String baseName = sourceFileName.substring(0, sourceFileName.lastIndexOf('.'));
       String ctagsOutput = CtagsExecutor.exec(
         srcDir.toFile(),
         language.getCtagsOption(),
         sourceFileName
       );
-      Path ctagsOutputFile = tagsDir.resolve("tags-" + baseName + ".ndjson");
+      Path ctagsOutputFile = tagsDir.resolve(sourceFileName + ".ndjson");
       Files.writeString(ctagsOutputFile, ctagsOutput);
 
       TestGenerator.generate(ctagsOutput);
@@ -54,7 +54,7 @@ public class PluginGenerator {
       String astContent = TreeSitterParser.parse(sourceFile, language.getTSLanguage());
       String sourceFileName = sourceFile.getFileName().toString();
       String baseName = sourceFileName.substring(0, sourceFileName.lastIndexOf('.'));
-      Path astOutputFile = astDir.resolve("ast-" + baseName + ".txt");
+      Path astOutputFile = astDir.resolve(baseName + ".ast.txt");
       Files.writeString(astOutputFile, astContent);
     }
   }
