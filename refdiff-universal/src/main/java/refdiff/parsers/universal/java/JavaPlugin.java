@@ -119,13 +119,18 @@ public class JavaPlugin extends BasePlugin {
           break;
         case "method_declaration":
           cstNode.setType(JavaNodeTypes.METHOD);
-          List<Parameter> method_params = extractSignatureParameters(parameters, sourceBytes);
-          cstNode.setParameters(method_params);
-          cstNode.setLocalName(NodeUtils.getNodeText(name, sourceBytes) + NodeUtils.generateParams(method_params));
+          try {
+            List<Parameter> method_params = extractSignatureParameters(parameters, sourceBytes);
+            cstNode.setParameters(method_params);
+            cstNode.setLocalName(NodeUtils.getNodeText(name, sourceBytes) + NodeUtils.generateParams(method_params));
+          } catch (RuntimeException e) {
+            System.out.println("Error extracting method parameters: " + path + ": " + e.getMessage());
+            throw e;
+          }
           cstNode.addStereotypes(Stereotype.TYPE_MEMBER);
           break;
         default:
-          System.out.println("Warning: Unhandled declaration type: " + declaration.getType() + " at " + declaration.getStartPoint().getRow() + "-" + declaration.getEndPoint().getRow() + " in source code: " + NodeUtils.getNodeText(declaration, sourceBytes));
+          System.out.println("Warning: Unhandled declaration type: " + declaration.getType() + " at " + path + ":" + declaration.getStartPoint().getRow() + "-" + declaration.getEndPoint().getRow() + " in source code: " + NodeUtils.getNodeText(declaration, sourceBytes));
           break;
       }
       addNodeToParent(cstNode, namespace);
@@ -139,7 +144,7 @@ public class JavaPlugin extends BasePlugin {
    * @param sourceBytes The source code string to extract type names.
    * @return A string representing the parameter signature.
    */
-  private List<Parameter> extractSignatureParameters(TSNode parametersNode, byte[] sourceBytes) {
+  private List<Parameter> extractSignatureParameters(TSNode parametersNode, byte[] sourceBytes) throws RuntimeException {
     List<Parameter> parameters = new ArrayList<>();
     for (int i = 0; i < parametersNode.getNamedChildCount(); i++) {
         TSNode parameter = parametersNode.getNamedChild(i);
@@ -166,7 +171,7 @@ public class JavaPlugin extends BasePlugin {
         if (paramTypeString != null) {
           parameters.add(new Parameter(paramTypeString));
         } else {
-            System.out.println("Warning: Could not determine type for parameter: " + parameter.getType() +
+          throw new RuntimeException("Could not determine type for parameter: " + parameter.getType() +
                 " at " + parameter.getStartPoint().getRow() + "-" + parameter.getEndPoint().getRow() +
                 " in source code: " + NodeUtils.getNodeText(parametersNode, sourceBytes));
         }
