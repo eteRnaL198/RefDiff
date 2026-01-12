@@ -9,6 +9,7 @@
 ```
 
 # Run with script
+Make sure tmux is installed.
 ```bash
 sh ./script/investigation.sh
 ```
