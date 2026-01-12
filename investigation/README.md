@@ -1,6 +1,9 @@
 # Run with gradle
 ```bash
-./gradlew runInvestigation --args='-l java --resume'
+./gradlew runInvestigation
+./gradlew runInvestigation --args='--resume'
+./gradlew runInvestigation --args='-l <language>'
+./gradlew runInvestigation --args='-l <language> -r <repo_url>'
 ```
 
 # Build distribution
@@ -9,7 +12,7 @@
 ```
 
 # Run with script
-Make sure tmux is installed.
+Premise: Make sure tmux is installed.
 ```bash
 sh ./script/investigation.sh
 ```

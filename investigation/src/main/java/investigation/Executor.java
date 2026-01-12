@@ -44,6 +44,7 @@ public class Executor {
         // CLI option: --resume and --language <lang> or -l <lang>
         boolean resume = false;
         String languageArg = null;
+        String repoArg = null;
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
             if ("--resume".equals(a)) {
@@ -55,10 +56,23 @@ public class Executor {
                 }
             } else if (a.startsWith("--language=")) {
                 languageArg = a.substring("--language=".length());
+            } else if ("--repo".equals(a) || "-r".equals(a)) {
+                if (i + 1 < args.length) {
+                    repoArg = args[i + 1];
+                    i++;
+                }
+            } else if (a.startsWith("--repo=")) {
+                repoArg = a.substring("--repo=".length());
             }
         }
 
-        new Executor().execute(resume, languageArg);
+        // Validation: when --repo is specified, --language must also be provided
+        if (repoArg != null && (languageArg == null || languageArg.trim().isEmpty())) {
+            System.err.println("Error: --language is required when --repo is specified.");
+            System.exit(1);
+        }
+
+        new Executor().execute(resume, languageArg, repoArg);
     }
 
     private void incrementCommitCount() {
@@ -69,8 +83,13 @@ public class Executor {
         currentCommitSha = sha;
     }
 
-    private void execute(boolean resume, String selectedLanguage) throws Exception {
-        Map<String, Map<String, File>> clonedReposByLang = getRepos(selectedLanguage);
+    private void execute(boolean resume, String selectedLanguage, String selectedRepoUrl) throws Exception {
+        Map<String, Map<String, File>> clonedReposByLang;
+        if (selectedRepoUrl == null || selectedRepoUrl.trim().isEmpty()) {
+            clonedReposByLang = getRepos(selectedLanguage);
+        } else {
+            clonedReposByLang = getRepos(selectedLanguage, selectedRepoUrl);
+        }
 
         System.out.println("\n\n----- Detect refactorings -----");
         for (Map.Entry<String, Map<String, File>> langEntry : clonedReposByLang.entrySet()) {
@@ -239,14 +258,7 @@ public class Executor {
                     if (repoUrl == null || repoUrl.trim().isEmpty()) {
                         continue;
                     }
-                    String[] parts = repoUrl.split("/");
-                    String repoNameWithGit = parts[parts.length - 1];
-                    String repoName;
-                    if (repoNameWithGit.endsWith(".git")) {
-                        repoName = repoNameWithGit.substring(0, repoNameWithGit.length() - 4);
-                    } else {
-                        repoName = repoNameWithGit;
-                    }
+                    String repoName = extractRepoNameFromUrl(repoUrl);
 
                     File tempFolder = new File("repo");
                     File repoDir = new File(tempFolder, repoName);
@@ -259,6 +271,42 @@ public class Executor {
             }
         }
         return clonedReposByLang;
+    }
+
+    private Map<String, Map<String, File>> getRepos(String selectedLanguage, String selectedRepoUrl) {
+        // If no specific repo URL is provided, delegate to the original single-arg method
+        if (selectedRepoUrl == null || selectedRepoUrl.trim().isEmpty()) {
+            return getRepos(selectedLanguage);
+        }
+
+        Map<String, Map<String, File>> clonedReposByLang = new HashMap<>();
+        String repoUrl = selectedRepoUrl.trim();
+        String repoName = extractRepoNameFromUrl(repoUrl);
+        try {
+            File tempFolder = new File("repo");
+            File repoDir = new File(tempFolder, repoName);
+            File clonedRepo = GitHelper.cloneBareRepository(repoDir, repoUrl);
+            clonedReposByLang.computeIfAbsent(selectedLanguage, ignored -> new HashMap<>()).put(repoName, clonedRepo);
+            System.out.println("Cloned " + repoName + " (" + selectedLanguage + ") to " + clonedRepo.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("Failed to clone " + repoUrl + ": " + e.getMessage());
+        }
+        return clonedReposByLang;
+    }
+
+    private static String extractRepoNameFromUrl(String repoUrl) {
+        if (repoUrl == null) {
+            return null;
+        }
+        String[] parts = repoUrl.split("/");
+        if (parts.length == 0) {
+            return repoUrl;
+        }
+        String repoNameWithGit = parts[parts.length - 1];
+        if (repoNameWithGit.endsWith(".git")) {
+            return repoNameWithGit.substring(0, repoNameWithGit.length() - 4);
+        }
+        return repoNameWithGit;
     }
 
     private static String getNowDateTime() {

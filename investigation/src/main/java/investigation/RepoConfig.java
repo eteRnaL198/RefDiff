@@ -2,7 +2,9 @@ package investigation;
 
 import java.util.Map;
 
-public final class RepoConfig { // TODO: Read repos from json
+// TODO: delete this class and method that uses this.
+
+public final class RepoConfig {
 
     public static final String[] JAVA = {
         // App
