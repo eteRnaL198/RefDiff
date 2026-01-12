@@ -1,13 +1,15 @@
 #!/bin/bash
 
 APP_BIN="./build/install/investigation/bin/investigation"
+# Space-separated list of target languages
+LANGUAGES="java c javascript go php python ruby"
 
-# List of target languages
-languages=("java" "c" "javascript" "go" "php" "python" "ruby" "php")
+# Ensure logs directory exists
+mkdir -p logs
 
-for lang in "${languages[@]}"; do
+for lang in $LANGUAGES; do
   # Execute each process in the background, redirecting output to separate log files
-  $APP_BIN --language $lang --resume  > "logs/out_$lang.log" 2>&1 &
+  "$APP_BIN" --language "$lang" --resume > "logs/out_$lang.log" 2>&1 &
   echo "Started process for $lang (PID: $!)"
 done
 
