@@ -34,8 +34,7 @@ import refdiff.parsers.universal.ruby.RubyParser;
 import refdiff.parsers.universal.php.PhpPlugin;
 
 public class Executor {
-    private static int COMMIT_DEPTH = 500;
-    // private static int COMMIT_COUNT = 100;
+    private static int COMMIT_DEPTH = 5000;
     private static final int BATCH_SIZE = 10;
 
     private int commitCount = 0;
