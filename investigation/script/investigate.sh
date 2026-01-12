@@ -3,8 +3,7 @@
 APP_BIN="./build/install/investigation/bin/investigation"
 
 # List of target languages
-# languages=("java" "c" "javascript" "go" "php" "python" "ruby" "php")
-languages=("java" "c")
+languages=("java" "c" "javascript" "go" "php" "python" "ruby" "php")
 
 for lang in "${languages[@]}"; do
   # Execute each process in the background, redirecting output to separate log files
