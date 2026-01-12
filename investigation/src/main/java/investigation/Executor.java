@@ -35,7 +35,7 @@ import refdiff.parsers.universal.php.PhpPlugin;
 
 public class Executor {
     private static int COMMIT_DEPTH = 5000;
-    private static final int BATCH_SIZE = 10;
+    private static final int BATCH_SIZE = 100;
 
     private int commitCount = 0;
     private String currentCommitSha = "";
