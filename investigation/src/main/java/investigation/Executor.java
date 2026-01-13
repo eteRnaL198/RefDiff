@@ -34,7 +34,7 @@ import refdiff.parsers.universal.ruby.RubyParser;
 import refdiff.parsers.universal.php.PhpPlugin;
 
 public class Executor {
-    private static int COMMIT_DEPTH = 5000;
+    private static int COMMIT_DEPTH = 10000;
     private static final int BATCH_SIZE = 100;
 
     private int commitCount = 0;
@@ -146,7 +146,7 @@ public class Executor {
                                         }
                                     }
                                     if ((commitCount + 1) % BATCH_SIZE == 0 || commitCount + 1 == COMMIT_DEPTH) {
-                                        System.out.println("Processed " + (commitCount + 1) + " commits for " + repoName
+                                        System.out.println(getNowDateTime() + " Processed " + (commitCount + 1) + " commits for " + repoName
                                                 + ". Writing results to file...");
                                         try {
                                             Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8),

@@ -67,10 +67,14 @@ ITEMS=(
 # Ensure logs directory exists
 mkdir -p logs
 
+# Maximum concurrent processes (adjustable)
+MAX_CONCURRENT=15
+
+# Active background PIDs
+PIDS=()
+
 for entry in "${ITEMS[@]}"; do
   # parse entry "lang|repo_url"
-  # lang: everything before the first '|'
-  # repo_url: everything after the first '|'
   lang="${entry%%|*}"
   repo_url="${entry#*|}"
 
@@ -85,9 +89,34 @@ for entry in "${ITEMS[@]}"; do
 
   # Launch one process per repository, passing --repo to the application
   "$APP_BIN" --language "$lang" --repo "$repo_url" --resume > "$log_file" 2>&1 &
-  echo "Started process for $lang repo $repo_url (PID: $!) -> $log_file"
+  pid=$!
+  PIDS+=("$pid")
+  echo "Started process for $lang repo $repo_url (PID: $pid) -> $log_file"
+
+  # If we've reached the concurrency limit, wait until at least one PID finishes.
+  while :; do
+    # Prune finished PIDs from PIDS
+    active=()
+    for p in "${PIDS[@]}"; do
+      if kill -0 "$p" >/dev/null 2>&1; then
+        active+=("$p")
+      fi
+    done
+    PIDS=("${active[@]}")
+
+    if [ "${#PIDS[@]}" -lt "$MAX_CONCURRENT" ]; then
+      break
+    fi
+
+    sleep 10
+  done
 done
 
-# Wait for all background processes to complete
-wait
+# After starting all entries, wait for any remaining background processes
+for p in "${PIDS[@]}"; do
+  if kill -0 "$p" >/dev/null 2>&1; then
+    wait "$p"
+  fi
+done
+
 echo "All scripts have completed."
