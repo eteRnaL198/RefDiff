@@ -14,5 +14,5 @@
 # Run with script
 Premise: Make sure tmux is installed.
 ```bash
-sh ./script/investigation.sh
+bash ./script/investigation.sh
 ```
