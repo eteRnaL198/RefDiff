@@ -2,20 +2,6 @@
 
 set -e
 
-# If not already running inside tmux, re-run this script inside a new detached tmux session.
-# This makes the processes continue running even if the SSH connection is lost.
-if [ -z "$TMUX" ] && [ "$1" != "--inside-tmux" ]; then
-  if ! command -v tmux >/dev/null 2>&1; then
-    echo "tmux is not installed. Running directly (will stop on SSH disconnect)."
-  else
-    session="investigation_$(date +%s)"
-    mkdir -p logs
-    tmux new-session -d -s "$session" "$0 --inside-tmux"
-    echo "Started tmux session '$session'. Attach with: tmux attach -t $session"
-    exit 0
-  fi
-fi
-
 APP_BIN="./build/install/investigation/bin/investigation"
 
 # "lang|repo_url".
