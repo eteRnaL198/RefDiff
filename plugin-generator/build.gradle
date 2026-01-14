@@ -37,11 +37,11 @@ test {
   useJUnitPlatform()
 }
 
-task runPluginImprover(type: JavaExec) {
+task runPluginGenerator(type: JavaExec) {
     group = "application"
-    description = "Run the Plugin Improver"
+    description = "Run the Plugin Generator"
     classpath = sourceSets.main.runtimeClasspath
-    mainClass.set("plugingenerator.PluginImprover")
+    mainClass.set("plugingenerator.PluginGenerator")
     def pluginDir = project(':refdiff-universal').projectDir.absolutePath
     systemProperty "plugin.dir", pluginDir
 }
