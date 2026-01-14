@@ -87,6 +87,10 @@ public class JsPlugin extends BasePlugin {
             value: (function_expression
               parameters: (formal_parameters) @parameters
               body: (statement_block) @body)) @function_declaration
+          (function_expression
+            name: (identifier) @name
+            parameters: (formal_parameters) @parameters
+            body: (_) @body) @function_declaration
         ]""";
 
     TSQuery tsQuery = new TSQuery(tsLang, querySrc);

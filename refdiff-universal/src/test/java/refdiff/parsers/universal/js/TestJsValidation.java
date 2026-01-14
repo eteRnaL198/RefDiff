@@ -62,7 +62,9 @@ public class TestJsValidation {
     List<ExpectedNode> expectedNodes = Arrays.asList(
         new ExpectedNode("AbstractButton3", JsNodeTypes.CLASS, 1, "benchmark.js"),
         new ExpectedNode("render", JsNodeTypes.FUNCTION, 2, "benchmark.js"),
-        new ExpectedNode("onClick", JsNodeTypes.FUNCTION, 11, "benchmark.js")
+        new ExpectedNode("onClick", JsNodeTypes.FUNCTION, 11, "benchmark.js"),
+
+        new ExpectedNode("render", JsNodeTypes.FUNCTION, 1, "benchmark1.js")
     );
 
     for (ExpectedNode expected : expectedNodes) {
