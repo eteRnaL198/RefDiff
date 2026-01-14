@@ -15,12 +15,6 @@ This will create a AST
 ```
 
 # Validation
-- Clone a repository with shallow clone
-  ```bash
-  cd plugin-generator
-  sh ./script/clone.sh -f ./repos-validation.txt
-  ```
-
 - Make sure repo directory has been created like this: `plugin-generator/repo`
 
 ./gradlew runValidator -Plang=Java
