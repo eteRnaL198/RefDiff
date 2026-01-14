@@ -78,6 +78,15 @@ public class JsPlugin extends BasePlugin {
               value: (arrow_function
                 parameter: (identifier) @parameters
                 body: (_) @body))) @function_declaration
+          (method_definition
+            name: (_) @name
+            parameters: (_) @parameters
+            body: (_) @body) @function_declaration
+          (pair
+            key: (property_identifier) @name
+            value: (function_expression
+              parameters: (formal_parameters) @parameters
+              body: (statement_block) @body)) @function_declaration
         ]""";
 
     TSQuery tsQuery = new TSQuery(tsLang, querySrc);
@@ -134,6 +143,9 @@ public class JsPlugin extends BasePlugin {
           cstNode.setType(JsNodeTypes.FUNCTION);
           cstNode.setLocation(NodeUtils.generateLocation(declaration, body, path));
           String funcName = NodeUtils.getNodeText(name, sourceBytes);
+          if (funcName == null || funcName.isEmpty()) {
+            funcName = "anonymousFunction";
+          }
           cstNode.setSimpleName(funcName);
           cstNode.setLocalName(funcName);
 
