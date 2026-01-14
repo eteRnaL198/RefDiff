@@ -1,8 +1,9 @@
-package validation;
+package validation.langValidator;
 
 import plugingenerator.Language;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.java.JavaPlugin;
+import validation.BaseValidator;
 import refdiff.parsers.universal.java.JavaNodeTypes;
 
 public class JavaValidator extends BaseValidator {
@@ -18,13 +19,14 @@ public class JavaValidator extends BaseValidator {
   }
 
   @Override
-  protected String[] getRepos() {
+  protected String[] getRepoUrls() {
     return new String[] {
-      // "mall",
-      // "spring-boot",
-      "elasticsearch",
-      "ghidra",
-      "spring-framework",
+      "https://github.com/Snailclimb/JavaGuide.git",
+      // "https://github.com/macrozheng/mall.git",
+      // "https://github.com/spring-projects/spring-boot.git",
+      // "https://github.com/elastic/elasticsearch.git",
+      // "https://github.com/NationalSecurityAgency/ghidra.git",
+      // "https://github.com/spring-projects/spring-framework.git",
     };
   }
 

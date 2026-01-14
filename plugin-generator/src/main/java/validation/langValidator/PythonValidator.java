@@ -1,8 +1,9 @@
-package validation;
+package validation.langValidator;
 
 import plugingenerator.Language;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.python.PythonParser;
+import validation.BaseValidator;
 import refdiff.parsers.universal.python.PythonNodeTypes;
 
 public class PythonValidator extends BaseValidator {
@@ -18,13 +19,13 @@ public class PythonValidator extends BaseValidator {
   }
 
   @Override
-  protected String[] getRepos() {
+  protected String[] getRepoUrls() {
     return new String[] {
-      "AutoGPT",
-      "stable-diffusion-webui",
-      "transformers",
-      "langflow",
-      "youtube-dl",
+      "https://github.com/Significant-Gravitas/AutoGPT.git",
+      "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git",
+      "https://github.com/huggingface/transformers.git",
+      "https://github.com/langflow-ai/langflow.git",
+      "https://github.com/ytdl-org/youtube-dl.git"
     };
   }
 

@@ -1,8 +1,9 @@
-package validation;
+package validation.langValidator;
 
 import plugingenerator.Language;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.js.JsPlugin;
+import validation.BaseValidator;
 import refdiff.parsers.universal.js.JsNodeTypes;
 
 public class JsValidator extends BaseValidator {
@@ -18,13 +19,13 @@ public class JsValidator extends BaseValidator {
   }
 
   @Override
-  protected String[] getRepos() {
+  protected String[] getRepoUrls() {
     return new String[] {
-      "react",
-      "next.js",
-      "node",
-      "three.js",
-      "axios",
+      "https://github.com/facebook/react.git",
+      "https://github.com/vercel/next.js.git",
+      "https://github.com/nodejs/node.git",
+      "https://github.com/mrdoob/three.js.git",
+      "https://github.com/axios/axios.git",
     };
   }
 

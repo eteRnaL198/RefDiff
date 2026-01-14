@@ -1,8 +1,9 @@
-package validation;
+package validation.langValidator;
 
 import plugingenerator.Language;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.c.CPlugin;
+import validation.BaseValidator;
 import refdiff.parsers.universal.c.CNodeTypes;
 
 public class CValidator extends BaseValidator {
@@ -18,13 +19,13 @@ public class CValidator extends BaseValidator {
   }
 
   @Override
-  protected String[] getRepos() {
+  protected String[] getRepoUrls() {
     return new String[] {
-      // "linux",
-      "scrcpy",
-      "netdata",
-      "Ventoy",
-      "redis",
+      // "https://github.com/torvalds/linux.git",
+      "https://github.com/Genymobile/scrcpy.git",
+      "https://github.com/netdata/netdata.git",
+      "https://github.com/ventoy/Ventoy.git",
+      "https://github.com/redis/redis.git",
     };
   }
 

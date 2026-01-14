@@ -30,9 +30,9 @@ public abstract class BaseValidator {
   protected abstract Language getLanguage();
 
   /**
-   * Concrete subclasses must provide the list of repository names to process.
+   * Concrete subclasses must provide the list of repository URLs to process.
    */
-  protected abstract String[] getRepos();
+  protected abstract String[] getRepoUrls();
 
   /**
    * Type equivalence check: implemented by subclasses for each language.
@@ -46,34 +46,30 @@ public abstract class BaseValidator {
     Language language = getLanguage();
     FilePathFilter fileFilter = new FilePathFilter(List.of(language.getExtensions()));
 
-    Path baseRepoDir = Paths.get("repo");
-    for (String repoName : getRepos()) {
-      Path repoPath = baseRepoDir.resolve(repoName);
-      if (!Files.exists(repoPath) || !Files.isDirectory(repoPath)) {
-        System.out.println("Repository not found, skipping: " + repoPath);
-        continue;
-      }
+    for (String repoUrl : getRepoUrls()) {
+      Path repoPath = Repository.get(repoUrl);
+      String repoName = repoPath.getFileName().toString();
       Path tagsOutputPath = Paths.get("output/tags/").resolve(language.getName()).resolve(repoName + ".ndjson");
       if (!Files.exists(tagsOutputPath.getParent())) {
         Files.createDirectories(tagsOutputPath.getParent());
       }
       if (Files.exists(tagsOutputPath)) {
         System.out.println("Tags file already exists, skipping ctags generation: " + tagsOutputPath);
+      } else {
+        System.out.println("Generating ctags for " + repoName + "...");
+        String ctagsOutput = Tag.execCtags(repoPath, language, fileFilter);
+        Files.writeString(tagsOutputPath, ctagsOutput, StandardOpenOption.CREATE);
       }
-      System.out.println("Generating ctags for " + repoName + "...");
-      String ctagsOutput = Tag.execCtags(repoPath, language, fileFilter);
-      Files.writeString(tagsOutputPath, ctagsOutput, StandardOpenOption.CREATE);
 
       System.out.println("Validating CST against ctags for " + repoName + "...");
       List<Match> matches = validateCstWithTags(repoPath, tagsOutputPath);
       String now = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmm"));
-      Path matchesOut = Paths.get("output/matching/").resolve(language.getName()).resolve(repoName + "-" + now + ".ndjson");
+      Path matchesOut = Paths.get("output/matching/").resolve(language.getName()).resolve(repoName + "-" + now + ".csv");
       if (!Files.exists(matchesOut.getParent())) {
         Files.createDirectories(matchesOut.getParent());
       }
-      for (Match match : matches) {
-        Files.writeString(matchesOut, match.toNdjson() + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-      }
+      String csv = MatchExporter.export(matches, repoUrl);
+      Files.writeString(matchesOut, csv, StandardOpenOption.CREATE);
     }
   }
 

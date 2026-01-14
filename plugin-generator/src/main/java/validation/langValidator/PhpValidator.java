@@ -1,8 +1,9 @@
-package validation;
+package validation.langValidator;
 
 import plugingenerator.Language;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.php.PhpPlugin;
+import validation.BaseValidator;
 import refdiff.parsers.universal.php.PhpNodeTypes;
 
 public class PhpValidator extends BaseValidator {
@@ -18,13 +19,13 @@ public class PhpValidator extends BaseValidator {
   }
 
   @Override
-  protected String[] getRepos() {
+  protected String[] getRepoUrls() {
     return new String[] {
-      "coolify",
-      "framework",
-      "server",
-      "symfony",
-      "jQuery-File-Upload",
+      "https://github.com/coollabsio/coolify.git",
+      "https://github.com/laravel/framework.git",
+      "https://github.com/nextcloud/server.git",
+      "https://github.com/symfony/symfony.git",
+      "https://github.com/blueimp/jQuery-File-Upload.git"
     };
   }
 

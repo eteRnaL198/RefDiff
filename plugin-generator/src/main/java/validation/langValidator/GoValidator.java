@@ -1,8 +1,9 @@
-package validation;
+package validation.langValidator;
 
 import plugingenerator.Language;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.go.GoParser;
+import validation.BaseValidator;
 import refdiff.parsers.universal.go.GoNodeTypes;
 
 public class GoValidator extends BaseValidator {
@@ -18,13 +19,13 @@ public class GoValidator extends BaseValidator {
   }
 
   @Override
-  protected String[] getRepos() {
+  protected String[] getRepoUrls() {
     return new String[] {
-        "ollama",
-        "go",
-        "kubernetes",
-        "frp",
-        "gin",
+      "https://github.com/ollama/ollama.git",
+      "https://github.com/golang/go.git",
+      "https://github.com/kubernetes/kubernetes.git",
+      "https://github.com/fatedier/frp.git",
+      "https://github.com/gin-gonic/gin.git",
     };
   }
 

@@ -1,8 +1,9 @@
-package validation;
+package validation.langValidator;
 
 import plugingenerator.Language;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.ruby.RubyParser;
+import validation.BaseValidator;
 import refdiff.parsers.universal.ruby.RubyNodeTypes;
 
 public class RubyValidator extends BaseValidator {
@@ -18,13 +19,13 @@ public class RubyValidator extends BaseValidator {
   }
 
   @Override
-  protected String[] getRepos() {
+  protected String[] getRepoUrls() {
     return new String[] {
-      "rails",
-      "maybe",
-      "jekyll",
-      "mastodon",
-      "huginn",
+      "https://github.com/rails/rails.git",
+      "https://github.com/maybe-finance/maybe.git",
+      "https://github.com/jekyll/jekyll.git",
+      "https://github.com/mastodon/mastodon.git",
+      "https://github.com/huginn/huginn.git"
     };
   }
 
