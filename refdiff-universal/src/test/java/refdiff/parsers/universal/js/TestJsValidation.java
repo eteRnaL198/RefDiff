@@ -64,7 +64,9 @@ public class TestJsValidation {
         new ExpectedNode("render", JsNodeTypes.FUNCTION, 2, "benchmark.js"),
         new ExpectedNode("onClick", JsNodeTypes.FUNCTION, 11, "benchmark.js"),
 
-        new ExpectedNode("render", JsNodeTypes.FUNCTION, 1, "benchmark1.js")
+        new ExpectedNode("render", JsNodeTypes.FUNCTION, 1, "benchmark1.js"),
+
+        new ExpectedNode("ReactImage0", JsNodeTypes.FUNCTION, 1, "benchmark2.js")
     );
 
     for (ExpectedNode expected : expectedNodes) {
