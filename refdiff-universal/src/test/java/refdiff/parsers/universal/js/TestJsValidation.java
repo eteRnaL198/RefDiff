@@ -68,7 +68,9 @@ public class TestJsValidation {
 
         new ExpectedNode("ReactImage0", JsNodeTypes.FUNCTION, 1, "benchmark2.js"),
 
-        new ExpectedNode("_load", JsNodeTypes.FUNCTION, 1, "flags.js")
+        new ExpectedNode("_load", JsNodeTypes.FUNCTION, 1, "flags.js"),
+
+        new ExpectedNode("module.exports", JsNodeTypes.FUNCTION, 1, "print-prerelease-summary.js")
     );
 
     for (ExpectedNode expected : expectedNodes) {
