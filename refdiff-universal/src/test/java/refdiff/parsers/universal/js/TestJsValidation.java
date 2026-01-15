@@ -74,8 +74,15 @@ public class TestJsValidation {
         
         new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "parse-params.js"),
 
-        new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "check-out-packages.js")
+        new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "check-out-packages.js"),
 
+        new ExpectedNode("filteringClosure", JsNodeTypes.FUNCTION, 1, "build-all-release-channels.js"),
+
+        new ExpectedNode("'./packages/shared/ReactSharedInternals.js'", JsNodeTypes.FUNCTION, 4, "forks.js"),
+
+        new ExpectedNode("MessageChannel", JsNodeTypes.CLASS, 4, "patchMessageChannel.js"),
+        
+        new ExpectedNode("__MeasureOnSuccessCallback", JsNodeTypes.FUNCTION, 1, "react-native-host-hooks.js")
     );
 
     for (ExpectedNode expected : expectedNodes) {

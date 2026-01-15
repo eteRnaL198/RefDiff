@@ -15,7 +15,13 @@ public class JsTsParser {
     // "https://github.com/facebook/react/blob/main/scripts/bench/benchmarks/pe-functional-components/benchmark.js#L4",
     // "https://github.com/facebook/react/blob/main/scripts/flags/flags.js#L150",
     // "https://github.com/facebook/react/blob/main/scripts/release/shared-commands/print-prerelease-summary.js#L9",
-    "https://github.com/facebook/react/blob/main/scripts/release/shared-commands/parse-params.js#L44,"
+    // "https://github.com/facebook/react/blob/main/scripts/release/shared-commands/parse-params.js#L44,"
+    // "https://github.com/facebook/react/blob/main/scripts/release/prepare-release-from-npm-commands/check-out-packages.js#L55",
+    // "https://github.com/facebook/react/blob/main/scripts/rollup/build-all-release-channels.js#L469",
+    // "https://github.com/facebook/react/blob/main/scripts/rollup/forks.js#L55",
+    // "https://github.com/facebook/react/blob/main/scripts/jest/patchMessageChannel.js#L4",
+    // "https://github.com/facebook/react/blob/main/scripts/flow/react-native-host-hooks.js#L12",
+    "https://github.com/facebook/react/blob/main/packages/react-devtools-inline/src/frontend.js#L37",
   };
   
   public static void main(String[] args) throws Exception {

@@ -45,6 +45,10 @@ public class JsValidator extends BaseValidator {
       return true;
     } else if (tag.getKind().equals("function") && tag.getName().equals("module.exports") && cstNode.getSimpleName().equals("exports")) {
       return true;
+    } else if (tag.getKind().equals("method") && tag.getName().equals("js") && cstNode.getSimpleName().endsWith(".js'")) {
+      return true;
+    } else if (tag.getKind().equals("function") && tag.getName().equals("type") && tag.getPattern().contains(cstNode.getSimpleName())) {
+      return true;
     }
     return false;
   }

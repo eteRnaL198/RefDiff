@@ -46,12 +46,17 @@ public class JsPlugin extends BasePlugin {
   @Override
   protected void buildCst(TSTree tree, TSLanguage tsLang, String path, byte[] sourceBytes) {
     String namespace = FilePathUtils.extractDirectoryFromFilePath(path);
-    String querySrc = """
+      String querySrc = """
         [
           (program) @file_declaration
+
           (class_declaration
             name: (identifier) @name
             body: (class_body) @body) @class_declaration
+          (assignment_expression
+              left: (member_expression property: (property_identifier) @name)
+              right: (class (class_body) @body)) @class_declaration
+
           (function_declaration
             name: (identifier) @name
             parameters: (formal_parameters) @parameters
@@ -60,42 +65,62 @@ public class JsPlugin extends BasePlugin {
             name: (identifier) @name
             parameters: (formal_parameters) @parameters
             body: (statement_block) @body) @function_declaration
-          (lexical_declaration
-            (variable_declarator
-              name: (identifier) @name
-              value: (function_expression
-                parameters: (formal_parameters) @parameters
-                body: (statement_block) @body))) @function_declaration
-          (lexical_declaration
-            (variable_declarator
-              name: (identifier) @name
-              value: (arrow_function
-                parameters: (formal_parameters) @parameters
-                body: (_) @body))) @function_declaration
-          (lexical_declaration
-            (variable_declarator
-              name: (identifier) @name
-              value: (arrow_function
-                parameter: (identifier) @parameters
-                body: (_) @body))) @function_declaration
           (method_definition
             name: (_) @name
             parameters: (_) @parameters
             body: (_) @body) @function_declaration
-          (pair
-            key: (property_identifier) @name
-            value: (function_expression
-              parameters: (formal_parameters) @parameters
-              body: (statement_block) @body)) @function_declaration
           (function_expression
             name: (identifier) @name
             parameters: (formal_parameters) @parameters
             body: (_) @body) @function_declaration
+
           (variable_declarator
             name: (identifier) @name
             value: (function_expression
               parameters: (formal_parameters) @parameters
-              body: (statement_block) @body)) @function_declaration
+              body: (_) @body)) @function_declaration
+          (variable_declarator
+            name: (identifier) @name
+            value: (arrow_function
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (variable_declarator
+            name: (identifier) @name
+            value: (arrow_function
+              parameter: (identifier) @parameters
+              body: (_) @body)) @function_declaration
+            
+          (pair
+            key: (property_identifier) @name
+            value: (function_expression
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (pair
+            key: (property_identifier) @name
+            value: (arrow_function
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (pair
+              key: (property_identifier) @name
+              value: (arrow_function
+                parameter: (identifier) @parameters
+                body: (_) @body)) @function_declaration
+          (pair
+            key: (string) @name
+            value: (function_expression
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (pair
+            key: (string) @name
+            value: (arrow_function
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (pair
+              key: (string) @name
+              value: (arrow_function
+                parameter: (identifier) @parameters
+                body: (_) @body)) @function_declaration
+
           (assignment_expression
             left: (member_expression property: (property_identifier) @name)
             right: (function_expression
@@ -111,6 +136,23 @@ public class JsPlugin extends BasePlugin {
             right: (arrow_function
               parameter: (identifier) @parameters
               body: (_) @body)) @function_declaration
+
+          (assignment_expression
+            left: (identifier) @name
+            right: (function_expression
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (assignment_expression
+            left: (identifier) @name
+            right: (arrow_function
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (assignment_expression
+            left: (identifier) @name
+            right: (arrow_function
+              parameter: (identifier) @parameters
+              body: (_) @body)) @function_declaration
+          
         ]""";
 
     TSQuery tsQuery = new TSQuery(tsLang, querySrc);
@@ -170,7 +212,6 @@ public class JsPlugin extends BasePlugin {
           if (funcName == null || funcName.isEmpty()) {
             funcName = "anonymousFunction";
           }
-          System.out.println("Function name: " + funcName + " at " + cstNode.getLocation()); // TODO remove
           cstNode.setSimpleName(funcName);
           cstNode.setLocalName(funcName);
 
