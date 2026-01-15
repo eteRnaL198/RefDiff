@@ -96,6 +96,11 @@ public class JsPlugin extends BasePlugin {
             value: (function_expression
               parameters: (formal_parameters) @parameters
               body: (statement_block) @body)) @function_declaration
+          (assignment_expression
+            left: (member_expression property: (property_identifier) @name)
+            right: (function_expression
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
         ]""";
 
     TSQuery tsQuery = new TSQuery(tsLang, querySrc);
@@ -155,6 +160,7 @@ public class JsPlugin extends BasePlugin {
           if (funcName == null || funcName.isEmpty()) {
             funcName = "anonymousFunction";
           }
+          System.out.println("Function name: " + funcName + " at " + cstNode.getLocation()); // TODO remove
           cstNode.setSimpleName(funcName);
           cstNode.setLocalName(funcName);
 
