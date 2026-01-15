@@ -43,6 +43,8 @@ public class JsValidator extends BaseValidator {
   protected boolean isNameEqual(Tag tag, CstNode cstNode) {
     if (tag.getKind().equals("function") && tag.getName().equals("exports") && cstNode.getSimpleName().equals("module.exports")) {
       return true;
+    } else if (tag.getKind().equals("function") && tag.getName().equals("module.exports") && cstNode.getSimpleName().equals("exports")) {
+      return true;
     }
     return false;
   }
