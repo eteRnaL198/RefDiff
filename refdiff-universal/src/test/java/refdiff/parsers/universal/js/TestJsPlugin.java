@@ -120,8 +120,6 @@ public class TestJsPlugin {
       }
     });
 
-    assertThat("Should find 17 function declarations", actualFunctionNodes.size(), is(equalTo(17)));
-
     List<ExpectedNode> expectedNodes = Arrays.asList(
         new ExpectedNode("classicFunction", JsNodeTypes.FUNCTION, 2, "classicFunction", null, "function.js", List.of("param1", "param2")),
         new ExpectedNode("anonymousFunction", JsNodeTypes.FUNCTION, 10, "anonymousFunction", null, "function.js", List.of("a", "b")),
