@@ -106,6 +106,11 @@ public class JsPlugin extends BasePlugin {
             right: (arrow_function
               parameters: (formal_parameters) @parameters
               body: (_) @body)) @function_declaration
+          (assignment_expression
+            left: (member_expression property: (property_identifier) @name)
+            right: (arrow_function
+              parameter: (identifier) @parameters
+              body: (_) @body)) @function_declaration
         ]""";
 
     TSQuery tsQuery = new TSQuery(tsLang, querySrc);

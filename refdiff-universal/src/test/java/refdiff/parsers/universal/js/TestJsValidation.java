@@ -72,7 +72,10 @@ public class TestJsValidation {
 
         new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "print-prerelease-summary.js"),
         
-        new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "parse-params.js")
+        new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "parse-params.js"),
+
+        new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "check-out-packages.js")
+
     );
 
     for (ExpectedNode expected : expectedNodes) {
