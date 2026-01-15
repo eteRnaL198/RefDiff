@@ -102,7 +102,7 @@ public class JsPlugin extends BasePlugin {
               parameters: (formal_parameters) @parameters
               body: (_) @body)) @function_declaration
           (assignment_expression
-            left: (member_expression) @name
+            left: (member_expression property: (property_identifier) @name)
             right: (arrow_function
               parameters: (formal_parameters) @parameters
               body: (_) @body)) @function_declaration

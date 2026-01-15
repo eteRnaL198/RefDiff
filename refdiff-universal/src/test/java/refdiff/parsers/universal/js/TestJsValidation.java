@@ -27,9 +27,9 @@ public class TestJsValidation {
   private static final LanguagePlugin parser = new JsPlugin();
   private static final String TEST_DATA_BASE_PATH = "src/test/resources/js/syntax";
 
-  private CstNode findNode(List<CstNode> nodes, String name, int line) {
+  private CstNode findNode(List<CstNode> nodes, String name, int line, String file) {
     return nodes.stream()
-        .filter(node -> name.equals(node.getSimpleName()) && node.getLocation().getBeginLine() == line)
+        .filter(node -> name.equals(node.getSimpleName()) && node.getLocation().getBeginLine() == line && node.getLocation().getFile().equals(file))
         .findFirst()
         .orElseThrow(() -> new AssertionError("Node with name '" + name + "' at line " + line + " not found."));
   }
@@ -70,11 +70,13 @@ public class TestJsValidation {
 
         new ExpectedNode("_load", JsNodeTypes.FUNCTION, 1, "flags.js"),
 
-        new ExpectedNode("module.exports", JsNodeTypes.FUNCTION, 1, "print-prerelease-summary.js")
+        new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "print-prerelease-summary.js"),
+        
+        new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "parse-params.js")
     );
 
     for (ExpectedNode expected : expectedNodes) {
-        CstNode actualNode = findNode(actualNodes, expected.name(), expected.line());
+        CstNode actualNode = findNode(actualNodes, expected.name(), expected.line(), expected.fileName()  );
         assertThat(actualNode.getType(), is(equalTo(expected.type())));
         assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
         Location location = actualNode.getLocation();

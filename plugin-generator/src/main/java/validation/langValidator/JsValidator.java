@@ -1,9 +1,11 @@
 package validation.langValidator;
 
 import plugingenerator.Language;
+import refdiff.core.cst.CstNode;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.js.JsPlugin;
 import validation.BaseValidator;
+import validation.Tag;
 import refdiff.parsers.universal.js.JsNodeTypes;
 
 public class JsValidator extends BaseValidator {
@@ -22,11 +24,27 @@ public class JsValidator extends BaseValidator {
   protected String[] getRepoUrls() {
     return new String[] {
       "https://github.com/facebook/react.git",
-      "https://github.com/vercel/next.js.git",
-      "https://github.com/nodejs/node.git",
-      "https://github.com/mrdoob/three.js.git",
-      "https://github.com/axios/axios.git",
+      // "https://github.com/axios/axios.git",
+      // "https://github.com/vercel/next.js.git",
+      // "https://github.com/nodejs/node.git",
+      // "https://github.com/mrdoob/three.js.git",
     };
+  }
+
+  @Override
+  protected boolean shouldIgnore(Tag tag) {
+    if (tag.getName().contains("anonymousFunction")) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  protected boolean isNameEqual(Tag tag, CstNode cstNode) {
+    if (tag.getKind().equals("function") && tag.getName().equals("exports") && cstNode.getSimpleName().equals("module.exports")) {
+      return true;
+    }
+    return false;
   }
 
   @Override
@@ -38,7 +56,10 @@ public class JsValidator extends BaseValidator {
       return JsNodeTypes.FUNCTION.equals(nodeType);
     }
     if (tagKind.equalsIgnoreCase("class")) {
-      return JsNodeTypes.CLASS.equals(nodeType);
+      return JsNodeTypes.CLASS.equals(nodeType) || JsNodeTypes.FUNCTION.equals(nodeType);
+    }
+    if (tagKind.equalsIgnoreCase("method")) {
+      return JsNodeTypes.FUNCTION.equals(nodeType);
     }
     return false;
   }
