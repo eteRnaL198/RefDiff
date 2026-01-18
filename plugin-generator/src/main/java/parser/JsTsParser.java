@@ -21,10 +21,21 @@ public class JsTsParser {
     // "https://github.com/facebook/react/blob/main/scripts/rollup/forks.js#L55",
     // "https://github.com/facebook/react/blob/main/scripts/jest/patchMessageChannel.js#L4",
     // "https://github.com/facebook/react/blob/main/scripts/flow/react-native-host-hooks.js#L12",
-    "https://github.com/facebook/react/blob/main/packages/react-devtools-inline/src/frontend.js#L37",
+    // "https://github.com/facebook/react/blob/main/packages/react-devtools-inline/src/frontend.js#L37",
+    // "https://github.com/facebook/react/blob/main/compiler/packages/babel-plugin-react-compiler/src/__tests__/fixtures/compiler/rules-of-hooks/todo.bail.rules-of-hooks-fadd52c1e460.js#L38",
+    // "https://github.com/facebook/react/blob/main/compiler/packages/babel-plugin-react-compiler/src/__tests__/fixtures/compiler/rules-of-hooks/todo.invalid.invalid-rules-of-hooks-9c79feec4b9b.js#L5",
+    // "https://github.com/facebook/react/blob/main/fixtures/stacks/BabelClasses-compiled.js#L39",
+    // "https://github.com/facebook/react/blob/main/fixtures/legacy-jsx-runtimes/react-14/react-14.test.js#L279",
+    // "https://github.com/facebook/react/blob/main/packages/react-server-dom-turbopack/src/server/ReactFlightDOMServerEdge.js#L175",
+    // "https://github.com/facebook/react/blob/main/packages/react-server-dom-turbopack/src/server/ReactFlightDOMServerNode.js#L654",
+    // "https://github.com/facebook/react/blob/main/packages/react-server-dom-turbopack/src/__tests__/ReactFlightTurbopackDOM-test.js#L68",
+    // "https://github.com/facebook/react/blob/main/packages/react-dom/src/__tests__/ReactDOM-test.js#L348",
+    // "https://github.com/facebook/react/blob/main/packages/react-dom/src/__tests__/ReactDOM-test.js#L382",
+    // "https://github.com/facebook/react/blob/main/fixtures/legacy-jsx-runtimes/react-16/react-16.test.js#L33",
+    // "https://github.com/facebook/react/blob/main/packages/react-refresh/src/__tests__/ReactFresh-test.js#L2092",
+    "https://github.com/facebook/react/blob/main/packages/react/src/__tests__/ReactChildren-test.js#L416"
   };
-  
-  public static void main(String[] args) throws Exception {
+ public static void main(String[] args) throws Exception {
     for (String repoUrl : REPO_URLS) {
       System.out.println("Validating repo: " + repoUrl);
       Path repoPath = getRepoPath(repoUrl);

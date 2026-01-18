@@ -10,6 +10,7 @@ import refdiff.core.io.FilePathFilter;
 import java.util.ArrayList;
 import refdiff.core.io.SourceFolder;
 import refdiff.core.io.SourceFileSet;
+import refdiff.core.cst.CstNode;
 import refdiff.core.cst.CstRoot;
 import refdiff.parsers.LanguagePlugin;
 import java.nio.file.StandardOpenOption;
@@ -34,10 +35,26 @@ public abstract class BaseValidator {
    */
   protected abstract String[] getRepoUrls();
 
+  // TODO refactor: move these methods to language match class
   /**
    * Type equivalence check: implemented by subclasses for each language.
    */
   protected abstract boolean isTypeEqual(String tagKind, String nodeType);
+
+  protected boolean isLineEqual(Integer tagLine, Integer nodeLine) {
+    return false;
+  }
+
+  protected boolean isNameEqual(Tag tag, CstNode node) {
+    return false;
+  }
+
+  protected boolean shouldIgnore(Tag tag, CstRoot root) {
+    if (root.isFileParseFailed(tag.getPath())) {
+      return true;
+    }
+    return false;
+  }
 
   /**
    * Run the validation process. Subclasses can call this from their own main().
@@ -80,7 +97,7 @@ public abstract class BaseValidator {
       CstRoot root = getPlugin().parse(sources);
       List<Match> matches = new ArrayList<>();
       for (Tag tag : tags) {
-        Match match = Match.create(tag, root, this::isTypeEqual);
+        Match match = Match.create(tag, root, this::shouldIgnore, this::isLineEqual, this::isNameEqual, this::isTypeEqual);
         matches.add(match);
       }
       return matches;

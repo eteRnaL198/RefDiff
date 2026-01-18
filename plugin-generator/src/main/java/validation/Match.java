@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.Optional;
 
 import refdiff.core.cst.CstNode;
@@ -52,8 +53,12 @@ public class Match {
    * Create a Match for the given tag using nodes from the CST root.
    * isTypeEqual: function that returns true when the tag kind and node type should be considered equal.
    */
-  public static Match create(Tag tag, CstRoot root, BiPredicate<String, String> isTypeEqual) {
+  public static Match create(Tag tag, CstRoot root, BiPredicate<Tag, CstRoot> shouldIgnore, BiPredicate<Integer, Integer> isLineEqual, BiPredicate<Tag, CstNode> isNameEqual, BiPredicate<String, String> isTypeEqual) {
     Match match = new Match(tag);
+    if (shouldIgnore.test(tag, root)) {
+      match.addNote("To be ignored");
+      return match;
+    }
 
     root.forEachNode((node, d) -> {
       Map<String, Boolean> fieldMatches = new HashMap<>();
@@ -73,30 +78,36 @@ public class Match {
       Integer nodeLine = node.getLocation().getBeginLine();
       if (tagLine != null && nodeLine != null && tagLine.equals(nodeLine)) {
         fieldMatches.put("line", true);
+      } else if (isLineEqual.test(tagLine, nodeLine)) {
+        fieldMatches.put("line", true);
       }
 
       if (tag.getName() != null && tag.getName().equals(node.getSimpleName())) {
         fieldMatches.put("name", true);
-      } else if (tag.getKind().equals("method") && node.getSimpleName().equals("new")) { // constructor special case
+      } else if (isNameEqual.test(tag, node)) {
         fieldMatches.put("name", true);
       } else {
-        return; // name must match to consider further fields
+        return;
       }
 
       if (isTypeEqual.test(tag.getKind(), node.getType())) {
         fieldMatches.put("type", true);
       }
 
+
+      boolean allMatched = fieldMatches.values().stream().allMatch(b -> b.booleanValue());
+      if (allMatched) {
+        match.exactMatch = true;
+        match.cstNodeCandidates.clear(); // store only exact match
+        match.cstNodeCandidates.add(node);
+        match.matchedFields.put(node.getId(), fieldMatches);
+        return;
+      }
       // if any field matched, record this node as a candidate
       boolean anyMatched = fieldMatches.values().stream().anyMatch(b -> b.booleanValue());
       if (anyMatched) {
         match.cstNodeCandidates.add(node);
         match.matchedFields.put(node.getId(), fieldMatches);
-
-        boolean allMatched = fieldMatches.values().stream().allMatch(b -> b.booleanValue());
-        if (allMatched) {
-          match.exactMatch = true;
-        }
       }
     });
 

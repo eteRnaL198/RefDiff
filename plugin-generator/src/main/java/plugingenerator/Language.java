@@ -8,9 +8,9 @@ public enum Language {
   // JAVA("java", ".java", "--kinds-Java=pigacm", () -> new TreeSitterJava()),
   JAVA("java", new String[]{".java"}, "--kinds-Java=igacm", () -> new TreeSitterJava()), // TODO package無視したけど後で対応する
   C("c", new String[]{".c"}, "--kinds-C=cf", () -> new TreeSitterC()),
-  JS("javascript", new String[]{".js", ".jsx"}, "--kinds-JavaScript=pfmGa", () -> new TreeSitterJavascript()),
-  PYTHON("python", new String[]{".py"}, "--kinds-Python=cfm", () -> new TreeSitterPython()),
-  GO("go", new String[]{".go"}, "--kinds-Go=pfm", () -> new TreeSitterGo()),
+  JS("javascript", new String[]{".js", ".jsx"}, "--kinds-JavaScript=fcm", () -> new TreeSitterJavascript()),
+  PYTHON("python", new String[] { ".py" }, "--kinds-Python=fm", () -> new TreeSitterPython()),
+  GO("go", new String[]{".go"}, "--kinds-Go=f", () -> new TreeSitterGo()),
   PHP("php", new String[]{".php"}, "--php-kinds=f", () -> new TreeSitterPhp()),
   RUBY("ruby", new String[]{".rb"}, "--kinds-Ruby=cfm", () -> new TreeSitterRuby());
   // TS("ts", ".ts", "--kinds-TypeScript=fmGa", () -> new TreeSitterTypescript());

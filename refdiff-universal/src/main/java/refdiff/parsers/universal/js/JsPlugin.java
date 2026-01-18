@@ -46,114 +46,202 @@ public class JsPlugin extends BasePlugin {
   @Override
   protected void buildCst(TSTree tree, TSLanguage tsLang, String path, byte[] sourceBytes) {
     String namespace = FilePathUtils.extractDirectoryFromFilePath(path);
-      String querySrc = """
-        [
-          (program) @file_declaration
+    String querySrc = """
+      [
+        (program) @file_declaration
 
-          (class_declaration
-            name: (identifier) @name
-            body: (class_body) @body) @class_declaration
-          (assignment_expression
-              left: (member_expression property: (property_identifier) @name)
-              right: (class (class_body) @body)) @class_declaration
+        (class
+          name: (identifier) @name
+          body: (class_body) @body) @class_declaration
+        (class_declaration
+          name: (identifier) @name
+          body: (class_body) @body) @class_declaration
+        (assignment_expression
+            left: (member_expression property: (property_identifier) @name)
+            right: (class (class_body) @body)) @class_declaration
+        (assignment_expression
+            left: (identifier) @name
+            right: (class (class_body) @body)) @class_declaration
+        (variable_declarator
+          name: (identifier) @name
+          value: (class (class_body) @body)) @class_declaration
 
-          (function_declaration
-            name: (identifier) @name
+        (field_definition
+          property: (property_identifier) @name
+          value: (function_expression
             parameters: (formal_parameters) @parameters
-            body: (statement_block) @body) @function_declaration
-          (generator_function_declaration
-            name: (identifier) @name
-            parameters: (formal_parameters) @parameters
-            body: (statement_block) @body) @function_declaration
-          (method_definition
-            name: (_) @name
-            parameters: (_) @parameters
-            body: (_) @body) @function_declaration
-          (function_expression
-            name: (identifier) @name
-            parameters: (formal_parameters) @parameters
-            body: (_) @body) @function_declaration
-
-          (variable_declarator
-            name: (identifier) @name
-            value: (function_expression
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (variable_declarator
-            name: (identifier) @name
+            body: (_) @body)) @function_declaration
+        (field_definition
+            property: (property_identifier) @name
             value: (arrow_function
               parameters: (formal_parameters) @parameters
               body: (_) @body)) @function_declaration
-          (variable_declarator
-            name: (identifier) @name
+        (field_definition
+            property: (property_identifier) @name
             value: (arrow_function
               parameter: (identifier) @parameters
               body: (_) @body)) @function_declaration
-            
-          (pair
-            key: (property_identifier) @name
-            value: (function_expression
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (pair
-            key: (property_identifier) @name
-            value: (arrow_function
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (pair
-              key: (property_identifier) @name
-              value: (arrow_function
-                parameter: (identifier) @parameters
-                body: (_) @body)) @function_declaration
-          (pair
-            key: (string) @name
-            value: (function_expression
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (pair
-            key: (string) @name
-            value: (arrow_function
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (pair
-              key: (string) @name
-              value: (arrow_function
-                parameter: (identifier) @parameters
-                body: (_) @body)) @function_declaration
 
-          (assignment_expression
-            left: (member_expression property: (property_identifier) @name)
-            right: (function_expression
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (assignment_expression
-            left: (member_expression property: (property_identifier) @name)
-            right: (arrow_function
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (assignment_expression
-            left: (member_expression property: (property_identifier) @name)
-            right: (arrow_function
-              parameter: (identifier) @parameters
-              body: (_) @body)) @function_declaration
+        (function_declaration
+          name: (identifier) @name
+          parameters: (formal_parameters) @parameters
+          body: (statement_block) @body) @function_declaration
+        (generator_function_declaration
+          name: (identifier) @name
+          parameters: (formal_parameters) @parameters
+          body: (statement_block) @body) @function_declaration
+        (method_definition
+          name: (_) @name
+          parameters: (_) @parameters
+          body: (_) @body) @function_declaration
+        (function_expression
+          name: (identifier) @name
+          parameters: (formal_parameters) @parameters
+          body: (_) @body) @function_declaration
 
-          (assignment_expression
-            left: (identifier) @name
-            right: (function_expression
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (assignment_expression
-            left: (identifier) @name
-            right: (arrow_function
-              parameters: (formal_parameters) @parameters
-              body: (_) @body)) @function_declaration
-          (assignment_expression
-            left: (identifier) @name
-            right: (arrow_function
-              parameter: (identifier) @parameters
-              body: (_) @body)) @function_declaration
+        (variable_declarator
+          name: (identifier) @name
+          value: (function_expression
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (variable_declarator
+          name: (identifier) @name
+          value: (arrow_function
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (variable_declarator
+          name: (identifier) @name
+          value: (arrow_function
+            parameter: (identifier) @parameters
+            body: (_) @body)) @function_declaration
           
-        ]""";
+        (pair
+          key: (property_identifier) @name
+          value: (function_expression
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (pair
+          key: (property_identifier) @name
+          value: (arrow_function
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (pair
+            key: (property_identifier) @name
+            value: (arrow_function
+              parameter: (identifier) @parameters
+              body: (_) @body)) @function_declaration
+        (pair
+          key: (string) @name
+          value: (function_expression
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (pair
+          key: (string) @name
+          value: (arrow_function
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (pair
+            key: (string) @name
+            value: (arrow_function
+              parameter: (identifier) @parameters
+              body: (_) @body)) @function_declaration
+        (pair
+            key: (string (string_fragment) @name)
+            value: (function_expression
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+        (pair
+            key: (string (string_fragment) @name)
+            value: (arrow_function
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+        (pair
+            key: (string (string_fragment) @name)
+            value: (arrow_function
+              parameter: (identifier) @parameters
+              body: (_) @body)) @function_declaration
+
+          (assignment_expression
+            left: (identifier) @name
+            right: (function_expression
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (assignment_expression
+            left: (identifier) @name
+            right: (arrow_function
+              parameters: (formal_parameters) @parameters
+              body: (_) @body)) @function_declaration
+          (assignment_expression
+            left: (identifier) @name
+            right: (arrow_function
+              parameter: (identifier) @parameters
+              body: (_) @body)) @function_declaration
+
+        (assignment_expression
+          left: (member_expression (property_identifier) @name)
+          right: (function_expression
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (assignment_expression
+          left: (member_expression (property_identifier) @name)
+          right: (arrow_function
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (assignment_expression
+          left: (member_expression (property_identifier) @name)
+          right: (arrow_function
+            parameter: (identifier) @parameters
+            body: (_) @body)) @function_declaration
+        
+        (assignment_expression
+          left: (member_expression (identifier) @name)
+          right: (function_expression
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration      
+
+        (assignment_expression
+          left: (subscript_expression (identifier) @name)
+          right: (function_expression
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (assignment_expression
+          left: (subscript_expression (identifier) @name)
+          right: (arrow_function
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (assignment_expression
+          left: (subscript_expression (identifier) @name)
+          right: (arrow_function
+            parameter: (identifier) @parameters
+            body: (_) @body)) @function_declaration 
+        
+        (assignment_expression
+          left: (subscript_expression (member_expression (identifier) @name))
+          right: (function_expression
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (assignment_expression
+          left: (subscript_expression (member_expression (identifier) @name))
+          right: (arrow_function
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (assignment_expression
+          left: (subscript_expression (member_expression (identifier) @name))
+          right: (arrow_function
+            parameter: (identifier) @parameters
+            body: (_) @body)) @function_declaration
+
+        (object_assignment_pattern
+          left: (shorthand_property_identifier_pattern) @name
+          right: (arrow_function
+            parameters: (formal_parameters) @parameters
+            body: (_) @body)) @function_declaration
+        (object_assignment_pattern
+            left: (shorthand_property_identifier_pattern) @name
+            right: (arrow_function
+              parameter: (identifier) @parameters
+              body: (_) @body)) @function_declaration
+      ]""";
 
     TSQuery tsQuery = new TSQuery(tsLang, querySrc);
     TSQueryCursor cursor = new TSQueryCursor();
@@ -206,6 +294,7 @@ public class JsPlugin extends BasePlugin {
           cstNode.setLocalName(className);
         }
         case JsNodeTypes.FUNCTION -> {
+          System.out.println("FUNCTION found: " + NodeUtils.getNodeText(name, sourceBytes) + " in " + path); // TODO remove
           cstNode.setType(JsNodeTypes.FUNCTION);
           cstNode.setLocation(NodeUtils.generateLocation(declaration, body, path));
           String funcName = NodeUtils.getNodeText(name, sourceBytes);
