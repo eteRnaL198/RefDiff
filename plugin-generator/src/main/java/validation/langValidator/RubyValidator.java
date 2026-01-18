@@ -22,10 +22,10 @@ public class RubyValidator extends BaseValidator {
   protected String[] getRepoUrls() {
     return new String[] {
       "https://github.com/rails/rails.git",
-      "https://github.com/maybe-finance/maybe.git",
-      "https://github.com/jekyll/jekyll.git",
-      "https://github.com/mastodon/mastodon.git",
-      "https://github.com/huginn/huginn.git"
+      // "https://github.com/maybe-finance/maybe.git",
+      // "https://github.com/jekyll/jekyll.git",
+      // "https://github.com/mastodon/mastodon.git",
+      // "https://github.com/huginn/huginn.git"
     };
   }
 

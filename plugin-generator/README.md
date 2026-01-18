@@ -17,7 +17,9 @@ This will create a AST
 # Validation
 - Make sure repo directory has been created like this: `plugin-generator/repo`
 
+```bash
 ./gradlew runValidator -Plang=Java
+```
 
 # Extensions
 `extensions-map.txt` is a output file of `ctags --list-maps` command that contains mapping from language to file extensions.

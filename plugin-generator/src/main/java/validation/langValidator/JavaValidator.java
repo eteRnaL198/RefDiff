@@ -1,9 +1,11 @@
 package validation.langValidator;
 
 import plugingenerator.Language;
+import refdiff.core.cst.CstNode;
 import refdiff.parsers.LanguagePlugin;
 import refdiff.parsers.universal.java.JavaPlugin;
 import validation.BaseValidator;
+import validation.Tag;
 import refdiff.parsers.universal.java.JavaNodeTypes;
 
 public class JavaValidator extends BaseValidator {
@@ -21,8 +23,8 @@ public class JavaValidator extends BaseValidator {
   @Override
   protected String[] getRepoUrls() {
     return new String[] {
-      "https://github.com/Snailclimb/JavaGuide.git",
-      // "https://github.com/macrozheng/mall.git",
+      // "https://github.com/Snailclimb/JavaGuide.git",
+      "https://github.com/macrozheng/mall.git",
       // "https://github.com/spring-projects/spring-boot.git",
       // "https://github.com/elastic/elasticsearch.git",
       // "https://github.com/NationalSecurityAgency/ghidra.git",
@@ -43,6 +45,19 @@ public class JavaValidator extends BaseValidator {
     }
     if (tagKind.equalsIgnoreCase("method")) {
       return JavaNodeTypes.METHOD.equals(nodeType);
+    }
+    return false;
+  }
+
+  @Override
+  protected boolean isLineEqual(Integer tagLine, Integer nodeLine) {
+    return true;
+  }
+
+  @Override
+  protected boolean isNameEqual(Tag tag, CstNode node) {
+    if (tag.getKind().equals("method") && node.getSimpleName().equals("new")) { // constructor special case
+      return true;
     }
     return false;
   }

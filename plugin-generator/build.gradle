@@ -2,10 +2,11 @@ plugins {
   id 'java'
   id 'eclipse'
   id 'application'
+  id 'org.graalvm.buildtools.native' version '0.9.20'
 }
 
 application {
-  mainClass = 'plugingenerator.PluginGenerator'
+  mainClass = 'validation.MainValidator'
 }
 
 dependencies {
@@ -54,6 +55,28 @@ task runValidator(type: JavaExec) {
     mainClass.set("validation.${v}Validator")
     doFirst {
       println "Running validator: ${v}Validator"
+      def pluginDir = project(':refdiff-universal').projectDir.absolutePath
+      systemProperty "plugin.dir", pluginDir
+    }
+}
+
+task runJavaTsParser(type: JavaExec) {
+    group = "application"
+    description = "Run the Java TreeSitter Parser"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set("parser.JavaTsParser")
+    doFirst {
+      def pluginDir = project(':refdiff-universal').projectDir.absolutePath
+      systemProperty "plugin.dir", pluginDir
+    }
+}
+
+task runJsTsParser(type: JavaExec) {
+    group = "application"
+    description = "Run the JavaScript TreeSitter Parser"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set("parser.JsTsParser")
+    doFirst {
       def pluginDir = project(':refdiff-universal').projectDir.absolutePath
       systemProperty "plugin.dir", pluginDir
     }

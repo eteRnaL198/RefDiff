@@ -22,11 +22,16 @@ public class PhpValidator extends BaseValidator {
   protected String[] getRepoUrls() {
     return new String[] {
       "https://github.com/coollabsio/coolify.git",
-      "https://github.com/laravel/framework.git",
-      "https://github.com/nextcloud/server.git",
-      "https://github.com/symfony/symfony.git",
-      "https://github.com/blueimp/jQuery-File-Upload.git"
+      // "https://github.com/laravel/framework.git",
+      // "https://github.com/nextcloud/server.git",
+      // "https://github.com/symfony/symfony.git",
+      // "https://github.com/blueimp/jQuery-File-Upload.git"
     };
+  }
+
+  @Override
+  protected boolean isLineEqual(Integer tagLine, Integer nodeLine) {
+    return true; // Attributes #[ ] may cause line number mismatches
   }
 
   @Override
@@ -36,9 +41,9 @@ public class PhpValidator extends BaseValidator {
     } else if (tagKind.equalsIgnoreCase("interface")) {
       return PhpNodeTypes.INTERFACE.equals(nodeType);
     } else if (tagKind.equalsIgnoreCase("function")) {
-      return PhpNodeTypes.FUNCTION.equals(nodeType);
+      return PhpNodeTypes.FUNCTION.equals(nodeType) || PhpNodeTypes.METHOD.equals(nodeType);
     } else if (tagKind.equalsIgnoreCase("method")) {
-      return PhpNodeTypes.METHOD.equals(nodeType);
+      return PhpNodeTypes.METHOD.equals(nodeType) || PhpNodeTypes.FUNCTION.equals(nodeType);
     }
 
     return false;

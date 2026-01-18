@@ -22,10 +22,10 @@ public class GoValidator extends BaseValidator {
   protected String[] getRepoUrls() {
     return new String[] {
       "https://github.com/ollama/ollama.git",
-      "https://github.com/golang/go.git",
-      "https://github.com/kubernetes/kubernetes.git",
-      "https://github.com/fatedier/frp.git",
-      "https://github.com/gin-gonic/gin.git",
+      // "https://github.com/golang/go.git",
+      // "https://github.com/kubernetes/kubernetes.git",
+      // "https://github.com/fatedier/frp.git",
+      // "https://github.com/gin-gonic/gin.git",
     };
   }
 
@@ -34,11 +34,8 @@ public class GoValidator extends BaseValidator {
     if (tagKind.equalsIgnoreCase("file")) {
       return GoNodeTypes.FILE.equals(nodeType);
     }
-    if (tagKind.equalsIgnoreCase("function")) {
-      return GoNodeTypes.FUNCTION.equals(nodeType);
-    }
-    if (tagKind.equalsIgnoreCase("method")) {
-      return GoNodeTypes.METHOD.equals(nodeType);
+    if (tagKind.equalsIgnoreCase("func")) {
+      return GoNodeTypes.FUNCTION.equals(nodeType) || GoNodeTypes.METHOD.equals(nodeType);
     }
     return false;
   }

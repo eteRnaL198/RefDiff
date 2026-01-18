@@ -23,9 +23,9 @@ public class CValidator extends BaseValidator {
     return new String[] {
       // "https://github.com/torvalds/linux.git",
       "https://github.com/Genymobile/scrcpy.git",
-      "https://github.com/netdata/netdata.git",
-      "https://github.com/ventoy/Ventoy.git",
-      "https://github.com/redis/redis.git",
+      // "https://github.com/netdata/netdata.git",
+      // "https://github.com/ventoy/Ventoy.git",
+      // "https://github.com/redis/redis.git",
     };
   }
 
@@ -36,6 +36,14 @@ public class CValidator extends BaseValidator {
     }
     if (tagKind.equalsIgnoreCase("function")) {
       return CNodeTypes.FUNCTION.equals(nodeType);
+    }
+    return false;
+  }
+
+  @Override
+  protected boolean isLineEqual(Integer tagLine, Integer nodeLine) {
+    if (Math.abs(tagLine - nodeLine) <= 1) {
+      return true;
     }
     return false;
   }

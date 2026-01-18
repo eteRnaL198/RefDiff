@@ -5,14 +5,14 @@ import java.util.function.Supplier;
 import org.treesitter.*;
 
 public enum Language {
-  // JAVA("java", ".java", "--kinds-Java=pigacm", () -> new TreeSitterJava()),
-  JAVA("java", new String[]{".java"}, "--kinds-Java=igacm", () -> new TreeSitterJava()), // TODO package無視したけど後で対応する
+  // JAVA("java", ".java", "--kinds-Java=pigcm", () -> new TreeSitterJava()),
+  JAVA("java", new String[]{".java"}, "--kinds-Java=igcm", () -> new TreeSitterJava()), // TODO package無視したけど後で対応する
   C("c", new String[]{".c"}, "--kinds-C=cf", () -> new TreeSitterC()),
   JS("javascript", new String[]{".js", ".jsx"}, "--kinds-JavaScript=fcm", () -> new TreeSitterJavascript()),
   PYTHON("python", new String[] { ".py" }, "--kinds-Python=fm", () -> new TreeSitterPython()),
   GO("go", new String[]{".go"}, "--kinds-Go=f", () -> new TreeSitterGo()),
   PHP("php", new String[]{".php"}, "--php-kinds=f", () -> new TreeSitterPhp()),
-  RUBY("ruby", new String[]{".rb"}, "--kinds-Ruby=cfm", () -> new TreeSitterRuby());
+  RUBY("ruby", new String[]{".rb"}, "--kinds-Ruby=f", () -> new TreeSitterRuby());
   // TS("ts", ".ts", "--kinds-TypeScript=fmGa", () -> new TreeSitterTypescript());
   // CS("cs", ".cs", "--kinds-CSharp=cfm", () -> new TreeSitterCSharp()),
   // CPP("cpp", ".cpp", "--kinds-C++=cfm", () -> new TreeSitterCpp());

@@ -21,17 +21,19 @@ public class PythonValidator extends BaseValidator {
   @Override
   protected String[] getRepoUrls() {
     return new String[] {
-      "https://github.com/Significant-Gravitas/AutoGPT.git",
-      "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git",
-      "https://github.com/huggingface/transformers.git",
-      "https://github.com/langflow-ai/langflow.git",
-      "https://github.com/ytdl-org/youtube-dl.git"
+      // "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git", // rank 2
+      "https://github.com/Significant-Gravitas/AutoGPT.git", // rank 1
+      // "https://github.com/huggingface/transformers.git",
+      // "https://github.com/langflow-ai/langflow.git",
+      // "https://github.com/ytdl-org/youtube-dl.git"
     };
   }
 
   @Override
   protected boolean isTypeEqual(String tagKind, String nodeType) {
     if (tagKind.equalsIgnoreCase("function")) {
+      return PythonNodeTypes.FUNCTION.equals(nodeType);
+    } if (tagKind.equalsIgnoreCase("member")) {
       return PythonNodeTypes.FUNCTION.equals(nodeType);
     }
     return false;
