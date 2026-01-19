@@ -43,7 +43,7 @@ public class TestPhpParser {
         }
     }
 
-    // @Test // TODO: Enable this test after fixing the parser to handle file nodes correctly
+    @Test
     public void shouldParsePhpClassesAndFunctionsCorrectly() throws Exception {
         Path baseFolderPath = Paths.get(TEST_DATA_BASE_PATH);
         SourceFileSet sources = SourceFolder.from(baseFolderPath, ".php");
