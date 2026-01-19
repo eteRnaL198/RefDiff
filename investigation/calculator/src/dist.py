@@ -3,6 +3,8 @@ import glob
 import os
 import csv
 
+OUT_PATH = './output/refactoring_distribution.png'
+
 def load_csv_files():
     base_path = '../result'
     languages = ['C', 'Java', 'JavaScript', 'PHP', 'Python', 'Ruby', 'Go']
@@ -14,7 +16,7 @@ def load_csv_files():
     for lang in languages:
         path = os.path.join(base_path, lang)
         csv_files = glob.glob(os.path.join(path, '*.csv'))
-        
+
         if not csv_files:
             print(f'No CSV files found for {lang}')
             continue
@@ -38,17 +40,27 @@ def load_csv_files():
             if rows_6_cols:
                 df = pd.DataFrame(rows_6_cols, columns=column_names)
                 df_list.append(df)
-            
+
             if rows_1_col:
                 commit_list.extend(rows_1_col)
-        
+
         if df_list:
             all_dfs[lang] = pd.concat(df_list, ignore_index=True)
-        
+
         if commit_list:
             all_commits[lang] = commit_list
 
     return all_dfs, all_commits
+
+
+def ensure_parent_dir(filepath):
+    dirpath = os.path.dirname(filepath)
+    if dirpath and not os.path.exists(dirpath):
+        try:
+            os.makedirs(dirpath, exist_ok=True)
+        except Exception as e:
+            print(f"Could not create directory {dirpath}: {e}")
+
 
 if __name__ == '__main__':
 
@@ -134,12 +146,10 @@ if __name__ == '__main__':
 
 
             # Save the plot
+            ensure_parent_dir(OUT_PATH)
+            plt.savefig(OUT_PATH)
 
-            output_filename = '../refactoring_distribution.png'
-
-            plt.savefig(output_filename)
-
-            print(f"Plot saved to {output_filename}")
+            print(f"Plot saved to {OUT_PATH}")
 
 
 

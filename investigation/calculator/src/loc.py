@@ -4,6 +4,9 @@ import os
 import csv
 import matplotlib.pyplot as plt
 
+OUT_BEFORE_PATH = './output/extract_before_loc.png'
+OUT_AFTER_PATH = './output/extract_after_loc.png'
+
 def load_csv_files():
     base_path = '../result'
     languages = ['C', 'Java', 'JavaScript', 'PHP', 'Python', 'Ruby', 'Go']
@@ -15,7 +18,7 @@ def load_csv_files():
     for lang in languages:
         path = os.path.join(base_path, lang)
         csv_files = glob.glob(os.path.join(path, '*.csv'))
-        
+
         if not csv_files:
             print(f'No CSV files found for {lang}')
             continue
@@ -39,17 +42,25 @@ def load_csv_files():
             if rows_6_cols:
                 df = pd.DataFrame(rows_6_cols, columns=column_names)
                 df_list.append(df)
-            
+
             if rows_1_col:
                 commit_list.extend(rows_1_col)
-        
+
         if df_list:
             all_dfs[lang] = pd.concat(df_list, ignore_index=True)
-        
+
         if commit_list:
             all_commits[lang] = commit_list
 
     return all_dfs, all_commits
+
+def ensure_parent_dir(filepath):
+    dirpath = os.path.dirname(filepath)
+    if dirpath and not os.path.exists(dirpath):
+        try:
+            os.makedirs(dirpath, exist_ok=True)
+        except Exception as e:
+            print(f"Could not create directory {dirpath}: {e}")
 
 if __name__ == '__main__':
     dataframes, _ = load_csv_files()
@@ -65,12 +76,12 @@ if __name__ == '__main__':
 
     if extract_data_list:
         combined_extract_df = pd.concat(extract_data_list, ignore_index=True)
-        
+
         combined_extract_df['BeforeLOC'] = pd.to_numeric(combined_extract_df['BeforeLOC'], errors='coerce')
         combined_extract_df['AfterLOC'] = pd.to_numeric(combined_extract_df['AfterLOC'], errors='coerce')
 
         combined_extract_df.dropna(subset=['BeforeLOC', 'AfterLOC'], inplace=True)
-        
+
         # Clip BeforeLOC to a maximum.
         # combined_extract_df['BeforeLOC'] = combined_extract_df['BeforeLOC'].clip(upper=200)
 
@@ -88,8 +99,9 @@ if __name__ == '__main__':
             ax1.set_ylabel('Lines of Code')
             plt.suptitle('')
             plt.tight_layout()
-            plt.savefig('../extract_before_loc.png')
-            print("Saved BeforeLOC boxplot to ../extract_before_loc.png")
+            ensure_parent_dir(OUT_BEFORE_PATH)
+            plt.savefig(OUT_BEFORE_PATH)
+            print(f"Saved BeforeLOC boxplot to {OUT_BEFORE_PATH}")
             plt.close(fig1)
 
             # AfterLOC boxplot
@@ -100,8 +112,9 @@ if __name__ == '__main__':
             ax2.set_ylabel('Lines of Code')
             plt.suptitle('')
             plt.tight_layout()
-            plt.savefig('../extract_after_loc.png')
-            print("Saved AfterLOC boxplot to ../extract_after_loc.png")
+            ensure_parent_dir(OUT_AFTER_PATH)
+            plt.savefig(OUT_AFTER_PATH)
+            print(f"Saved AfterLOC boxplot to {OUT_AFTER_PATH}")
             plt.close(fig2)
         else:
             print("No valid data to plot after cleaning.")
