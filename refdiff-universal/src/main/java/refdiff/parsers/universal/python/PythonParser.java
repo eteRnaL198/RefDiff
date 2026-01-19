@@ -121,13 +121,7 @@ public class PythonParser implements LanguagePlugin {
 
       functionCstNode.setNamespace(filePath + "/");
 
-      int defStartByte = functionDefinitionNode.getStartByte();
-      int defEndByte = functionDefinitionNode.getEndByte();
-      int bodyStartByte = bodyNode.getStartByte();
-      int bodyEndByte = bodyNode.getEndByte();
-      int lineNumber = functionDefinitionNode.getStartPoint().getRow() + 1;
-      int endLineNumber = functionDefinitionNode.getEndPoint().getRow() + 1;
-      functionCstNode.setLocation(new Location(filePath, defStartByte, defEndByte, lineNumber, endLineNumber, bodyStartByte, bodyEndByte));
+      functionCstNode.setLocation(NodeUtils.generateLocation(functionDefinitionNode, bodyNode, filePath));
 
       List<Parameter> cstParameters = new ArrayList<>();
       if (paramsNode != null) {

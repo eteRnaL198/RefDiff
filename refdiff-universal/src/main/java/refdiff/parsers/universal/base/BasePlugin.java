@@ -88,6 +88,10 @@ public abstract class BasePlugin implements LanguagePlugin {
       byte[] sourceBytes = sourceCode.getBytes(StandardCharsets.UTF_8);
       buildCst(tree, tsLang, filePath, sourceBytes);
 
+      if (tree.getRootNode().hasError()) {
+        root.addParseFailedFile(filePath);
+      }
+
       TokenizedSource tokenizedSource = Tokenizer.tokenize(tree, tsLang, filePath); // TODO: Should the argument for tokenize be a relative path?
       root.addTokenizedFile(tokenizedSource);
     }

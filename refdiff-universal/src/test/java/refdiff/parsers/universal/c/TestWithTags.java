@@ -21,7 +21,7 @@ import refdiff.core.cst.CstRoot;
 import refdiff.core.io.SourceFolder;
 import refdiff.parsers.LanguagePlugin;
 
-public class TestFunc {
+public class TestWithTags {
 
     private final LanguagePlugin parser = new CPlugin();
 

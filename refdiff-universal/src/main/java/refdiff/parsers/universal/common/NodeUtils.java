@@ -21,6 +21,7 @@ public class NodeUtils {
             path,
             decl.getStartByte(),
             decl.getEndByte(),
+            decl.getStartPoint().getRow() + 1,
             body != null ? body.getStartPoint().getRow() + 1 : decl.getStartPoint().getRow() + 1,
             body != null ? body.getEndPoint().getRow() + 1 : decl.getEndPoint().getRow() + 1,
             body != null ? body.getStartByte() : decl.getStartByte(),

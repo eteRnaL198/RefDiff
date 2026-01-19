@@ -63,26 +63,24 @@ public class TestJsValidation {
         new ExpectedNode("AbstractButton3", JsNodeTypes.CLASS, 1, "benchmark.js"),
         new ExpectedNode("render", JsNodeTypes.FUNCTION, 2, "benchmark.js"),
         new ExpectedNode("onClick", JsNodeTypes.FUNCTION, 11, "benchmark.js"),
-
         new ExpectedNode("render", JsNodeTypes.FUNCTION, 1, "benchmark1.js"),
-
         new ExpectedNode("ReactImage0", JsNodeTypes.FUNCTION, 1, "benchmark2.js"),
-
         new ExpectedNode("_load", JsNodeTypes.FUNCTION, 1, "flags.js"),
-
         new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "print-prerelease-summary.js"),
-        
         new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "parse-params.js"),
-
         new ExpectedNode("exports", JsNodeTypes.FUNCTION, 1, "check-out-packages.js"),
-
         new ExpectedNode("filteringClosure", JsNodeTypes.FUNCTION, 1, "build-all-release-channels.js"),
-
         new ExpectedNode("'./packages/shared/ReactSharedInternals.js'", JsNodeTypes.FUNCTION, 4, "forks.js"),
-
         new ExpectedNode("MessageChannel", JsNodeTypes.CLASS, 4, "patchMessageChannel.js"),
-        
-        new ExpectedNode("__MeasureOnSuccessCallback", JsNodeTypes.FUNCTION, 1, "react-native-host-hooks.js")
+        new ExpectedNode("__MeasureOnSuccessCallback", JsNodeTypes.FUNCTION, 1, "react-native-host-hooks.js"),
+        new ExpectedNode("k", JsNodeTypes.FUNCTION, 2, "todo.bail.rules-of-hooks-fadd52c1e460.js"),
+        new ExpectedNode("h", JsNodeTypes.FUNCTION, 2, "todo.invalid.invalid-rules-of-hooks-9c79feec4b9b.js"),
+        new ExpectedNode("@@iterator", JsNodeTypes.FUNCTION, 3, "react-14.test.js"),
+        new ExpectedNode("ErrorBoundary", JsNodeTypes.CLASS, 1, "ReactFlightTurbopackDOM-test.js"),
+        new ExpectedNode("div", JsNodeTypes.FUNCTION, 1, "ReactDOM-test.js"),
+        new ExpectedNode("RequiredPropComponent", JsNodeTypes.CLASS, 1, "react-16.test.js"),
+        new ExpectedNode("Wrapper", JsNodeTypes.CLASS, 5, "ReactFresh-test.js"),
+        new ExpectedNode("Number", JsNodeTypes.FUNCTION, 1, "ReactChildren-test.js")
     );
 
     for (ExpectedNode expected : expectedNodes) {
