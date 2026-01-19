@@ -41,7 +41,7 @@ public class GoParser extends BasePlugin {
 
   @Override
   protected void buildCst(TSTree tree, TSLanguage tsLang, String filePath, byte[] sourceCode) {
-    String namespace = extractNamespace(tree, tsLang, sourceCode);
+    String namespace = extractNamespace(tree, tsLang, sourceCode) + ".";
 
     String querySrc = """
     [
