@@ -46,7 +46,7 @@ public class JavaPlugin extends BasePlugin {
 
   @Override
   protected void buildCst(TSTree tree, TSLanguage tsLang, String path, byte[] sourceBytes) {
-    String namespace = FilePathUtils.extractDirectoryFromFilePath(path);
+    String namespace = extractPackageName(tree, tsLang, sourceBytes) + ".";
     String querySrc = """
     [
       (class_declaration
@@ -179,4 +179,21 @@ public class JavaPlugin extends BasePlugin {
     return parameters;
   }
 
+  private String extractPackageName(TSTree tree, TSLanguage tsLang, byte[] sourceBytes) {
+    String packageQuerySrc = "(package_declaration  [(identifier) (scoped_identifier)] @package_name)";
+    TSQuery packageQuery = new TSQuery(tsLang, packageQuerySrc);
+    TSQueryCursor packageCursor = new TSQueryCursor();
+    packageCursor.exec(packageQuery, tree.getRootNode());
+    String packageName = "";
+    TSQueryMatch packageMatch = new TSQueryMatch();
+    if (packageCursor.nextMatch(packageMatch)) {
+      for (TSQueryCapture capture : packageMatch.getCaptures()) {
+        TSNode capturedNode = capture.getNode();
+        packageName = NodeUtils.getNodeText(capturedNode, sourceBytes);
+
+        break;
+      }
+    }
+    return packageName;
+  }
 }

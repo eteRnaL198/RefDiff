@@ -61,24 +61,24 @@ public class TestJavaPlugin {
         });
 
         List<ExpectedNode> expectedNodes = Arrays.asList(
-            new ExpectedNode("BasicPublicClass", JavaNodeTypes.CLASS, 23, "BasicPublicClass", "", "BasicPublicClass.java"),
-            new ExpectedNode("PackagePrivateClass", JavaNodeTypes.CLASS, 46, "PackagePrivateClass", "", "BasicPublicClass.java"),
-            new ExpectedNode("AbstractVehicle", JavaNodeTypes.CLASS, 58, "AbstractVehicle", "", "BasicPublicClass.java"),
-            new ExpectedNode("FinalImmutableData", JavaNodeTypes.CLASS, 69, "FinalImmutableData", "", "BasicPublicClass.java"),
-            new ExpectedNode("Car", JavaNodeTypes.CLASS, 88, "Car", "", "BasicPublicClass.java"),
-            new ExpectedNode("MultiImplementer", JavaNodeTypes.CLASS, 98, "MultiImplementer", "", "BasicPublicClass.java"),
-            new ExpectedNode("ComplexHierarchy", JavaNodeTypes.CLASS, 113, "ComplexHierarchy", "", "BasicPublicClass.java"),
-            new ExpectedNode("Box", JavaNodeTypes.CLASS, 131, "Box", "", "BasicPublicClass.java"),
-            new ExpectedNode("BoundedGenericCache", JavaNodeTypes.CLASS, 149, "BoundedGenericCache", "", "BasicPublicClass.java"),
-            new ExpectedNode("BoundedGenericCache", JavaNodeTypes.CLASS, 149, "BoundedGenericCache", "", "BasicPublicClass.java"),
-            new ExpectedNode("NumberProcessor", JavaNodeTypes.CLASS, 162, "NumberProcessor", "", "BasicPublicClass.java"),
-            new ExpectedNode("OuterShell", JavaNodeTypes.CLASS, 177, "OuterShell", "", "BasicPublicClass.java"),
+            new ExpectedNode("BasicPublicClass", JavaNodeTypes.CLASS, 23, "BasicPublicClass", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("PackagePrivateClass", JavaNodeTypes.CLASS, 46, "PackagePrivateClass", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("AbstractVehicle", JavaNodeTypes.CLASS, 58, "AbstractVehicle", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("FinalImmutableData", JavaNodeTypes.CLASS, 69, "FinalImmutableData", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("Car", JavaNodeTypes.CLASS, 88, "Car", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("MultiImplementer", JavaNodeTypes.CLASS, 98, "MultiImplementer", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("ComplexHierarchy", JavaNodeTypes.CLASS, 113, "ComplexHierarchy", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("Box", JavaNodeTypes.CLASS, 131, "Box", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("BoundedGenericCache", JavaNodeTypes.CLASS, 149, "BoundedGenericCache", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("BoundedGenericCache", JavaNodeTypes.CLASS, 149, "BoundedGenericCache", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("NumberProcessor", JavaNodeTypes.CLASS, 162, "NumberProcessor", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("OuterShell", JavaNodeTypes.CLASS, 177, "OuterShell", "com.example.parser.test.", "BasicPublicClass.java"),
             new ExpectedNode("StaticNested", JavaNodeTypes.CLASS, 185, "StaticNested", null, "BasicPublicClass.java"),
             new ExpectedNode("Inner", JavaNodeTypes.CLASS, 196, "Inner", null, "BasicPublicClass.java"),
             new ExpectedNode("MethodLocalRunnable", JavaNodeTypes.CLASS, 210, "MethodLocalRunnable", null, "BasicPublicClass.java"),
-            new ExpectedNode("AnnotatedClass", JavaNodeTypes.CLASS, 311, "AnnotatedClass", "", "BasicPublicClass.java"),
-            new ExpectedNode("EmptyClass", JavaNodeTypes.CLASS, 329, "EmptyClass", "", "BasicPublicClass.java"),
-            new ExpectedNode("GenericsSubclass", JavaNodeTypes.CLASS, 340, "GenericsSubclass", "", "BasicPublicClass.java")
+            new ExpectedNode("AnnotatedClass", JavaNodeTypes.CLASS, 311, "AnnotatedClass", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("EmptyClass", JavaNodeTypes.CLASS, 329, "EmptyClass", "com.example.parser.test.", "BasicPublicClass.java"),
+            new ExpectedNode("GenericsSubclass", JavaNodeTypes.CLASS, 340, "GenericsSubclass", "com.example.parser.test.", "BasicPublicClass.java")
         );
 
         for (ExpectedNode expected : expectedNodes) {

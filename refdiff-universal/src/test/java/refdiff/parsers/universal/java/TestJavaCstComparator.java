@@ -34,8 +34,8 @@ public class TestJavaCstComparator {
     public void shouldMatchMoveClass() throws Exception {
         CstDiff diff = diff("moveClass");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.MOVE, node("Foo/Foo"), node("Moved/Foo")),
-            relationship(RelationshipType.SAME, node("Foo/Foo", "main(String[])"), node("Moved/Foo", "main(String[])"))
+            relationship(RelationshipType.MOVE, node("v0.Foo.Foo"), node("v1.Moved.Foo")),
+            relationship(RelationshipType.SAME, node("v0.Foo.Foo", "main(String[])"), node("v1.Moved.Foo", "main(String[])"))
         ));
     }
 
@@ -43,9 +43,9 @@ public class TestJavaCstComparator {
     public void shouldMatchMoveMethod() throws Exception {
         CstDiff diff = diff("moveMethod");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo")),
-            relationship(RelationshipType.MOVE, node("Foo", "hello()"), node("Bar", "hello()")),
-            relationship(RelationshipType.SAME, node("Foo", "main(String[])"), node("Foo", "main(String[])"))
+            relationship(RelationshipType.SAME, node("tmp.Foo"), node("tmp.Foo")),
+            relationship(RelationshipType.MOVE, node("tmp.Foo", "hello()"), node("tmp.Bar", "hello()")),
+            relationship(RelationshipType.SAME, node("tmp.Foo", "main(String[])"), node("tmp.Foo", "main(String[])"))
         ));
     }
 
@@ -53,8 +53,8 @@ public class TestJavaCstComparator {
     public void shouldMatchMoveAndRenameClass() throws Exception {
         CstDiff diff = diff("moveAndRenameClass");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.SAME, node("Foo/Foo", "main(String[])"), node("Bar/Bar", "main(String[])")),
-            relationship(RelationshipType.MOVE_RENAME, node("Foo/Foo"), node("Bar/Bar"))
+            relationship(RelationshipType.SAME, node("v0.Foo.Foo", "main(String[])"), node("v1.Bar.Bar", "main(String[])")),
+            relationship(RelationshipType.MOVE_RENAME, node("v0.Foo.Foo"), node("v1.Bar.Bar"))
         ));
     }
 
@@ -62,8 +62,8 @@ public class TestJavaCstComparator {
     public void shouldMatchRenameClass() throws Exception {
         CstDiff diff = diff("renameClass");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.SAME, node("Foo", "main(String[])"), node("Bar", "main(String[])")),
-            relationship(RelationshipType.RENAME, node("Foo"), node("Bar"))
+            relationship(RelationshipType.SAME, node("pkg.Foo", "main(String[])"), node("pkg.Bar", "main(String[])")),
+            relationship(RelationshipType.RENAME, node("pkg.Foo"), node("pkg.Bar"))
         ));
     }
 
@@ -71,11 +71,11 @@ public class TestJavaCstComparator {
     public void shouldMatchRenameMethod() throws Exception {
         CstDiff diff = diff("renameMethod");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.RENAME, node("User", "isOkay()"), node("User", "isAdult()")),
-            relationship(RelationshipType.SAME, node("User"), node("User")),
-            relationship(RelationshipType.RENAME, node("Foo", "hello()"), node("Foo", "greet()")),
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo")),
-            relationship(RelationshipType.SAME, node("User", "new(int)"), node("User", "new(int)"))
+            relationship(RelationshipType.RENAME, node("pkg.User", "isOkay()"), node("pkg.User", "isAdult()")),
+            relationship(RelationshipType.SAME, node("pkg.User"), node("pkg.User")),
+            relationship(RelationshipType.RENAME, node("pkg.Foo", "hello()"), node("pkg.Foo", "greet()")),
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo")),
+            relationship(RelationshipType.SAME, node("pkg.User", "new(int)"), node("pkg.User", "new(int)"))
         ));
     }
 
@@ -83,8 +83,8 @@ public class TestJavaCstComparator {
     public void shouldMatchExtractInterface() throws Exception {
         CstDiff diff = diff("extractInterface");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.EXTRACT_SUPER, node("Foo"), node("Bar")),
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo"))
+            relationship(RelationshipType.EXTRACT_SUPER, node("pkg.Foo"), node("pkg.Bar")),
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo"))
         ));
     }
 
@@ -92,8 +92,8 @@ public class TestJavaCstComparator {
     public void shouldMatchExtractSuperclass() throws Exception {
         CstDiff diff = diff("extractSuperclass");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.EXTRACT_SUPER, node("Foo"), node("Bar")),
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo"))
+            relationship(RelationshipType.EXTRACT_SUPER, node("pkg.Foo"), node("pkg.Bar")),
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo"))
         ));
     }
 
@@ -101,9 +101,9 @@ public class TestJavaCstComparator {
     public void shouldMatchPullUpMethod() throws Exception {
         CstDiff diff = diff("pullUpMethod");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo")),
-            relationship(RelationshipType.PULL_UP, node("Foo", "greet()"), node("Bar", "greet()")),
-            relationship(RelationshipType.SAME, node("Bar"), node("Bar"))
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo")),
+            relationship(RelationshipType.PULL_UP, node("pkg.Foo", "greet()"), node("pkg.Bar", "greet()")),
+            relationship(RelationshipType.SAME, node("pkg.Bar"), node("pkg.Bar"))
         ));
     }
 
@@ -111,9 +111,9 @@ public class TestJavaCstComparator {
     public void shouldMatchPushDownMethod() throws Exception {
         CstDiff diff = diff("pushDownMethod");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.SAME, node("Bar"), node("Bar")),
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo")),
-            relationship(RelationshipType.PUSH_DOWN, node("Bar", "greet()"), node("Foo", "greet()"))
+            relationship(RelationshipType.SAME, node("pkg.Bar"), node("pkg.Bar")),
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo")),
+            relationship(RelationshipType.PUSH_DOWN, node("pkg.Bar", "greet()"), node("pkg.Foo", "greet()"))
         ));
     }
 
@@ -121,9 +121,9 @@ public class TestJavaCstComparator {
     public void shouldMatchExtractMethod() throws Exception {
         CstDiff diff = diff("extractMethod");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo")),
-            relationship(RelationshipType.EXTRACT, node("Foo", "main(String[])"), node("Foo", "hello(String[])")),
-            relationship(RelationshipType.SAME, node("Foo", "main(String[])"), node("Foo", "main(String[])"))
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo")),
+            relationship(RelationshipType.EXTRACT, node("pkg.Foo", "main(String[])"), node("pkg.Foo", "hello(String[])")),
+            relationship(RelationshipType.SAME, node("pkg.Foo", "main(String[])"), node("pkg.Foo", "main(String[])"))
         ));
     }
 
@@ -131,9 +131,9 @@ public class TestJavaCstComparator {
     public void shouldMatchExtractAndMoveMethod() throws Exception {
         CstDiff diff = diff("extractAndMoveMethod");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.EXTRACT_MOVE, node("Foo", "main(String[])"), node("Bar", "hello(String[])")),
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo")),
-            relationship(RelationshipType.SAME, node("Foo", "main(String[])"), node("Foo", "main(String[])"))
+            relationship(RelationshipType.EXTRACT_MOVE, node("pkg.Foo", "main(String[])"), node("pkg.Bar", "hello(String[])")),
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo")),
+            relationship(RelationshipType.SAME, node("pkg.Foo", "main(String[])"), node("pkg.Foo", "main(String[])"))
         ));
     }
 
@@ -141,9 +141,9 @@ public class TestJavaCstComparator {
     public void shouldMatchInlineMethod() throws Exception {
         CstDiff diff = diff("InlineMethod"); // Folder name is "InlineMethod"
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.INLINE, node("Foo", "hello(String[])"), node("Foo", "main(String[])")),
-            relationship(RelationshipType.SAME, node("Foo", "main(String[])"), node("Foo", "main(String[])")),
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo"))
+            relationship(RelationshipType.INLINE, node("pkg.Foo", "hello(String[])"), node("pkg.Foo", "main(String[])")),
+            relationship(RelationshipType.SAME, node("pkg.Foo", "main(String[])"), node("pkg.Foo", "main(String[])")),
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo"))
         ));
     }
 
@@ -151,10 +151,10 @@ public class TestJavaCstComparator {
     public void shouldMatchInternalMoveMethod() throws Exception {
         CstDiff diff = diff("InternalMoveMethod"); // Folder name is "InternalMoveMethod"
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.SAME, node("Foo"), node("Foo")),
-            relationship(RelationshipType.SAME, node("Foo", "Bar"), node("Foo", "Bar")),
-            relationship(RelationshipType.INTERNAL_MOVE, node("Foo", "Bar", "hello(String[])"), node("Foo", "hello(String[])")),
-            relationship(RelationshipType.SAME, node("Foo", "main(String[])"), node("Foo", "main(String[])"))
+            relationship(RelationshipType.SAME, node("pkg.Foo"), node("pkg.Foo")),
+            relationship(RelationshipType.SAME, node("pkg.Foo", "Bar"), node("pkg.Foo", "Bar")),
+            relationship(RelationshipType.INTERNAL_MOVE, node("pkg.Foo", "Bar", "hello(String[])"), node("pkg.Foo", "hello(String[])")),
+            relationship(RelationshipType.SAME, node("pkg.Foo", "main(String[])"), node("pkg.Foo", "main(String[])"))
         ));
     }
 }

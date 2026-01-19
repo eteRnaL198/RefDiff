@@ -1,4 +1,5 @@
-package java.refactor.moveClass.v0.Foo;
+package v0.Foo;
+
 
 public class Foo {
   public static void main(String[] args) {

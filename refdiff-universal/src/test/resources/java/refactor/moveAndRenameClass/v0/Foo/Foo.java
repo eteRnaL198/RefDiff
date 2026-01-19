@@ -1,4 +1,4 @@
-package java.refactor.moveAndRenameClass.v0.Foo;
+package v0.Foo;
 
 public class Foo {
   public static void main(String[] args) {
