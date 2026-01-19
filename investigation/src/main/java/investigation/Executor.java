@@ -34,8 +34,8 @@ import refdiff.parsers.universal.ruby.RubyParser;
 import refdiff.parsers.universal.php.PhpPlugin;
 
 public class Executor {
-    private static int COMMIT_DEPTH = 10000;
-    private static final int BATCH_SIZE = 500;
+    private static int COMMIT_DEPTH = 1000000;
+    private static final int BATCH_SIZE = 1000;
 
     private int commitCount = 0;
     private String currentCommitSha = "";
@@ -112,12 +112,10 @@ public class Executor {
                     startCommitSha = getLatestCommitSha(lang, repoName);
                 }
 
-                Path outPath = Paths.get("result", lang, repoName + "-" + getNowDateTime() + ".csv");
-                Files.createDirectories(outPath.getParent());
+                Path outDir = Paths.get("result", lang);
+                Files.createDirectories(outDir);
 
                 String header = "\"Commit\",\"RefactoringType\",\"Before\",\"After\",\"BeforeLOC\",\"AfterLOC\"\n";
-                Files.write(outPath, header.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND);
 
                 commitCount = 0;
 
@@ -146,16 +144,8 @@ public class Executor {
                                         }
                                     }
                                     if ((commitCount + 1) % BATCH_SIZE == 0 || commitCount + 1 == COMMIT_DEPTH) {
-                                        System.out.println(getNowDateTime() + " Processed " + (commitCount + 1) + " commits for " + repoName
-                                                + ". Writing results to file...");
-                                        try {
-                                            Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8),
-                                                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                                            sb.setLength(0); // clear the StringBuilder
-                                        } catch (IOException e) {
-                                            System.err.println(
-                                                    "Failed to write results for " + repoName + ": " + e.getMessage());
-                                        }
+                                        int processed = commitCount + 1;
+                                        writeBatch(outDir, repoName, header, sb, processed);
                                     }
                                     incrementCommitCount();
                                     setCurrentCommitSha(commitSha);
@@ -163,14 +153,8 @@ public class Executor {
                     } catch (Exception e) {
                         System.err.println("Error processing repository " + repoName + " (attempt " + attempt + "): "
                                 + e.getMessage());
-                        try {
-                            Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8),
-                                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                            sb.setLength(0); // clear the StringBuilder
-                        } catch (IOException ioException) {
-                            System.err.println(
-                                    "Failed to write error log for " + repoName + ": " + ioException.getMessage());
-                        }
+                        writeBatch(outDir, repoName, header, sb, attempt);
+                        sb.setLength(0); // clear the StringBuilder
                         if (attempt == 3) {
                             System.err.println("Max attempts reached for repository " + repoName + ". Skipping.");
                         } else {
@@ -182,10 +166,13 @@ public class Executor {
                     break; // exit the retry loop if successful
                 }
 
-                // Write any remaining results
+                // Write any remaining results (final partial batch)
                 if (sb.length() > 0) {
-                    Files.write(outPath, sb.toString().getBytes(StandardCharsets.UTF_8),
-                            StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    int processed = commitCount; // total processed so far
+                    if (processed <= 0) {
+                        processed = 0;
+                    }
+                    writeBatch(outDir, repoName, header, sb, processed);
                 }
             }
         }
@@ -354,6 +341,24 @@ public class Executor {
                 return new PhpPlugin();
             default:
                 throw new IllegalArgumentException("Unsupported language: " + language);
+        }
+    }
+
+    private void writeBatch(Path outDir, String repoName, String header, StringBuilder sb, int processed) {
+        String fileName = repoName + "-" + getNowDateTime() + "-" + processed + ".csv";
+        Path batchPath = outDir.resolve(fileName);
+        System.out.println(getNowDateTime() + " Processed " + processed + " commits for " + repoName
+                + ". Writing results to file " + batchPath.getFileName() + "...");
+        try {
+            if (!Files.exists(batchPath)) {
+                Files.write(batchPath, header.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
+                        StandardOpenOption.WRITE);
+            }
+            Files.write(batchPath, sb.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND);
+            sb.setLength(0);
+        } catch (IOException e) {
+            System.err.println("Failed to write results for " + repoName + ": " + e.getMessage());
         }
     }
 }
