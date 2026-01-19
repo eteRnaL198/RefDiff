@@ -294,7 +294,6 @@ public class JsPlugin extends BasePlugin {
           cstNode.setLocalName(className);
         }
         case JsNodeTypes.FUNCTION -> {
-          System.out.println("FUNCTION found: " + NodeUtils.getNodeText(name, sourceBytes) + " in " + path); // TODO remove
           cstNode.setType(JsNodeTypes.FUNCTION);
           cstNode.setLocation(NodeUtils.generateLocation(declaration, body, path));
           String funcName = NodeUtils.getNodeText(name, sourceBytes);
