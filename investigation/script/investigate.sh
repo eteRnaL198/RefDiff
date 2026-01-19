@@ -74,7 +74,7 @@ for entry in "${ITEMS[@]}"; do
   log_file="logs/out_${lang}_${safe_repo_name}.log"
 
   # Launch one process per repository, passing --repo to the application
-  "$APP_BIN" --language "$lang" --repo "$repo_url" > "$log_file" 2>&1 &
+  "$APP_BIN" --language "$lang" --repo "$repo_url" --resume > "$log_file" 2>&1 &
   pid=$!
   PIDS+=("$pid")
   echo "Started process for $lang repo $repo_url (PID: $pid) -> $log_file"

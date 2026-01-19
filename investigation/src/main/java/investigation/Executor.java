@@ -34,8 +34,8 @@ import refdiff.parsers.universal.ruby.RubyParser;
 import refdiff.parsers.universal.php.PhpPlugin;
 
 public class Executor {
-    private static int COMMIT_DEPTH = 1000000;
-    private static final int BATCH_SIZE = 1000;
+    private static int COMMIT_DEPTH = 2000000;
+    private static final int BATCH_SIZE = 500;
 
     private int commitCount = 0;
     private String currentCommitSha = "";
@@ -115,8 +115,6 @@ public class Executor {
                 Path outDir = Paths.get("result", lang);
                 Files.createDirectories(outDir);
 
-                String header = "\"Commit\",\"RefactoringType\",\"Before\",\"After\",\"BeforeLOC\",\"AfterLOC\"\n";
-
                 commitCount = 0;
 
                 StringBuilder sb = new StringBuilder();
@@ -145,7 +143,7 @@ public class Executor {
                                     }
                                     if ((commitCount + 1) % BATCH_SIZE == 0 || commitCount + 1 == COMMIT_DEPTH) {
                                         int processed = commitCount + 1;
-                                        writeBatch(outDir, repoName, header, sb, processed);
+                                        writeBatch(outDir, repoName, sb, processed);
                                     }
                                     incrementCommitCount();
                                     setCurrentCommitSha(commitSha);
@@ -153,7 +151,7 @@ public class Executor {
                     } catch (Exception e) {
                         System.err.println("Error processing repository " + repoName + " (attempt " + attempt + "): "
                                 + e.getMessage());
-                        writeBatch(outDir, repoName, header, sb, attempt);
+                        writeBatch(outDir, repoName, sb, attempt);
                         sb.setLength(0); // clear the StringBuilder
                         if (attempt == 3) {
                             System.err.println("Max attempts reached for repository " + repoName + ". Skipping.");
@@ -172,7 +170,7 @@ public class Executor {
                     if (processed <= 0) {
                         processed = 0;
                     }
-                    writeBatch(outDir, repoName, header, sb, processed);
+                    writeBatch(outDir, repoName, sb, processed);
                 }
             }
         }
@@ -344,18 +342,24 @@ public class Executor {
         }
     }
 
-    private void writeBatch(Path outDir, String repoName, String header, StringBuilder sb, int processed) {
+    private void writeBatch(Path outDir, String repoName, StringBuilder sb, int processed) {
         String fileName = repoName + "-" + getNowDateTime() + "-" + processed + ".csv";
         Path batchPath = outDir.resolve(fileName);
         System.out.println(getNowDateTime() + " Processed " + processed + " commits for " + repoName
                 + ". Writing results to file " + batchPath.getFileName() + "...");
         try {
-            if (!Files.exists(batchPath)) {
-                Files.write(batchPath, header.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
+            if (Files.exists(batchPath)) {
+                // If the file already exists, always append the new data (do not rewrite header)
+                Files.write(batchPath, sb.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
+                        StandardOpenOption.APPEND);
+            } else {
+                // File doesn't exist yet: write header followed by content
+                String header = "\"Commit\",\"RefactoringType\",\"Before\",\"After\",\"BeforeLOC\",\"AfterLOC\"\n";
+                String content = header + sb.toString();
+                Files.write(batchPath, content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
                         StandardOpenOption.WRITE);
             }
-            Files.write(batchPath, sb.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
-                    StandardOpenOption.APPEND);
+            
             sb.setLength(0);
         } catch (IOException e) {
             System.err.println("Failed to write results for " + repoName + ": " + e.getMessage());
