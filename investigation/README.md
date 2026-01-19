@@ -12,7 +12,11 @@
 ```
 
 # Run with script
-Premise: Make sure tmux is installed.
+```bash
+screen -S investigation_session
+screen -r investigation_session
+```
+
 ```bash
 bash ./script/investigation.sh
 ```
