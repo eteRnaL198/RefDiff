@@ -30,10 +30,10 @@ public final class RepoConfig {
         // "https://github.com/vmg/redcarpet.git",
 
         // Borges 2018
-        "https://github.com/ffmpeg/ffmpeg.git", // App
+        "https://github.com/ffmpeg/ffmpeg.git", // App 122483 commits
         "https://github.com/bilibili/ijkplayer.git", // Non-web library
         "https://github.com/firehol/netdata.git", // Software tool
-        "https://github.com/torvalds/linux.git", // System
+        "https://github.com/torvalds/linux.git", // System 1,413,527 commits
         "https://github.com/phpredis/phpredis.git", // Web
     };
 
@@ -45,11 +45,11 @@ public final class RepoConfig {
         // "https://github.com/angular/angular.js.git",
 
         // Borges 2018
-        "https://github.com/adobe/brackets.git", // App
+        "https://github.com/adobe/brackets.git", // App 17847 commits
         "https://github.com/moment/moment.git", // Non-web
         "https://github.com/gulpjs/gulp.git", // Software tool
-        "https://github.com/nodejs/node.git", // System
-        "https://github.com/facebook/react.git", // Web
+        "https://github.com/nodejs/node.git", // System 45842 commits
+        "https://github.com/facebook/react.git", // Web 21278 commits
     };
 
     public static final String[] RUBY = {
@@ -67,8 +67,8 @@ public final class RepoConfig {
         "https://github.com/jekyll/jekyll.git", // App
         "https://github.com/plataformatec/devise.git", // Non-web library
         "https://github.com/gitlabhq/gitlabhq.git", // Software tool
-        "https://github.com/ruby/ruby.git", // System
-        "https://github.com/rails/rails.git", // Web
+        "https://github.com/ruby/ruby.git", // System 96694 commits
+        "https://github.com/rails/rails.git", // Web 96897 commits
     };
 
 
@@ -86,7 +86,7 @@ public final class RepoConfig {
         // Borges 2018
         "https://github.com/getlantern/lantern.git", // App
         "https://github.com/labstack/echo.git", // Non-web library
-        "https://github.com/kubernetes/kubernetes.git", // Software tool
+        "https://github.com/kubernetes/kubernetes.git", // Software tool 134911 commits
         "https://github.com/docker/docker.git", // System
         "https://github.com/go-martini/martini.git", // Web
     };
