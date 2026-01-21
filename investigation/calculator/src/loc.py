@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
             # BeforeLOC boxplot
             fig1, ax1 = plt.subplots(figsize=(12, 8))
-            combined_extract_df.boxplot(column='BeforeLOC', by='Language', ax=ax1, showfliers=False)
+            combined_extract_df.boxplot(column='BeforeLOC', by='Language', ax=ax1, showfliers=False, showmeans=True)
             ax1.set_title('BeforeLOC for EXTRACT Refactoring by Language')
             ax1.set_xlabel('Language')
             ax1.set_ylabel('Lines of Code')
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
             # AfterLOC boxplot
             fig2, ax2 = plt.subplots(figsize=(12, 8))
-            combined_extract_df.boxplot(column='AfterLOC', by='Language', ax=ax2, showfliers=False)
+            combined_extract_df.boxplot(column='AfterLOC', by='Language', ax=ax2, showfliers=False, showmeans=True)
             ax2.set_title('AfterLOC for EXTRACT Refactoring by Language')
             ax2.set_xlabel('Language')
             ax2.set_ylabel('Lines of Code')
