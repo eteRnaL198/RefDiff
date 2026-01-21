@@ -133,7 +133,7 @@ if __name__ == '__main__':
                     ax.bar_label(container, labels=display_labels, label_type='center', color='white', weight='bold')
 
 
-            plt.title('Distribution of Refactoring Types by Language')
+            plt.title('Count of Refactoring Types by Language')
 
             plt.xlabel('Language')
 
