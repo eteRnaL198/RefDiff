@@ -71,7 +71,14 @@ def join_table_java(oracle_df: DataFrame, detected_df: DataFrame, does_ignore_li
 
     result_df["oracle index"] = merged_df["oracle index"]
     result_df["detected index"] = merged_df["detected index"]
-    result_df["note"] = "" # TODO for notes
+    result_df["note"] = ""
+    # Mark rows that are detected-only (not present in the dataset/oracle)
+    try:
+        mask_right_only = merged_df["_merge"] == "right_only"
+        result_df.loc[mask_right_only, "note"] = "Not in dataset"
+    except Exception:
+        # if _merge column missing or assignment fails, leave notes empty
+        pass
 
     return result_df
 

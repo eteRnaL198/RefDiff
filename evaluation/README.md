@@ -2,6 +2,7 @@
 ./gradlew runEvaluation --args='java'
 ./gradlew runEvaluation --args='c precision'
 ./gradlew runEvaluation --args='js recall'
+./gradlew runEvaluation --args='js precision head'
 ```
 
 For a specific directory:
@@ -12,4 +13,10 @@ For a specific directory:
 
 ```bash
 ./gradlew runDebug
+```
+
+```bash
+./build/install/evaluation/bin/evaluation java
+./build/install/evaluation/bin/evaluation javascript precision
+./build/install/evaluation/bin/evaluation javascript head
 ```

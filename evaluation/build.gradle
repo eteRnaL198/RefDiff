@@ -21,6 +21,10 @@ dependencies {
     testImplementation 'junit:junit:4.11'
 }
 
+application {
+    mainClass = 'evaluation.Executor'
+}
+
 task runEvaluation(type: JavaExec) {
     group = 'Application'
     description = 'Runs the performance evaluation executor. Args: <language> [metric]'

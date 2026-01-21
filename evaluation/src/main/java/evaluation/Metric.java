@@ -11,7 +11,7 @@ public enum Metric {
       case "recall":
         return RECALL;
       default:
-        throw new IllegalArgumentException("Unsupported metric: " + metric);
+        return null;
     }
   }
 }

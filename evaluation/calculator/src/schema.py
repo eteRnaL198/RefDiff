@@ -1,5 +1,6 @@
 detected_schema = {
     "index": int,
+    "url": str,
     "repository": str,
     "commit": str,
     "type": str,

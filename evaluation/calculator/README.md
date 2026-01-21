@@ -13,3 +13,10 @@ venv/bin/python -m src.main -l c -m precision -d ../detection-result/1027-0837-c
 ```bash
 python3 -m unittest
 ```
+
+## Random Sampling
+To randomly sample from the merged result CSV file, use `random.py` which outputs a randomly sampled CSV file to `/calculator/sampled/sampled-{lang}-head-{date}-seed{seed}.csv`.
+
+```bash
+venv/bin/python -m src.manual.random
+```

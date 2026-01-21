@@ -57,8 +57,8 @@ public class Debugger {
 
         if (IS_FOR_REPO) {
             File baseDir = new File("repository");
-            File repo = Commit.clone(baseDir, Commit.extractOwner(COMMIT_URL), Commit.extractRepoName(COMMIT_URL));
-            diff = debugger.diff(plugin, repo, Commit.extractSha1(COMMIT_URL));
+            File repo = CommitUrl.clone(baseDir, CommitUrl.extractOwner(COMMIT_URL), CommitUrl.extractRepoName(COMMIT_URL));
+            diff = debugger.diff(plugin, repo, CommitUrl.extractSha1(COMMIT_URL));
         } else {
             Path path = Paths.get("src/test/resources/", DIR_NAME);
             diff = debugger.diff(plugin, path);

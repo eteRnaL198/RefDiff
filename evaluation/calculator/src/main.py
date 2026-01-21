@@ -33,7 +33,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Read and summarize a java.csv result file")
     parser.add_argument("--language", "-l", default="java", choices=["java", "c", "js"], help="Programming language")
     parser.add_argument("--metric", "-m", default="precision", choices=["precision", "recall"], help="Metric to calculate")
-    parser.add_argument("--detected", "-d", default="../detection-result/java-1116-1601.csv", help="Relative path to detected results")
+    # parser.add_argument("--detected", "-d", default="../detection-result/java/java-0121-0453.csv", help="Relative path to detected results")
+    parser.add_argument("--detected", "-d", default="../detection-result/javascript/recall/javascript-recall-0121-0533.csv", help="Relative path to detected results")
     args = parser.parse_args(argv)
 
     detected_path = Path(args.detected)
