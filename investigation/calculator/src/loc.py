@@ -3,13 +3,14 @@ import glob
 import os
 import csv
 import matplotlib.pyplot as plt
+import datetime
 
 OUT_BEFORE_PATH = './output/extract_before_loc.png'
 OUT_AFTER_PATH = './output/extract_after_loc.png'
 
 def load_csv_files():
     base_path = '../result'
-    languages = ['C', 'Java', 'JavaScript', 'PHP', 'Python', 'Ruby', 'Go']
+    languages = ["c", "java", "javascript", "php", "python", "ruby", "go"]
     all_dfs = {}
     all_commits = {}
 
@@ -99,9 +100,10 @@ if __name__ == '__main__':
             ax1.set_ylabel('Lines of Code')
             plt.suptitle('')
             plt.tight_layout()
-            ensure_parent_dir(OUT_BEFORE_PATH)
-            plt.savefig(OUT_BEFORE_PATH)
-            print(f"Saved BeforeLOC boxplot to {OUT_BEFORE_PATH}")
+            out_before_path = OUT_BEFORE_PATH.format(ts=datetime.datetime.now().strftime("%m%d_%H-%M"))
+            ensure_parent_dir(out_before_path)
+            plt.savefig(out_before_path)
+            print(f"Saved BeforeLOC boxplot to {out_before_path}")
             plt.close(fig1)
 
             # AfterLOC boxplot
@@ -112,9 +114,10 @@ if __name__ == '__main__':
             ax2.set_ylabel('Lines of Code')
             plt.suptitle('')
             plt.tight_layout()
-            ensure_parent_dir(OUT_AFTER_PATH)
-            plt.savefig(OUT_AFTER_PATH)
-            print(f"Saved AfterLOC boxplot to {OUT_AFTER_PATH}")
+            out_after_path = OUT_AFTER_PATH.format(ts=datetime.datetime.now().strftime("%m%d_%H-%M"))
+            ensure_parent_dir(out_after_path)
+            plt.savefig(out_after_path)
+            print(f"Saved AfterLOC boxplot to {out_after_path}")
             plt.close(fig2)
         else:
             print("No valid data to plot after cleaning.")

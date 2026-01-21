@@ -2,8 +2,9 @@ import pandas as pd
 import glob
 import os
 import csv
+import datetime
 
-OUT_PATH = './output/refactoring_distribution.png'
+OUT_PATH_TEMPLATE = './output/refactoring_distribution_{ts}.png'
 
 def load_csv_files():
     base_path = '../result'
@@ -144,12 +145,12 @@ if __name__ == '__main__':
             plt.tight_layout()
 
 
+            # Save the plot (include month-day and hour-minute, no year)
+            out_path = OUT_PATH_TEMPLATE.format(ts=datetime.datetime.now().strftime("%m-%d_%H-%M"))
+            ensure_parent_dir(out_path)
+            plt.savefig(out_path)
 
-            # Save the plot
-            ensure_parent_dir(OUT_PATH)
-            plt.savefig(OUT_PATH)
-
-            print(f"Plot saved to {OUT_PATH}")
+            print(f"Plot saved to {out_path}")
 
 
 
