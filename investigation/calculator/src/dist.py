@@ -7,7 +7,7 @@ OUT_PATH = './output/refactoring_distribution.png'
 
 def load_csv_files():
     base_path = '../result'
-    languages = ['C', 'Java', 'JavaScript', 'PHP', 'Python', 'Ruby', 'Go']
+    languages = ['c', 'java', 'javascript', 'php', 'python', 'ruby', 'go']
     all_dfs = {}
     all_commits = {}
 
