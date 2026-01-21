@@ -5,8 +5,8 @@ import csv
 import matplotlib.pyplot as plt
 import datetime
 
-OUT_BEFORE_PATH = './output/extract_before_loc.png'
-OUT_AFTER_PATH = './output/extract_after_loc.png'
+OUT_BEFORE_PATH = './output/extract_before_loc_{ts}.png'
+OUT_AFTER_PATH = './output/extract_after_loc_{ts}.png'
 
 def load_csv_files():
     base_path = '../result'
