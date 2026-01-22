@@ -35,7 +35,7 @@ import refdiff.parsers.universal.php.PhpPlugin;
 
 public class Executor {
     private static int COMMIT_DEPTH = 2000000;
-    private static final int BATCH_SIZE = 500;
+    private static final int BATCH_SIZE = 1000;
 
     private int commitCount = 0;
     private String currentCommitSha = "";
@@ -45,6 +45,7 @@ public class Executor {
         boolean resume = false;
         String languageArg = null;
         String repoArg = null;
+        String resultDirArg = null;
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
             if ("--resume".equals(a)) {
@@ -63,6 +64,13 @@ public class Executor {
                 }
             } else if (a.startsWith("--repo=")) {
                 repoArg = a.substring("--repo=".length());
+            } else if (a.startsWith("--result-dir=")) {
+                resultDirArg = a.substring("--result-dir=".length());
+            } else if ("--result-dir".equals(a)) {
+                if (i + 1 < args.length) {
+                    resultDirArg = args[i + 1];
+                    i++;
+                }
             }
         }
 
@@ -72,7 +80,7 @@ public class Executor {
             System.exit(1);
         }
 
-        new Executor().execute(resume, languageArg, repoArg);
+        new Executor().execute(resume, languageArg, repoArg, resultDirArg);
     }
 
     private void incrementCommitCount() {
@@ -83,7 +91,12 @@ public class Executor {
         currentCommitSha = sha;
     }
 
-    private void execute(boolean resume, String selectedLanguage, String selectedRepoUrl) throws Exception {
+    private String resultBase = "result";
+
+    private void execute(boolean resume, String selectedLanguage, String selectedRepoUrl, String resultBaseDir) throws Exception {
+        if (resultBaseDir != null && !resultBaseDir.trim().isEmpty()) {
+            this.resultBase = resultBaseDir;
+        }
         Map<String, Map<String, File>> clonedReposByLang;
         if (selectedRepoUrl == null || selectedRepoUrl.trim().isEmpty()) {
             clonedReposByLang = getRepos(selectedLanguage);
@@ -112,7 +125,7 @@ public class Executor {
                     startCommitSha = getLatestCommitSha(lang, repoName);
                 }
 
-                Path outDir = Paths.get("result", lang);
+                Path outDir = Paths.get(this.resultBase, lang);
                 Files.createDirectories(outDir);
 
                 commitCount = 0;
@@ -177,7 +190,7 @@ public class Executor {
     }
 
     private String getLatestCommitSha(String lang, String repoName) {
-        Path resultDir = Paths.get("result", lang);
+        Path resultDir = Paths.get(this.resultBase, lang);
         if (!Files.exists(resultDir)) {
             return null;
         }
