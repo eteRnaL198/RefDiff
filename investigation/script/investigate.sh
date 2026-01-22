@@ -8,53 +8,53 @@ APP_BIN="./build/install/investigation/bin/investigation"
 # For each language: 5 domains (exclude Documentation), take the 2nd-most-starred repo per domain
 ITEMS=(
   # C
-  "c|https://github.com/tmux/tmux.git"                    # Application software (2nd)
-  "c|https://github.com/torch/torch7.git"                 # Non-web libraries and frameworks (2nd)
-  "c|https://github.com/git/git.git"                     # Software tools (2nd)
-  "c|https://github.com/antirez/redis.git"               # System software (2nd)
-  "c|https://github.com/allinurl/goaccess.git"           # Web libraries and frameworks (2nd)
+  # "c|https://github.com/tmux/tmux.git"                    # Application software (2nd)
+  # "c|https://github.com/torch/torch7.git"                 # Non-web libraries and frameworks (2nd)
+  # "c|https://github.com/git/git.git"                     # Software tools (2nd)
+  # "c|https://github.com/antirez/redis.git"               # System software (2nd)
+  # "c|https://github.com/allinurl/goaccess.git"           # Web libraries and frameworks (2nd)
 
   # Go
-  "go|https://github.com/spf13/hugo.git"                 # Application software (2nd)
-  "go|https://github.com/go-kit/kit.git"                 # Non-web libraries and frameworks (2nd)
-  "go|https://github.com/gogits/gogs.git"                # Software tools (2nd)
-  "go|https://github.com/golang/go.git"                  # System software (2nd)
-  "go|https://github.com/gin-gonic/gin.git"              # Web libraries and frameworks (2nd)
+  # "go|https://github.com/spf13/hugo.git"                 # Application software (2nd)
+  # "go|https://github.com/go-kit/kit.git"                 # Non-web libraries and frameworks (2nd)
+  # "go|https://github.com/gogits/gogs.git"                # Software tools (2nd)
+  # "go|https://github.com/golang/go.git"                  # System software (2nd)
+  # "go|https://github.com/gin-gonic/gin.git"              # Web libraries and frameworks (2nd)
 
   # Java
-  "java|https://github.com/hannahmitt/homemirror.git"    # Application software (2nd)
+  # "java|https://github.com/hannahmitt/homemirror.git"    # Application software (2nd)
   "java|https://github.com/google/guava.git"             # Non-web libraries and frameworks (2nd)
-  "java|https://github.com/spring-projects/spring-boot.git" # Software tools (2nd)
-  "java|https://github.com/clojure/clojure.git"          # System software (2nd)
-  "java|https://github.com/spring-projects/spring-framework.git" # Web libraries and frameworks (2nd)
+  # "java|https://github.com/spring-projects/spring-boot.git" # Software tools (2nd)
+  # "java|https://github.com/clojure/clojure.git"          # System software (2nd)
+  # "java|https://github.com/spring-projects/spring-framework.git" # Web libraries and frameworks (2nd)
 
   # JavaScript
-  "javascript|https://github.com/resume/resume.github.com.git" # Application software (2nd)
-  "javascript|https://github.com/lodash/lodash.git"      # Non-web libraries and frameworks (2nd)
-  "javascript|https://github.com/yarnpkg/yarn.git"       # Software tools (2nd)
-  "javascript|https://github.com/typicode/json-server.git" # System software (2nd)
-  "javascript|https://github.com/angular/angular.js.git" # Web libraries and frameworks (2nd)
+  # "javascript|https://github.com/resume/resume.github.com.git" # Application software (2nd)
+  # "javascript|https://github.com/lodash/lodash.git"      # Non-web libraries and frameworks (2nd)
+  # "javascript|https://github.com/yarnpkg/yarn.git"       # Software tools (2nd)
+  # "javascript|https://github.com/typicode/json-server.git" # System software (2nd)
+  # "javascript|https://github.com/angular/angular.js.git" # Web libraries and frameworks (2nd)
 
   # PHP
-  "php|https://github.com/phanan/koel.git"               # Application software (2nd)
-  "php|https://github.com/phpoffice/phpexcel.git"        # Non-web libraries and frameworks (2nd)
-  "php|https://github.com/piwik/piwik.git"               # Software tools (2nd)
+  # "php|https://github.com/phanan/koel.git"               # Application software (2nd)
+  # "php|https://github.com/phpoffice/phpexcel.git"        # Non-web libraries and frameworks (2nd)
+  # "php|https://github.com/piwik/piwik.git"               # Software tools (2nd)
   # php has only one popular system software repo
-  "php|https://github.com/bcit-ci/codeigniter.git"      # Web libraries and frameworks (2nd)
+  # "php|https://github.com/bcit-ci/codeigniter.git"      # Web libraries and frameworks (2nd)
 
   # Python
-  "python|https://github.com/reddit/reddit.git"          # Application software (2nd)
-  "python|https://github.com/scikit-learn/scikit-learn.git" # Non-web libraries and frameworks (2nd)
-  "python|https://github.com/nvbn/thefuck.git"           # Software tools (2nd)
-  "python|https://github.com/samshadwell/trumpscript.git" # System software (2nd)
-  "python|https://github.com/django/django.git"          # Web libraries and frameworks (2nd)
+  # "python|https://github.com/reddit/reddit.git"          # Application software (2nd)
+  # "python|https://github.com/scikit-learn/scikit-learn.git" # Non-web libraries and frameworks (2nd)
+  # "python|https://github.com/nvbn/thefuck.git"           # Software tools (2nd)
+  # "python|https://github.com/samshadwell/trumpscript.git" # System software (2nd)
+  # "python|https://github.com/django/django.git"          # Web libraries and frameworks (2nd)
 
   # Ruby
-  "ruby|https://github.com/discourse/discourse.git"      # Application software (2nd)
-  "ruby|https://github.com/thoughtbot/paperclip.git"     # Non-web libraries and frameworks (2nd)
-  "ruby|https://github.com/cantino/huginn.git"           # Software tools (2nd)
-  "ruby|https://github.com/jruby/jruby.git"              # System software (2nd)
-  "ruby|https://github.com/sinatra/sinatra.git"          # Web libraries and frameworks (2nd)
+  # "ruby|https://github.com/discourse/discourse.git"      # Application software (2nd)
+  # "ruby|https://github.com/thoughtbot/paperclip.git"     # Non-web libraries and frameworks (2nd)
+  # "ruby|https://github.com/cantino/huginn.git"           # Software tools (2nd)
+  # "ruby|https://github.com/jruby/jruby.git"              # System software (2nd)
+  # "ruby|https://github.com/sinatra/sinatra.git"          # Web libraries and frameworks (2nd)
 )
 
 # rank 1
