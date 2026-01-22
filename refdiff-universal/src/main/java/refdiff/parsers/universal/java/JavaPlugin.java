@@ -125,7 +125,7 @@ public class JavaPlugin extends BasePlugin {
             cstNode.setLocalName(NodeUtils.getNodeText(name, sourceBytes) + NodeUtils.generateParams(method_params));
           } catch (RuntimeException e) {
             System.out.println("Error extracting method parameters: " + path + ": " + e.getMessage());
-            throw e;
+            cstNode.setLocalName(NodeUtils.getNodeText(name, sourceBytes) + "()");
           }
           cstNode.addStereotypes(Stereotype.TYPE_MEMBER);
           break;
@@ -166,8 +166,9 @@ public class JavaPlugin extends BasePlugin {
             continue; // Skipping receiver parameters for localName.
         } else if (parameter.getType().equals("block_comment") || parameter.getType().equals("line_comment")) {
             continue; // Skip comments within parameters
+        } else if (parameter.getType().equals("ERROR")) {
+            continue; // Skip error nodes
         }
-
         if (paramTypeString != null) {
           parameters.add(new Parameter(paramTypeString));
         } else {

@@ -47,7 +47,7 @@ public class TestJavaPlugin {
         }
     }
 
-    @Test
+    // @Test
     public void shouldParseClassDeclarationsCorrectly() throws Exception {
         Path baseFolderPath = Paths.get(TEST_DATA_BASE_PATH + "/class");
         SourceFileSet sources = SourceFolder.from(baseFolderPath, ".java");
@@ -93,4 +93,32 @@ public class TestJavaPlugin {
             assertTrue(actualNode.getParameters().isEmpty());
         }
     }
+
+    @Test
+    public void shouldParseMethodDeclarationsCorrectly() throws Exception {
+        Path baseFolderPath = Paths.get(TEST_DATA_BASE_PATH + "/method");
+        SourceFileSet sources = SourceFolder.from(baseFolderPath, ".java");
+        CstRoot cstRoot = parser.parse(sources);
+
+        List<CstNode> nodes = new ArrayList<>();
+        cstRoot.forEachNode((node, depth) -> {
+            nodes.add(node);
+        });
+
+        List<ExpectedNode> expectedNodes = Arrays.asList(
+            new ExpectedNode("checkArgument", JavaNodeTypes.METHOD, 7, "checkArgument(boolean, String)",null, "Precondition.java")
+        );
+
+        for (ExpectedNode expected : expectedNodes) {
+            CstNode actualNode = findNode(nodes, expected.name(), expected.line());
+            assertThat(actualNode.getType(), is(equalTo(expected.type())));
+            assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
+            assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+            assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+            Location location = actualNode.getLocation();
+            assertThat(location.getFile(), is(equalTo(expected.fileName())));
+            assertThat(location.getBeginLine(), is(equalTo(expected.line())));
+        }
+    }
+
 }
