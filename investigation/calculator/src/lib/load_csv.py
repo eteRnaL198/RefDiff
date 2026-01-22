@@ -28,9 +28,7 @@ def load_csv_files(base_path):
             continue
 
         for file in csv_files:
-            repo_name = os.path.splitext(os.path.basename(file))[
-                0
-            ]  # repo_name-MMDD-HHMM
+            repo_name = os.path.splitext(os.path.basename(file))[0].split('-')[0]  # take part before '-'
             try:
                 df_file = pd.read_csv(
                     file, header=None, names=column_names, dtype=str, encoding="utf-8"
