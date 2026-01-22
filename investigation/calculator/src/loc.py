@@ -5,74 +5,21 @@ import csv
 import matplotlib.pyplot as plt
 import datetime
 
-OUT_BEFORE_PATH = './output/extract_before_loc_{ts}.png'
-OUT_AFTER_PATH = './output/extract_after_loc_{ts}.png'
+from src.lib.load_csv import load_csv_files
+from src.lib.file_util import ensure_parent_dir
 
-def load_csv_files():
-    base_path = '../result'
-    languages = ["c", "java", "javascript", "php", "python", "ruby", "go"]
-    all_dfs = {}
-    all_commits = {}
-
-    column_names = ['Commit', 'RefactoringType', 'Before', 'After', 'BeforeLOC', 'AfterLOC']
-
-    for lang in languages:
-        path = os.path.join(base_path, lang)
-        csv_files = glob.glob(os.path.join(path, '*.csv'))
-
-        if not csv_files:
-            print(f'No CSV files found for {lang}')
-            continue
-
-        df_list = []
-        commit_list = []
-        for file in csv_files:
-            rows_6_cols = []
-            rows_1_col = []
-            try:
-                with open(file, 'r', newline='', encoding='utf-8') as f:
-                    reader = csv.reader(f)
-                    for row in reader:
-                        if len(row) == 6:
-                            rows_6_cols.append(row)
-                        elif len(row) == 1:
-                            rows_1_col.append(row[0])
-            except Exception as e:
-                print(f"Error reading {file}: {e}")
-
-            if rows_6_cols:
-                df = pd.DataFrame(rows_6_cols, columns=column_names)
-                df_list.append(df)
-
-            if rows_1_col:
-                commit_list.extend(rows_1_col)
-
-        if df_list:
-            all_dfs[lang] = pd.concat(df_list, ignore_index=True)
-
-        if commit_list:
-            all_commits[lang] = commit_list
-
-    return all_dfs, all_commits
-
-def ensure_parent_dir(filepath):
-    dirpath = os.path.dirname(filepath)
-    if dirpath and not os.path.exists(dirpath):
-        try:
-            os.makedirs(dirpath, exist_ok=True)
-        except Exception as e:
-            print(f"Could not create directory {dirpath}: {e}")
+OUT_BEFORE_PATH = './output/extract_before_loc_{ts}.pdf'
+OUT_AFTER_PATH = './output/extract_after_loc_{ts}.pdf'
 
 if __name__ == '__main__':
-    dataframes, _ = load_csv_files()
+    df_all = load_csv_files("../result")
 
     extract_data_list = []
 
-    for lang, df in dataframes.items():
-        if 'RefactoringType' in df.columns and 'BeforeLOC' in df.columns and 'AfterLOC' in df.columns:
-            extract_df = df[df['RefactoringType'] == 'EXTRACT'].copy()
-            if not extract_df.empty:
-                extract_df['Language'] = lang
+    if not df_all.empty and 'Lang' in df_all.columns:
+        for lang, df_lang in df_all.groupby('Lang'):
+            if 'RefactoringType' in df_lang.columns and 'BeforeLOC' in df_lang.columns and 'AfterLOC' in df_lang.columns:
+                extract_df = df_lang[df_lang['RefactoringType'] == 'EXTRACT'].copy()
                 extract_data_list.append(extract_df)
 
     if extract_data_list:
@@ -94,7 +41,7 @@ if __name__ == '__main__':
 
             # BeforeLOC boxplot
             fig1, ax1 = plt.subplots(figsize=(12, 8))
-            combined_extract_df.boxplot(column='BeforeLOC', by='Language', ax=ax1, showfliers=False, showmeans=True)
+            combined_extract_df.boxplot(column='BeforeLOC', by='Lang', ax=ax1, showfliers=False, showmeans=True)
             ax1.set_title('BeforeLOC for EXTRACT Refactoring by Language')
             ax1.set_xlabel('Language')
             ax1.set_ylabel('Lines of Code')
@@ -108,7 +55,7 @@ if __name__ == '__main__':
 
             # AfterLOC boxplot
             fig2, ax2 = plt.subplots(figsize=(12, 8))
-            combined_extract_df.boxplot(column='AfterLOC', by='Language', ax=ax2, showfliers=False, showmeans=True)
+            combined_extract_df.boxplot(column='AfterLOC', by='Lang', ax=ax2, showfliers=False, showmeans=True)
             ax2.set_title('AfterLOC for EXTRACT Refactoring by Language')
             ax2.set_xlabel('Language')
             ax2.set_ylabel('Lines of Code')
