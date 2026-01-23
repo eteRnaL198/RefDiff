@@ -123,6 +123,10 @@ public class Executor {
                 String startCommitSha = null;
                 if (resume) {
                     startCommitSha = getLatestCommitSha(lang, repoName);
+                    if (startCommitSha == null) {
+                        System.out.println("No latest commit found for " + repoName);
+                        continue;
+                    }
                 }
 
                 Path outDir = Paths.get(this.resultBase, lang);
@@ -218,8 +222,11 @@ public class Executor {
                             if (columns.length > 0) {
                                 String commitSha = columns[0].replace("\"", "");
                                 if (!commitSha.trim().isEmpty()) {
-                                    System.out.println("Resuming from commit " + commitSha + " for repo " + repoName
-                                            + " from file " + csvPath.getFileName());
+                                    if (commitSha.length() != 40) {
+                                        continue;
+                                    }
+                                    System.out.println("Latest commit " + commitSha + " for " + repoName
+                                            + " file " + csvPath.getFileName());
                                     return commitSha;
                                 }
                             }
