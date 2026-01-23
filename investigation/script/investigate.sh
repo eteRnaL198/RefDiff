@@ -4,6 +4,21 @@ set -e
 
 APP_BIN="./build/install/investigation/bin/investigation"
 
+# for js
+ITEMS=(
+  "javascript|https://github.com/adobe/brackets.git" # App
+  "javascript|https://github.com/moment/moment.git" # Non-web
+  "javascript|https://github.com/gulpjs/gulp.git" # Software tool
+  "javascript|https://github.com/nodejs/node.git" # System
+  "javascript|https://github.com/facebook/react.git" # Web
+
+  "javascript|https://github.com/resume/resume.github.com.git" # Application software (2nd)
+  "javascript|https://github.com/lodash/lodash.git"      # Non-web libraries and frameworks (2nd)
+  "javascript|https://github.com/yarnpkg/yarn.git"       # Software tools (2nd)
+  "javascript|https://github.com/typicode/json-server.git" # System software (2nd)
+  "javascript|https://github.com/angular/angular.js.git" # Web libraries and frameworks (2nd)
+)
+
 # "lang|repo_url".
 # For each language: 5 domains (exclude Documentation), take the 2nd-most-starred repo per domain
 ITEMS=(
@@ -23,7 +38,7 @@ ITEMS=(
 
   # Java
   # "java|https://github.com/hannahmitt/homemirror.git"    # Application software (2nd)
-  "java|https://github.com/google/guava.git"             # Non-web libraries and frameworks (2nd)
+  # "java|https://github.com/google/guava.git"             # Non-web libraries and frameworks (2nd)
   # "java|https://github.com/spring-projects/spring-boot.git" # Software tools (2nd)
   # "java|https://github.com/clojure/clojure.git"          # System software (2nd)
   # "java|https://github.com/spring-projects/spring-framework.git" # Web libraries and frameworks (2nd)
@@ -71,12 +86,12 @@ ITEMS=(
 #   "c|https://github.com/torvalds/linux.git" # System
 #   "c|https://github.com/phpredis/phpredis.git" # Web
 
-#   "javascript|https://github.com/adobe/brackets.git" # App
-#   "javascript|https://github.com/moment/moment.git" # Non-web
-#   "javascript|https://github.com/gulpjs/gulp.git" # Software tool
-#   "javascript|https://github.com/nodejs/node.git" # System
-#   "javascript|https://github.com/facebook/react.git" # Web
-
+  # "javascript|https://github.com/adobe/brackets.git" # App
+  # "javascript|https://github.com/moment/moment.git" # Non-web
+  # "javascript|https://github.com/gulpjs/gulp.git" # Software tool
+  # "javascript|https://github.com/nodejs/node.git" # System
+  # "javascript|https://github.com/facebook/react.git" # Web
+# 
 #   "ruby|https://github.com/jekyll/jekyll.git" # App
 #   "ruby|https://github.com/plataformatec/devise.git" # Non-web library
 #   "ruby|https://github.com/gitlabhq/gitlabhq.git" # Software tool
