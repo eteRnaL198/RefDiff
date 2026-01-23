@@ -301,32 +301,33 @@ public class JsPlugin extends BasePlugin {
             funcName = "anonymousFunction";
           }
           cstNode.setSimpleName(funcName);
-          cstNode.setLocalName(funcName);
-
+          
           List<Parameter> cstParameters = new ArrayList<>();
           if (parameters != null) {
-            extractParameters(parameters, sourceBytes, cstParameters, tsLang);
+            cstParameters = extractParameters(parameters, sourceBytes, tsLang);
           }
           cstNode.setParameters(cstParameters);
+          cstNode.setLocalName(funcName + NodeUtils.generateParams(cstParameters));
         }
       }
       addNodeToParent(cstNode, namespace);
     }
   }
 
-  private void extractParameters(TSNode parametersHostNode, byte[] sourceBytes, List<Parameter> cstParameters, TSLanguage tsLang) {
+  private List<Parameter> extractParameters(TSNode parametersHostNode, byte[] sourceBytes, TSLanguage tsLang) {
+    List<Parameter> cstParameters = new ArrayList<>();
     if (parametersHostNode == null) {
-        return;
+        return cstParameters;
     }
 
     String hostNodeType = parametersHostNode.getType();
     if ("identifier".equals(hostNodeType)) { // Single parameter for arrow function: param => ...
         cstParameters.add(new Parameter(NodeUtils.getNodeText(parametersHostNode, sourceBytes)));
-        return;
+        return cstParameters;
     }
 
     if (!"formal_parameters".equals(hostNodeType)) {
-        return;
+        return cstParameters;
     }
 
     for (int i = 0; i < parametersHostNode.getNamedChildCount(); i++) {
@@ -336,6 +337,7 @@ public class JsPlugin extends BasePlugin {
             cstParameters.add(new Parameter(paramName));
         }
     }
+    return cstParameters;
   }
 
   private String queryParameterName(TSNode paramNode, byte[] sourceBytes, TSLanguage tsLang) {

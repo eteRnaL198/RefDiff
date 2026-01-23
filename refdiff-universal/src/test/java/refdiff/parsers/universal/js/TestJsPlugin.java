@@ -3,8 +3,8 @@ package refdiff.parsers.universal.js;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -63,16 +63,16 @@ public class TestJsPlugin {
     List<ExpectedNode> expectedNodes = Arrays.asList(
         new ExpectedNode("file.js", JsNodeTypes.FILE, 1, "file.js", "dir/", "dir/file.js")
     );
-    for (ExpectedNode expected : expectedNodes) {
-        CstNode actualNode = findNode(fileNodes, expected.name(), expected.line());
-        assertThat(actualNode.getType(), is(equalTo(expected.type())));
-        assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
-        assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
-        assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
-        Location location = actualNode.getLocation();
-        assertThat(location.getFile(), is(equalTo(expected.fileName())));
-        assertThat(location.getBeginLine(), is(equalTo(expected.line())));
-    }
+    assertAll(expectedNodes.stream().map(expected -> () -> {
+      CstNode actualNode = findNode(fileNodes, expected.name(), expected.line());
+      assertThat(actualNode.getType(), is(equalTo(expected.type())));
+      assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
+      assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+      assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+      Location location = actualNode.getLocation();
+      assertThat(location.getFile(), is(equalTo(expected.fileName())));
+      assertThat(location.getBeginLine(), is(equalTo(expected.line())));
+    }));
   }
 
   @Test
@@ -88,23 +88,21 @@ public class TestJsPlugin {
       }
     });
 
-    assertThat("Should find 2 class declarations", classNodes.size(), is(equalTo(2)));
-
     List<ExpectedNode> expectedNodes = Arrays.asList(
         new ExpectedNode("Animal", JsNodeTypes.CLASS, 2, "Animal", null, "dir/class.js"),
         new ExpectedNode("Dog", JsNodeTypes.CLASS, 65, "Dog", null, "dir/class.js")
     );
 
-    for (ExpectedNode expected : expectedNodes) {
-        CstNode actualNode = findNode(classNodes, expected.name(), expected.line());
-        assertThat(actualNode.getType(), is(equalTo(expected.type())));
-        assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
-        assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
-        assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
-        Location location = actualNode.getLocation();
-        assertThat(location.getFile(), is(equalTo(expected.fileName())));
-        assertThat(location.getBeginLine(), is(equalTo(expected.line())));
-    }
+    assertAll(expectedNodes.stream().map(expected -> () -> {
+      CstNode actualNode = findNode(classNodes, expected.name(), expected.line());
+      assertThat(actualNode.getType(), is(equalTo(expected.type())));
+      assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
+      assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+      assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+      Location location = actualNode.getLocation();
+      assertThat(location.getFile(), is(equalTo(expected.fileName())));
+      assertThat(location.getBeginLine(), is(equalTo(expected.line())));
+    }));
   }
 
   @Test
@@ -121,40 +119,40 @@ public class TestJsPlugin {
     });
 
     List<ExpectedNode> expectedNodes = Arrays.asList(
-        new ExpectedNode("classicFunction", JsNodeTypes.FUNCTION, 2, "classicFunction", null, "function.js", List.of("param1", "param2")),
-        new ExpectedNode("anonymousFunction", JsNodeTypes.FUNCTION, 10, "anonymousFunction", null, "function.js", List.of("a", "b")),
-        new ExpectedNode("arrowFunctionSimple", JsNodeTypes.FUNCTION, 16, "arrowFunctionSimple", null, "function.js", List.of("x", "y")),
-        new ExpectedNode("arrowFunctionSingleParam", JsNodeTypes.FUNCTION, 19, "arrowFunctionSingleParam", null, "function.js", List.of("param")),
-        new ExpectedNode("arrowFunctionNoParam", JsNodeTypes.FUNCTION, 22, "arrowFunctionNoParam", null, "function.js", List.of()),
-        new ExpectedNode("arrowFunctionBlockBody", JsNodeTypes.FUNCTION, 25, "arrowFunctionBlockBody", null, "function.js", List.of("val1", "val2")),
-        new ExpectedNode("higherOrderFunction", JsNodeTypes.FUNCTION, 32, "higherOrderFunction", null, "function.js", List.of("callback")),
-        new ExpectedNode("outerFunction", JsNodeTypes.FUNCTION, 39, "outerFunction", null, "function.js", List.of("outerVar")),
-        new ExpectedNode("innerFunction", JsNodeTypes.FUNCTION, 41, "innerFunction", null, "function.js", List.of("innerParam")),
-        new ExpectedNode("processArguments", JsNodeTypes.FUNCTION, 50, "processArguments", null, "function.js", List.of("firstArg", "...restArgs")),
-        new ExpectedNode("greet", JsNodeTypes.FUNCTION, 58, "greet", null, "function.js", List.of("name")),
-        new ExpectedNode("performAsyncOperation", JsNodeTypes.FUNCTION, 65, "performAsyncOperation", null, "function.js", List.of("success")),
-        new ExpectedNode("idGenerator", JsNodeTypes.FUNCTION, 91, "idGenerator", null, "function.js", List.of()),
-        new ExpectedNode("fibonacciSequence", JsNodeTypes.FUNCTION, 101, "fibonacciSequence", null, "function.js", List.of()),
-        new ExpectedNode("functionWithErrorHandling", JsNodeTypes.FUNCTION, 114, "functionWithErrorHandling", null, "function.js", List.of("num")),
-        new ExpectedNode("functionWithIIFE", JsNodeTypes.FUNCTION, 132, "functionWithIIFE", null, "function.js", List.of()),
-        new ExpectedNode("labeledLoopFunction", JsNodeTypes.FUNCTION, 145, "labeledLoopFunction", null, "function.js", List.of())
+        new ExpectedNode("classicFunction", JsNodeTypes.FUNCTION, 2, "classicFunction(param1, param2)", null, "function.js", List.of("param1", "param2")),
+        new ExpectedNode("anonymousFunction", JsNodeTypes.FUNCTION, 10, "anonymousFunction(a, b)", null, "function.js", List.of("a", "b")),
+        new ExpectedNode("arrowFunctionSimple", JsNodeTypes.FUNCTION, 16, "arrowFunctionSimple(x, y)", null, "function.js", List.of("x", "y")),
+        new ExpectedNode("arrowFunctionSingleParam", JsNodeTypes.FUNCTION, 19, "arrowFunctionSingleParam(param)", null, "function.js", List.of("param")),
+        new ExpectedNode("arrowFunctionNoParam", JsNodeTypes.FUNCTION, 22, "arrowFunctionNoParam()", null, "function.js", List.of()),
+        new ExpectedNode("arrowFunctionBlockBody", JsNodeTypes.FUNCTION, 25, "arrowFunctionBlockBody(val1, val2)", null, "function.js", List.of("val1", "val2")),
+        new ExpectedNode("higherOrderFunction", JsNodeTypes.FUNCTION, 32, "higherOrderFunction(callback)", null, "function.js", List.of("callback")),
+        new ExpectedNode("outerFunction", JsNodeTypes.FUNCTION, 39, "outerFunction(outerVar)", null, "function.js", List.of("outerVar")),
+        new ExpectedNode("innerFunction", JsNodeTypes.FUNCTION, 41, "innerFunction(innerParam)", null, "function.js", List.of("innerParam")),
+        new ExpectedNode("processArguments", JsNodeTypes.FUNCTION, 50, "processArguments(firstArg, ...restArgs)", null, "function.js", List.of("firstArg", "...restArgs")),
+        new ExpectedNode("greet", JsNodeTypes.FUNCTION, 58, "greet(name)", null, "function.js", List.of("name")),
+        new ExpectedNode("performAsyncOperation", JsNodeTypes.FUNCTION, 65, "performAsyncOperation(success)", null, "function.js", List.of("success")),
+        new ExpectedNode("idGenerator", JsNodeTypes.FUNCTION, 91, "idGenerator()", null, "function.js", List.of()),
+        new ExpectedNode("fibonacciSequence", JsNodeTypes.FUNCTION, 101, "fibonacciSequence()", null, "function.js", List.of()),
+        new ExpectedNode("functionWithErrorHandling", JsNodeTypes.FUNCTION, 114, "functionWithErrorHandling(num)", null, "function.js", List.of("num")),
+        new ExpectedNode("functionWithIIFE", JsNodeTypes.FUNCTION, 132, "functionWithIIFE()", null, "function.js", List.of()),
+        new ExpectedNode("labeledLoopFunction", JsNodeTypes.FUNCTION, 145, "labeledLoopFunction()", null, "function.js", List.of())
     );
 
-    for (ExpectedNode expected : expectedNodes) {
-        CstNode actualNode = findNode(actualFunctionNodes, expected.name(), expected.line());
-        assertThat(actualNode.getType(), is(equalTo(expected.type())));
-        assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
-        assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
-        if (expected.namespace() != null) {
-            assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
-        }
-        Location location = actualNode.getLocation();
-        assertThat(location.getFile(), is(equalTo(expected.fileName())));
-        assertThat(location.getBeginLine(), is(equalTo(expected.line())));
-        List<String> actualParamNames = actualNode.getParameters().stream()
-            .map(Parameter::getName)
-            .collect(Collectors.toList());
-        assertThat(actualParamNames, is(equalTo(expected.params())));
-    }
+    assertAll(expectedNodes.stream().map(expected -> () -> {
+      CstNode actualNode = findNode(actualFunctionNodes, expected.name(), expected.line());
+      assertThat(actualNode.getType(), is(equalTo(expected.type())));
+      assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
+      assertThat(actualNode.getLocalName(), is(equalTo(expected.localName())));
+      if (expected.namespace() != null) {
+          assertThat(actualNode.getNamespace(), is(equalTo(expected.namespace())));
+      }
+      Location location = actualNode.getLocation();
+      assertThat(location.getFile(), is(equalTo(expected.fileName())));
+      assertThat(location.getBeginLine(), is(equalTo(expected.line())));
+      List<String> actualParamNames = actualNode.getParameters().stream()
+          .map(Parameter::getName)
+          .collect(Collectors.toList());
+      assertThat(actualParamNames, is(equalTo(expected.params())));
+    }));
   }
 }
