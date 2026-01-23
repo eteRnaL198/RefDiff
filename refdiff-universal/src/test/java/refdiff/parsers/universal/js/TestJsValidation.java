@@ -3,8 +3,8 @@ package refdiff.parsers.universal.js;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -82,14 +82,14 @@ public class TestJsValidation {
         new ExpectedNode("Wrapper", JsNodeTypes.CLASS, 5, "ReactFresh-test.js"),
         new ExpectedNode("Number", JsNodeTypes.FUNCTION, 1, "ReactChildren-test.js")
     );
-
-    for (ExpectedNode expected : expectedNodes) {
-        CstNode actualNode = findNode(actualNodes, expected.name(), expected.line(), expected.fileName()  );
+    assertAll(expectedNodes.stream().map(expected -> () -> {
+        CstNode actualNode = findNode(actualNodes, expected.name(), expected.line(), expected.fileName());
+        System.out.println(actualNode.getLocalName());
         assertThat(actualNode.getType(), is(equalTo(expected.type())));
         assertThat(actualNode.getSimpleName(), is(equalTo(expected.name())));
         Location location = actualNode.getLocation();
         assertThat(location.getFile(), is(equalTo(expected.fileName())));
         assertThat(location.getBeginLine(), is(equalTo(expected.line())));
-    }
+    }));
   }
 }

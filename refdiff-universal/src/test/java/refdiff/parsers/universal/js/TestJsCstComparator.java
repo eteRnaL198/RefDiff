@@ -36,7 +36,7 @@ public class TestJsCstComparator {
         CstDiff diff = diff("moveFile");
         assertThat(diff, containsOnly(
             relationship(RelationshipType.MOVE, node("script.js"), node("dir/script.js")),
-            relationship(RelationshipType.SAME, node("script.js", "sayHello"), node("dir/script.js", "sayHello"))
+            relationship(RelationshipType.SAME, node("script.js", "sayHello(name)"), node("dir/script.js", "sayHello(name)"))
         ));
     }
 
@@ -46,7 +46,7 @@ public class TestJsCstComparator {
         assertThat(diff, containsOnly(
             relationship(RelationshipType.MOVE, node("script.js", "MyClass"), node("MyMovedClass.js", "MyClass")),
             relationship(RelationshipType.SAME, node("script.js"), node("script.js")),
-            relationship(RelationshipType.SAME, node("script.js", "foo"), node("script.js", "foo"))
+            relationship(RelationshipType.SAME, node("script.js", "foo()"), node("script.js", "foo()"))
         ));
     }
 
@@ -54,9 +54,9 @@ public class TestJsCstComparator {
     public void shouldMatchMoveFunction() throws Exception {
         CstDiff diff = diff("moveFunction");
         assertThat(diff, containsOnly(
-            relationship(RelationshipType.MOVE, node("script.js", "foo"), node("moved.js", "foo")),
+            relationship(RelationshipType.MOVE, node("script.js", "foo()"), node("moved.js", "foo()")),
             relationship(RelationshipType.SAME, node("script.js"), node("script.js")),
-            relationship(RelationshipType.SAME, node("script.js", "bar"), node("script.js", "bar"))
+            relationship(RelationshipType.SAME, node("script.js", "bar()"), node("script.js", "bar()"))
         ));
     }
 
@@ -65,7 +65,7 @@ public class TestJsCstComparator {
         CstDiff diff = diff("renameFile");
         assertThat(diff, containsOnly(
                 relationship(RelationshipType.RENAME, node("script.js"), node("renamed.js")),
-                relationship(RelationshipType.SAME, node("script.js", "sayHello"), node("renamed.js", "sayHello"))
+                relationship(RelationshipType.SAME, node("script.js", "sayHello(name)"), node("renamed.js", "sayHello(name)"))
         ));
     }
 
@@ -82,7 +82,7 @@ public class TestJsCstComparator {
     public void shoudMatchRenameFunction() throws Exception {
         CstDiff diff = diff("renameFunction");
         assertThat(diff, containsOnly(
-                relationship(RelationshipType.RENAME, node("script.js", "foo"), node("script.js", "renamed")),
+                relationship(RelationshipType.RENAME, node("script.js", "foo(msg)"), node("script.js", "renamed(msg)")),
                 relationship(RelationshipType.SAME, node("script.js"), node("script.js"))));
     }
 
@@ -91,7 +91,7 @@ public class TestJsCstComparator {
         CstDiff diff = diff("moveAndRenameFile");
         assertThat(diff, containsOnly(
                 relationship(RelationshipType.MOVE_RENAME, node("script.js"), node("dir/greet.js")),
-                relationship(RelationshipType.SAME, node("script.js", "sayHello"), node("dir/greet.js", "sayHello"))
+                relationship(RelationshipType.SAME, node("script.js", "sayHello(name)"), node("dir/greet.js", "sayHello(name)"))
         ));
     }
 
@@ -99,8 +99,8 @@ public class TestJsCstComparator {
     public void shouldMatchMoveAndRenameFunction() throws Exception {
         CstDiff diff = diff("moveAndRenameFunction");
         assertThat(diff, containsOnly(
-                relationship(RelationshipType.MOVE_RENAME, node("script.js", "foo"), node("foo.js", "renamed")),
-                relationship(RelationshipType.SAME, node("script.js", "bar"), node("script.js", "bar")),
+                relationship(RelationshipType.MOVE_RENAME, node("script.js", "foo(name)"), node("foo.js", "renamed(name)")),
+                relationship(RelationshipType.SAME, node("script.js", "bar()"), node("script.js", "bar()")),
                 relationship(RelationshipType.SAME, node("script.js"), node("script.js"))
         ));
     }
@@ -109,8 +109,8 @@ public class TestJsCstComparator {
     public void shouldMatchExtractFunction() throws Exception {
         CstDiff diff = diff("extractFunction");
         assertThat(diff, containsOnly(
-                relationship(RelationshipType.EXTRACT, node("script.js", "foo"), node("script.js", "bar")),
-                relationship(RelationshipType.SAME, node("script.js", "foo"), node("script.js", "foo")),
+                relationship(RelationshipType.EXTRACT, node("script.js", "foo()"), node("script.js", "bar()")),
+                relationship(RelationshipType.SAME, node("script.js", "foo()"), node("script.js", "foo()")),
                 relationship(RelationshipType.SAME, node("script.js"), node("script.js"))));
     }
     
@@ -118,8 +118,8 @@ public class TestJsCstComparator {
     public void shouldMatchInlineFunction() throws Exception {
         CstDiff diff = diff("inlineFunction");
         assertThat(diff, containsOnly(
-                relationship(RelationshipType.INLINE, node("script.js", "bar"), node("script.js", "foo")),
-                relationship(RelationshipType.SAME, node("script.js", "foo"), node("script.js", "foo")),
+                relationship(RelationshipType.INLINE, node("script.js", "bar()"), node("script.js", "foo()")),
+                relationship(RelationshipType.SAME, node("script.js", "foo()"), node("script.js", "foo()")),
                 relationship(RelationshipType.SAME, node("script.js"), node("script.js"))));
     }
 }

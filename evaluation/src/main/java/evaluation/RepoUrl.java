@@ -12,11 +12,14 @@ import java.util.Map;
 import refdiff.core.io.GitHelper;
 
 public class RepoUrl {
+  private static final String JAVA_PROJECTS_FILE = "src/main/resources/java-projects.txt";
   private static final String C_PROJECTS_FILE = "src/main/resources/c-projects.txt";
   private static final String JS_PROJECTS_FILE = "src/main/resources/js-projects.txt";
 
   public static String[] getRepoUrls(Language lang) {
-    if (lang == Language.C) {
+    if (lang == Language.JAVA) {
+      return loadRepoUrlsFromFile(JAVA_PROJECTS_FILE);
+    } else if (lang == Language.C) {
       return loadRepoUrlsFromFile(C_PROJECTS_FILE);
     } else if (lang == Language.JAVASCRIPT) {
       return loadRepoUrlsFromFile(JS_PROJECTS_FILE);
