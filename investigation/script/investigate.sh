@@ -21,7 +21,7 @@ ITEMS=(
 
 # "lang|repo_url".
 # For each language: 5 domains (exclude Documentation), take the 2nd-most-starred repo per domain
-ITEMS=(
+# ITEMS=(
   # C
   # "c|https://github.com/tmux/tmux.git"                    # Application software (2nd)
   # "c|https://github.com/torch/torch7.git"                 # Non-web libraries and frameworks (2nd)
@@ -70,7 +70,7 @@ ITEMS=(
   # "ruby|https://github.com/cantino/huginn.git"           # Software tools (2nd)
   # "ruby|https://github.com/jruby/jruby.git"              # System software (2nd)
   # "ruby|https://github.com/sinatra/sinatra.git"          # Web libraries and frameworks (2nd)
-)
+# )
 
 # rank 1
 # ITEMS=(
