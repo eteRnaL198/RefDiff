@@ -50,7 +50,6 @@ if __name__ == "__main__":
 
     # Prepare data for plotting
     plot_data = pd.DataFrame(all_counts).fillna(0)
-    absolute_counts_data = pd.DataFrame(all_absolute_counts).fillna(0)
 
     # Check if there is data to plot
     if plot_data.empty:
@@ -60,25 +59,17 @@ if __name__ == "__main__":
     # Transpose for plotting (languages on x-axis)
     ax = plot_data.T.plot(kind="bar", stacked=True, figsize=(10, 7))
 
-    # To ensure the order of counts matches the plot, we align the absolute counts dataframe
-    # with the percentage dataframe, which dictates the plot structure.
-    aligned_absolute_counts = (
-        absolute_counts_data.reindex(index=plot_data.index, columns=plot_data.columns)
-        .fillna(0)
-        .astype(int)
-    )
-
-    # Add counts on the bars
+    # Add percentages on the bars
     for container in ax.containers:
         # The label for each container is the refactoring type
         refactoring_type = container.get_label()
 
-        # Get the counts for this type across all languages from the aligned absolute counts
-        if refactoring_type in aligned_absolute_counts.index:
-            labels = aligned_absolute_counts.loc[refactoring_type].values
+        # Get the percentage values for this type across all languages
+        if refactoring_type in plot_data.index:
+            labels = plot_data.loc[refactoring_type].values
 
             # Create labels only for non-zero bars to avoid clutter
-            display_labels = [f"{v}" if v > 0 else "" for v in labels]
+            display_labels = [f"{v:.1f}" if v > 1 else "" for v in labels]
 
             ax.bar_label(
                 container,
@@ -86,6 +77,7 @@ if __name__ == "__main__":
                 label_type="center",
                 color="white",
                 weight="bold",
+                fontsize=8,
             )
 
     plt.title("Distribution of Refactoring Types by Language")

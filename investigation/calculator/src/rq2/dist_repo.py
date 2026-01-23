@@ -37,7 +37,6 @@ if __name__ == '__main__':
 
     # Prepare data for plotting
     plot_data = pd.DataFrame(all_counts).fillna(0)
-    absolute_counts_data = pd.DataFrame(all_absolute_counts).fillna(0)
 
     # Check if there is data to plot
     if plot_data.empty:
@@ -50,9 +49,6 @@ if __name__ == '__main__':
 
     # Rows: repos (ordered_repos), Columns: refactoring types
     plot_df = plot_data.reindex(columns=ordered_repos).T.fillna(0)
-
-    # Align absolute counts with the plot structure
-    aligned_absolute_counts = absolute_counts_data.reindex(index=plot_data.index, columns=ordered_repos).fillna(0).astype(int)
 
     # Base x positions with extra gap between language groups
     base_positions = []
@@ -79,14 +75,12 @@ if __name__ == '__main__':
         heights = plot_df[ref_type].values
         bars = ax.bar(base_positions, heights, bottom=bottoms, width=width, label=ref_type)
 
-        # annotate with absolute counts inside each stacked segment
-        if ref_type in aligned_absolute_counts.index:
-            counts = aligned_absolute_counts.loc[ref_type].reindex(ordered_repos).fillna(0).astype(int).values
-            for rect, cnt in zip(bars, counts):
-                if cnt > 0 and rect.get_height() > 0:
-                    ax.text(rect.get_x() + rect.get_width() / 2,
-                            rect.get_y() + rect.get_height() / 2,
-                            str(cnt), ha='center', va='center', color='black', fontweight='bold', fontsize=8)
+        # annotate with percentage inside each stacked segment
+        for rect, percentage in zip(bars, heights):
+            if percentage > 1:  # Use a threshold to avoid clutter
+                ax.text(rect.get_x() + rect.get_width() / 2,
+                        rect.get_y() + rect.get_height() / 2,
+                        f"{percentage:.1f}", ha='center', va='center', color='white', fontweight='bold', fontsize=8)
 
         bottoms += heights
 
