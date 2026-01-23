@@ -127,7 +127,7 @@ for entry in "${ITEMS[@]}"; do
 
   # Launch one process per repository, passing --repo to the application
   # "$APP_BIN" --language "$lang" --repo "$repo_url" --resume > "$log_file" 2>&1 &
-  "$APP_BIN" --language "$lang" --repo "$repo_url" --result-dir "result/2nd" > "$log_file" 2>&1 &
+  "$APP_BIN" --language "$lang" --repo "$repo_url" > "$log_file" 2>&1 &
   pid=$!
   PIDS+=("$pid")
   echo "Started process for $lang repo $repo_url (PID: $pid) -> $log_file"
