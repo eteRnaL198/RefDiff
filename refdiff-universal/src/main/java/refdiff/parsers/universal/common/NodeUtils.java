@@ -22,9 +22,9 @@ public class NodeUtils {
             decl.getStartByte(),
             decl.getEndByte(),
             decl.getStartPoint().getRow() + 1,
-            body != null ? body.getStartPoint().getRow() + 1 : decl.getStartPoint().getRow() + 1,
+            body != null ? body.getStartPoint().getRow() + 1 : decl.getEndPoint().getRow() + 1,
             body != null ? body.getEndPoint().getRow() + 1 : decl.getEndPoint().getRow() + 1,
-            body != null ? body.getStartByte() : decl.getStartByte(),
+            body != null ? body.getStartByte() : decl.getEndByte(),
             body != null ? body.getEndByte() : decl.getEndByte()
         );
     }
