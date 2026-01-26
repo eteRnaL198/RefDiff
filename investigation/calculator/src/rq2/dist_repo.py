@@ -41,7 +41,9 @@ if __name__ == '__main__':
 
     # order repos by language then repo name
     repo_lang = df[['Repo', 'Lang']].drop_duplicates().set_index('Repo')['Lang'].to_dict()
-    ordered_repos = sorted(repo_lang.keys(), key=lambda r: (repo_lang.get(r, ''), r))
+    lang_order = ['java', 'c', 'javascript', 'python', 'go', 'php', 'ruby']
+    lang_rank = {lang: i for i, lang in enumerate(lang_order)}
+    ordered_repos = sorted(repo_lang.keys(), key=lambda r: (lang_rank.get(repo_lang.get(r, ''), 999), r))
 
     # Rows: repos (ordered_repos), Columns: refactoring types
     plot_df = plot_data.reindex(columns=ordered_repos).T.fillna(0)

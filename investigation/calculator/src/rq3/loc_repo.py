@@ -100,7 +100,9 @@ if __name__ == '__main__':
 
             # Order repos by language then repo name
             repo_lang = combined_extract_df[['Repo', 'Lang']].drop_duplicates().set_index('Repo')['Lang'].to_dict()
-            ordered_repos = sorted(repo_lang.keys(), key=lambda r: (repo_lang.get(r, ''), r))
+            lang_order = ['java', 'c', 'javascript', 'python', 'go', 'php', 'ruby']
+            lang_rank = {lang: i for i, lang in enumerate(lang_order)}
+            ordered_repos = sorted(repo_lang.keys(), key=lambda r: (lang_rank.get(repo_lang.get(r, ''), 999), r))
 
             # BeforeLOC boxplot by repo
             fig1, ax1 = plt.subplots(figsize=(28, 10))
