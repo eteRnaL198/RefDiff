@@ -1,6 +1,7 @@
 import pandas as pd
 import glob
 import os
+import re
 
 """
 read all csv files from base_path/<language>/*.csv
@@ -18,6 +19,67 @@ def load_csv_files(base_path):
         "Lang",
         "Repo",
     ]
+
+    # Files to exclude by language (auto-generated/build artifacts)
+    exclude_names_by_lang = {
+        "java": [
+            "r.java", "buildconfig.java", "manifest.java", "pom.xml", "build.gradle",
+            "settings.gradle", "gradle.properties", "gradlew", "gradlew.bat"
+        ],
+        "c": [
+            "configure", "config.h", "config.h.in", "config.log", "config.status",
+            "makefile", "cmakecache.txt", "cmakefiles.txt", "cmake_install.cmake",
+            "compile_commands.json"
+        ],
+        "javascript": [
+            "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "npm-shrinkwrap.json",
+            "package.json", "rollup.config.js", "webpack.config.js", "vite.config.js",
+            "parcel.config.js", "tsconfig.json", "babel.config.js", ".babelrc"
+        ],
+        "python": [
+            "setup.py", "setup.cfg", "pyproject.toml", "requirements.txt", "pipfile",
+            "pipfile.lock", "poetry.lock", "pdm.lock", "generated.py"
+        ],
+        "go": [
+            "go.mod", "go.sum", "vendor/modules.txt", "bindata.go", "zz_generated.go",
+            "zz_generated.deepcopy.go", "mock_gen.go", "mockgen.go", "wire_gen.go"
+        ],
+        "php": [
+            "composer.json", "composer.lock", "autoload.php", "autoload_real.php",
+            "autoload_static.php", "autoload_psr4.php", "autoload_classmap.php"
+        ],
+        "ruby": [
+            "gemfile", "gemfile.lock", "rakefile", "gemspec", "version.rb",
+            "schema.rb", "routes.rb"
+        ],
+    }
+    exclude_dirs_by_lang = {
+        "java": [
+            "target", "build", "out", ".gradle", ".mvn", "generated", "gen",
+            "build/generated", "build/resources", "build/tmp"
+        ],
+        "c": [
+            "build", "cmake-build-debug", "cmake-build-release", "cmake-build-relwithdebinfo",
+            "cmake-build-minsizerel", "autom4te.cache"
+        ],
+        "javascript": [
+            "node_modules", "dist", "build", "out", ".next", ".nuxt", ".cache",
+            "coverage", "vendor"
+        ],
+        "python": [
+            "__pycache__", "build", "dist", ".eggs", ".pytest_cache", ".mypy_cache",
+            ".tox", ".venv", "venv", "site-packages"
+        ],
+        "go": [
+            "vendor", "bin", "pkg", "dist"
+        ],
+        "php": [
+            "vendor", "cache", "storage", "build"
+        ],
+        "ruby": [
+            "vendor", "bundle", ".bundle", "log", "tmp", "coverage"
+        ],
+    }
 
     all_records = []
     for lang in languages:
@@ -57,6 +119,20 @@ def load_csv_files(base_path):
 
             df_file["Lang"] = lang
             df_file["Repo"] = repo_name
+
+            # Filter out rows whose Before/After paths include excluded filenames
+            excluded = set(name.lower() for name in exclude_names_by_lang.get(lang, []))
+            excluded_dirs = set(name.lower().strip("/\\") for name in exclude_dirs_by_lang.get(lang, []))
+            if excluded or excluded_dirs:
+                before_paths = df_file["Before"].astype(str).str.lower()
+                after_paths = df_file["After"].astype(str).str.lower()
+                mask = True
+                for name in excluded:
+                    mask = mask & (~before_paths.str.contains(re.escape(name))) & (~after_paths.str.contains(re.escape(name)))
+                for dir_name in excluded_dirs:
+                    pattern = rf"(^|/){re.escape(dir_name)}(/|$)"
+                    mask = mask & (~before_paths.str.contains(pattern, regex=True)) & (~after_paths.str.contains(pattern, regex=True))
+                df_file = df_file[mask]
             all_records.append(df_file)
     if not all_records:
         return pd.DataFrame(columns=column_names)
