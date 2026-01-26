@@ -13,9 +13,8 @@ OUT_PATH_TEMPLATE = './output/refactoring_dist_repo_{ts}.pdf'
 if __name__ == '__main__':
     df = load_csv_files("../result")
 
-    # Step 1: Calculate percentages and absolute counts
+    # Step 1: Calculate percentages
     all_counts = {}
-    all_absolute_counts = {}
     allowed_refactoring_types = ['CHANGE_SIGNATURE', 'EXTRACT', 'EXTRACT_MOVE', 'INLINE', 'MOVE', 'RENAME', 'MOVE_RENAME']
 
     for repo, df_repo in df.groupby('Repo'):
@@ -27,17 +26,13 @@ if __name__ == '__main__':
             # Filter to allowed refactoring types
             filtered_df = df_repo[df_repo['RefactoringType'].isin(allowed_refactoring_types)]
 
-            # Percentages and absolute counts per repo
+            # Percentages per repo
             counts = filtered_df['RefactoringType'].value_counts(normalize=True) * 100
             all_counts[repo] = counts
-
-            absolute_counts = filtered_df['RefactoringType'].value_counts()
-            all_absolute_counts[repo] = absolute_counts
 
 
     # Prepare data for plotting
     plot_data = pd.DataFrame(all_counts).fillna(0)
-    absolute_counts_data = pd.DataFrame(all_absolute_counts).fillna(0)
 
     # Check if there is data to plot
     if plot_data.empty:
@@ -50,9 +45,6 @@ if __name__ == '__main__':
 
     # Rows: repos (ordered_repos), Columns: refactoring types
     plot_df = plot_data.reindex(columns=ordered_repos).T.fillna(0)
-
-    # Align absolute counts with the plot structure
-    aligned_absolute_counts = absolute_counts_data.reindex(index=plot_data.index, columns=ordered_repos).fillna(0).astype(int)
 
     # Base x positions with extra gap between language groups
     base_positions = []
@@ -70,7 +62,8 @@ if __name__ == '__main__':
         print("No refactoring types to plot.")
         exit(0)
 
-    fig, ax = plt.subplots(figsize=(28, 8))
+    fig, ax = plt.subplots(figsize=(28, 10))
+    ax.tick_params(axis='both', labelsize=14)
 
     # Stack bars manually for each repo
     bottoms = np.zeros(len(ordered_repos))
@@ -79,38 +72,43 @@ if __name__ == '__main__':
         heights = plot_df[ref_type].values
         bars = ax.bar(base_positions, heights, bottom=bottoms, width=width, label=ref_type)
 
-        # annotate with absolute counts inside each stacked segment
-        if ref_type in aligned_absolute_counts.index:
-            counts = aligned_absolute_counts.loc[ref_type].reindex(ordered_repos).fillna(0).astype(int).values
-            for rect, cnt in zip(bars, counts):
-                if cnt > 0 and rect.get_height() > 0:
-                    ax.text(rect.get_x() + rect.get_width() / 2,
-                            rect.get_y() + rect.get_height() / 2,
-                            str(cnt), ha='center', va='center', color='black', fontweight='bold', fontsize=8)
+        # annotate with percentage inside each stacked segment
+        for rect, percentage in zip(bars, heights):
+            if percentage > 1:  # Use a threshold to avoid clutter
+                ax.text(rect.get_x() + rect.get_width() / 2,
+                        rect.get_y() + rect.get_height() / 2,
+                        f"{percentage:.1f}", ha='center', va='center', color='white', fontweight='bold', fontsize=10)
 
         bottoms += heights
+
+    # tighten x-limits without changing bar width
+    if base_positions:
+        pad = 0.2
+        ax.set_xlim(min(base_positions) - width / 2 - pad,
+                    max(base_positions) + width / 2 + pad)
 
     # set x tick labels at base positions
     labels = [f"{repo}\n({repo_lang.get(repo,'')})" for repo in ordered_repos]
     ax.set_xticks(base_positions)
     ax.set_xticklabels(labels, rotation=60, ha='center')
 
-    plt.title('Distribution of Refactoring Types by Repo')
-    plt.xlabel('Repo (language in parenthesis)')
-    plt.ylabel('Percentage (%)')
+    plt.title('Distribution of Refactoring Types by Project', fontsize=18)
+    plt.xlabel('Project (language in parenthesis)', fontsize=16)
+    plt.ylabel('Percentage (%)', fontsize=16)
 
     # Place legend as a single horizontal row below the plot (use figure legend to avoid clipping)
     ncol = max(1, len(plot_df.columns))
     handles, labels = ax.get_legend_handles_labels()
     fig.legend(handles, labels, title='Refactoring Type', ncol=ncol,
-               loc='lower center', bbox_to_anchor=(0.5, 0.02), bbox_transform=fig.transFigure)
-    # Make room at the bottom for the legend
-    plt.subplots_adjust(bottom=0.18)
-    plt.tight_layout()
+               fontsize=14, title_fontsize=15,
+               loc='lower center', bbox_to_anchor=(0.5, -0.02), bbox_transform=fig.transFigure)
+    # Make room at the bottom for the legend and keep it from clipping
+    plt.subplots_adjust(bottom=0.30)
+    plt.tight_layout(rect=[0, 0.12, 1, 1])
 
     # Save the plot (include month-day and hour-minute, no year)
     out_path = OUT_PATH_TEMPLATE.format(ts=datetime.datetime.now().strftime("%m-%d_%H-%M"))
     ensure_parent_dir(out_path)
-    plt.savefig(out_path)
+    plt.savefig(out_path, bbox_inches='tight')
 
     print(f"Plot saved to {out_path}")
