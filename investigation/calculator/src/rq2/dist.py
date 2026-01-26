@@ -57,6 +57,8 @@ if __name__ == "__main__":
         exit(0)
 
     # Transpose for plotting (languages on x-axis)
+    lang_order = ["java", "c", "javascript", "python", "go", "php", "ruby"]
+    plot_data = plot_data.reindex(columns=lang_order)
     ax = plot_data.T.plot(kind="bar", stacked=True, figsize=(10, 7))
 
     # Add percentages on the bars

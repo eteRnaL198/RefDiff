@@ -77,6 +77,10 @@ if __name__ == '__main__':
     if extract_data_list:
         combined_extract_df = pd.concat(extract_data_list, ignore_index=True)
 
+        lang_order = ['java', 'c', 'javascript', 'python', 'go', 'php', 'ruby']
+        combined_extract_df['Lang'] = pd.Categorical(combined_extract_df['Lang'], categories=lang_order, ordered=True)
+        combined_extract_df = combined_extract_df.sort_values('Lang')
+
         combined_extract_df['BeforeLOC'] = pd.to_numeric(combined_extract_df['BeforeLOC'], errors='coerce')
         combined_extract_df['AfterLOC'] = pd.to_numeric(combined_extract_df['AfterLOC'], errors='coerce')
 
