@@ -130,7 +130,7 @@ def load_csv_files(base_path):
                 for name in excluded:
                     mask = mask & (~before_paths.str.contains(re.escape(name))) & (~after_paths.str.contains(re.escape(name)))
                 for dir_name in excluded_dirs:
-                    pattern = rf"(^|/){re.escape(dir_name)}(/|$)"
+                    pattern = rf"(?:^|/){re.escape(dir_name)}(?:/|$)"
                     mask = mask & (~before_paths.str.contains(pattern, regex=True)) & (~after_paths.str.contains(pattern, regex=True))
                 df_file = df_file[mask]
             all_records.append(df_file)
