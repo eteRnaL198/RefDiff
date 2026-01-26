@@ -42,7 +42,7 @@ if __name__ == '__main__':
             # BeforeLOC boxplot
             fig1, ax1 = plt.subplots(figsize=(12, 8))
             combined_extract_df.boxplot(column='BeforeLOC', by='Lang', ax=ax1, showfliers=False, showmeans=True)
-            ax1.set_title('BeforeLOC for EXTRACT Refactoring by Language')
+            ax1.set_title('LOC for EXTRACT Refactoring by Language')
             ax1.set_xlabel('Language')
             ax1.set_ylabel('Lines of Code')
             plt.suptitle('')
