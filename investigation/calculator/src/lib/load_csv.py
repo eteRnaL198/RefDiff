@@ -34,7 +34,7 @@ def load_csv_files(base_path):
         "javascript": [
             "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "npm-shrinkwrap.json",
             "package.json", "rollup.config.js", "webpack.config.js", "vite.config.js",
-            "parcel.config.js", "tsconfig.json", "babel.config.js", ".babelrc"
+            "parcel.config.js", "tsconfig.json", "babel.config.js", ".babelrc", "lint-md.js"
         ],
         "python": [
             "setup.py", "setup.cfg", "pyproject.toml", "requirements.txt", "pipfile",
@@ -64,7 +64,7 @@ def load_csv_files(base_path):
         ],
         "javascript": [
             "node_modules", "dist", "build", "out", ".next", ".nuxt", ".cache",
-            "coverage", "vendor"
+            "coverage", "vendor", "min"
         ],
         "python": [
             "__pycache__", "build", "dist", ".eggs", ".pytest_cache", ".mypy_cache",
@@ -124,14 +124,13 @@ def load_csv_files(base_path):
             excluded = set(name.lower() for name in exclude_names_by_lang.get(lang, []))
             excluded_dirs = set(name.lower().strip("/\\") for name in exclude_dirs_by_lang.get(lang, []))
             if excluded or excluded_dirs:
-                before_paths = df_file["Before"].astype(str).str.lower()
-                after_paths = df_file["After"].astype(str).str.lower()
+                before_paths = df_file["Before"].astype(str).str.lower().str.replace("\\", "/", regex=False)
+                after_paths = df_file["After"].astype(str).str.lower().str.replace("\\", "/", regex=False)
                 mask = True
                 for name in excluded:
-                    mask = mask & (~before_paths.str.contains(re.escape(name))) & (~after_paths.str.contains(re.escape(name)))
+                    mask = mask & (~before_paths.str.contains(name, regex=False)) & (~after_paths.str.contains(name, regex=False))
                 for dir_name in excluded_dirs:
-                    pattern = rf"(?:^|/){re.escape(dir_name)}(?:/|$)"
-                    mask = mask & (~before_paths.str.contains(pattern, regex=True)) & (~after_paths.str.contains(pattern, regex=True))
+                    mask = mask & (~before_paths.str.contains(dir_name, regex=False)) & (~after_paths.str.contains(dir_name, regex=False))
                 df_file = df_file[mask]
             all_records.append(df_file)
     if not all_records:
