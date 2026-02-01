@@ -8,6 +8,7 @@ from src.lib.file_util import ensure_parent_dir
 OUT_PATH = './output/extract_loc_scatter_javascript_{ts}.pdf'
 
 FREQUENT_LOC_THRESHOLD = 500
+OVER_LOC_THRESHOLD = 2000
 
 
 def build_loc_counts(df, loc_col):
@@ -40,6 +41,23 @@ def report_frequent_loc_commits(df, loc_col, threshold):
             print(f"  {commit_hash}: {int(cnt)}")
 
 
+def report_over_loc_commits(df, loc_col, threshold):
+    if "Commit" not in df.columns:
+        return
+    loc_series = pd.to_numeric(df[loc_col], errors='coerce')
+    over_mask = loc_series > threshold
+    if not over_mask.any():
+        return
+    subset = df.loc[over_mask, ["Commit", loc_col]].copy()
+    subset["Commit"] = subset["Commit"].astype(str)
+    subset = subset[subset["Commit"] != ""]
+    if subset.empty:
+        return
+    print(f"{loc_col} > {threshold} commits:")
+    for _, row in subset.iterrows():
+        print(f"  {row['Commit']} ({loc_col}={int(row[loc_col])})")
+
+
 if __name__ == '__main__':
     df_all = load_csv_files("../result")
 
@@ -62,6 +80,8 @@ if __name__ == '__main__':
 
     report_frequent_loc_commits(df_js, "BeforeLOC", FREQUENT_LOC_THRESHOLD)
     report_frequent_loc_commits(df_js, "AfterLOC", FREQUENT_LOC_THRESHOLD)
+    report_over_loc_commits(df_js, "BeforeLOC", OVER_LOC_THRESHOLD)
+    report_over_loc_commits(df_js, "AfterLOC", OVER_LOC_THRESHOLD)
 
     counts_before = build_loc_counts(df_js, "BeforeLOC")
     counts_after = build_loc_counts(df_js, "AfterLOC")
@@ -81,7 +101,6 @@ if __name__ == '__main__':
     ax.set_title("EXTRACT Refactoring LOC Distribution (JavaScript)")
     ax.set_xlabel("Lines of Code")
     ax.set_ylabel("Count")
-    ax.set_xlim(0, 200)
     ax.legend()
 
     plt.tight_layout()
