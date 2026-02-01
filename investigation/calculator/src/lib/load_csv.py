@@ -43,7 +43,8 @@ def load_csv_files(base_path):
         ],
         "go": [
             "go.mod", "go.sum", "vendor/modules.txt", "bindata.go", "zz_generated.go",
-            "zz_generated.deepcopy.go", "mock_gen.go", "mockgen.go", "wire_gen.go"
+            "zz_generated.deepcopy.go", "mock_gen.go", "mockgen.go", "wire_gen.go",
+            "rewrite", "pb.go", "gen.go", "generated.go",
         ],
         "php": [
             "composer.json", "composer.lock", "autoload.php", "autoload_real.php",
@@ -72,7 +73,7 @@ def load_csv_files(base_path):
             ".tox", ".venv", "venv", "site-packages"
         ],
         "go": [
-            "vendor", "bin", "pkg", "dist"
+            "vendor", "bin", "pkg", "dist", "kubernetes/typed",
         ],
         "php": [
             "vendor", "cache", "storage", "build"
