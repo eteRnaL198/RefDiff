@@ -52,11 +52,54 @@ def main():
         print("No valid data to plot after cleaning.")
         return
 
+    stats = (
+        combined_extract_df
+        .groupby('Lang')
+        .agg(
+            before_min=('BeforeLOC', 'min'),
+            before_q25=('BeforeLOC', lambda s: s.quantile(0.25)),
+            before_median=('BeforeLOC', 'median'),
+            before_q75=('BeforeLOC', lambda s: s.quantile(0.75)),
+            before_max=('BeforeLOC', 'max'),
+            before_mean=('BeforeLOC', 'mean'),
+            after_min=('AfterLOC', 'min'),
+            after_q25=('AfterLOC', lambda s: s.quantile(0.25)),
+            after_median=('AfterLOC', 'median'),
+            after_q75=('AfterLOC', lambda s: s.quantile(0.75)),
+            after_max=('AfterLOC', 'max'),
+            after_mean=('AfterLOC', 'mean'),
+        )
+        .reset_index()
+    )
+    print("LOC summary by language (mean/median):")
+    for _, row in stats.iterrows():
+        print(
+            f"  {row['Lang']}: "
+            f"BeforeLOC mean={row['before_mean']:.2f} "
+            f"min={int(row['before_min'])} q25={int(row['before_q25'])} "
+            f"median={int(row['before_median'])} q75={int(row['before_q75'])} "
+            f"max={int(row['before_max'])}, "
+            f"AfterLOC mean={row['after_mean']:.2f} "
+            f"min={int(row['after_min'])} q25={int(row['after_q25'])} "
+            f"median={int(row['after_median'])} q75={int(row['after_q75'])} "
+            f"max={int(row['after_max'])}"
+        )
+
     plt.style.use('ggplot')
 
     # BeforeLOC boxplot
     fig1, ax1 = plt.subplots(figsize=(12, 8))
-    combined_extract_df.boxplot(column='BeforeLOC', by='Lang', ax=ax1, showfliers=False, showmeans=True)
+    before_order = (
+        combined_extract_df
+        .groupby('Lang', observed=False)['BeforeLOC']
+        .median()
+        .sort_values(ascending=False)
+        .index
+        .tolist()
+    )
+    df_before = combined_extract_df.copy()
+    df_before['Lang'] = pd.Categorical(df_before['Lang'], categories=before_order, ordered=True)
+    df_before.boxplot(column='BeforeLOC', by='Lang', ax=ax1, showfliers=False, showmeans=True)
     ax1.set_title('LOC for EXTRACT Refactoring by Language')
     ax1.set_xlabel('Language')
     ax1.set_ylabel('Lines of Code')
@@ -70,8 +113,18 @@ def main():
 
     # AfterLOC boxplot
     fig2, ax2 = plt.subplots(figsize=(12, 8))
-    combined_extract_df.boxplot(column='AfterLOC', by='Lang', ax=ax2, showfliers=False, showmeans=True)
-    ax2.set_title('AfterLOC for EXTRACT Refactoring by Language')
+    after_order = (
+        combined_extract_df
+        .groupby('Lang', observed=False)['AfterLOC']
+        .median()
+        .sort_values(ascending=False)
+        .index
+        .tolist()
+    )
+    df_after = combined_extract_df.copy()
+    df_after['Lang'] = pd.Categorical(df_after['Lang'], categories=after_order, ordered=True)
+    df_after.boxplot(column='AfterLOC', by='Lang', ax=ax2, showfliers=False, showmeans=True)
+    ax2.set_title('LOC for EXTRACT Refactoring by Language')
     ax2.set_xlabel('Language')
     ax2.set_ylabel('Lines of Code')
     plt.suptitle('')

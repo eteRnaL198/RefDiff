@@ -4,11 +4,22 @@ import glob
 import os
 import datetime
 import numpy as np
+import re
 
 from src.lib.load_csv import load_csv_files
 from src.lib.file_util import ensure_parent_dir
 
 OUT_PATH_TEMPLATE = './output/refactoring_dist_repo_{ts}.pdf'
+
+ENTITY_NAMES_BY_LANG = {
+    "java": ["Method"],
+    "c": ["Function"],
+    "javascript": ["Function"],
+    "python": ["Function"],
+    "go": ["function_declaration", "method_declaration"],
+    "php": ["function_definition", "method_declaration"],
+    "ruby": ["Method"],
+}
 
 if __name__ == '__main__':
     df = load_csv_files("../result")
@@ -20,6 +31,15 @@ if __name__ == '__main__':
     for repo, df_repo in df.groupby('Repo'):
         df_repo = df_repo.copy()
         if 'RefactoringType' in df_repo.columns:
+            if 'Before' in df_repo.columns:
+                lang = df_repo['Lang'].iloc[0] if 'Lang' in df_repo.columns and not df_repo.empty else None
+                entity_names = ENTITY_NAMES_BY_LANG.get(lang, []) if lang is not None else []
+                if entity_names:
+                    pattern = "|".join(re.escape(name) for name in entity_names)
+                    df_repo = df_repo[df_repo['Before'].astype(str).str.contains(pattern, na=False)]
+                else:
+                    df_repo = df_repo.iloc[0:0]
+
             df_repo['RefactoringType'] = df_repo['RefactoringType'].replace(['INTERNAL_MOVE'], 'MOVE')
             df_repo['RefactoringType'] = df_repo['RefactoringType'].replace(['INTERNAL_MOVE_RENAME'], 'MOVE_RENAME')
 

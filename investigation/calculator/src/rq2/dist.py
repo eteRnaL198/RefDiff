@@ -3,11 +3,22 @@ import matplotlib.pyplot as plt
 import glob
 import os
 import datetime
+import re
 
 from src.lib.load_csv import load_csv_files
 from src.lib.file_util import ensure_parent_dir
 
 OUT_PATH_TEMPLATE = "./output/refactoring_distribution_{ts}.pdf"
+
+ENTITY_NAMES_BY_LANG = {
+    "java": ["Method"],
+    "c": ["Function"],
+    "javascript": ["Function"],
+    "python": ["Function"],
+    "go": ["function_declaration", "method_declaration"],
+    "php": ["function_definition", "method_declaration"],
+    "ruby": ["Method"],
+}
 
 if __name__ == "__main__":
     df = load_csv_files("../result")
@@ -28,6 +39,16 @@ if __name__ == "__main__":
     for lang, df_lang in df.groupby("Lang"):
         df_lang = df_lang.copy()
         if "RefactoringType" in df_lang.columns:
+            if "Before" in df_lang.columns:
+                entity_names = ENTITY_NAMES_BY_LANG.get(lang, [])
+                if entity_names:
+                    pattern = "|".join(re.escape(name) for name in entity_names)
+                    df_lang = df_lang[
+                        df_lang["Before"].astype(str).str.contains(pattern, na=False)
+                    ]
+                else:
+                    df_lang = df_lang.iloc[0:0]
+
             df_lang["RefactoringType"] = df_lang["RefactoringType"].replace(
                 ["INTERNAL_MOVE"], "MOVE"
             )
