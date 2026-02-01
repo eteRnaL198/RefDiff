@@ -34,7 +34,8 @@ def load_csv_files(base_path):
         "javascript": [
             "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "npm-shrinkwrap.json",
             "package.json", "rollup.config.js", "webpack.config.js", "vite.config.js",
-            "parcel.config.js", "tsconfig.json", "babel.config.js", ".babelrc", "lint-md.js"
+            "parcel.config.js", "tsconfig.json", "babel.config.js", ".babelrc", "lint-md.js",
+            "lodash.js", "lodash.src.js", # bundled library files
         ],
         "python": [
             "setup.py", "setup.cfg", "pyproject.toml", "requirements.txt", "pipfile",
