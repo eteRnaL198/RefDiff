@@ -35,10 +35,12 @@ if __name__ == '__main__':
                 lang = df_repo['Lang'].iloc[0] if 'Lang' in df_repo.columns and not df_repo.empty else None
                 entity_names = ENTITY_NAMES_BY_LANG.get(lang, []) if lang is not None else []
                 if entity_names:
-                    pattern = "|".join(re.escape(name) for name in entity_names)
-                    df_repo = df_repo[df_repo['Before'].astype(str).str.contains(pattern, na=False)]
-                else:
-                    df_repo = df_repo.iloc[0:0]
+                    pattern = r"^\{(?:%s)\b" % "|".join(
+                        re.escape(name) for name in entity_names
+                    )
+                    df_repo = df_repo[
+                        df_repo["Before"].astype(str).str.match(pattern, na=False)
+                    ]
 
             df_repo['RefactoringType'] = df_repo['RefactoringType'].replace(['INTERNAL_MOVE'], 'MOVE')
             df_repo['RefactoringType'] = df_repo['RefactoringType'].replace(['INTERNAL_MOVE_RENAME'], 'MOVE_RENAME')
@@ -109,13 +111,35 @@ if __name__ == '__main__':
         ax.set_xlim(min(base_positions) - width / 2 - pad,
                     max(base_positions) + width / 2 + pad)
 
-    # set x tick labels at base positions
-    labels = [f"{repo}\n({repo_lang.get(repo,'')})" for repo in ordered_repos]
+    # set x tick labels at base positions (repo only)
+    labels = [repo for repo in ordered_repos]
     ax.set_xticks(base_positions)
     ax.set_xticklabels(labels, rotation=60, ha='center')
 
+    # add language labels once per language group beneath the repo labels
+    group_start = 0
+    for i in range(1, len(ordered_repos) + 1):
+        is_boundary = (i == len(ordered_repos)) or (
+            repo_lang.get(ordered_repos[i]) != repo_lang.get(ordered_repos[i - 1])
+        )
+        if is_boundary:
+            group_end = i - 1
+            lang = repo_lang.get(ordered_repos[group_start], '')
+            center = (base_positions[group_start] + base_positions[group_end]) / 2
+            ax.text(
+                center,
+                -0.18,
+                lang,
+                ha='center',
+                va='top',
+                transform=ax.get_xaxis_transform(),
+                fontsize=14,
+                fontweight='bold'
+            )
+            group_start = i
+
     plt.title('Distribution of Refactoring Types by Project', fontsize=18)
-    plt.xlabel('Project (language in parenthesis)', fontsize=16)
+    plt.xlabel('Project', fontsize=16)
     plt.ylabel('Percentage (%)', fontsize=16)
 
     # Place legend as a single horizontal row below the plot (use figure legend to avoid clipping)
@@ -125,8 +149,8 @@ if __name__ == '__main__':
                fontsize=14, title_fontsize=15,
                loc='lower center', bbox_to_anchor=(0.5, -0.02), bbox_transform=fig.transFigure)
     # Make room at the bottom for the legend and keep it from clipping
-    plt.subplots_adjust(bottom=0.30)
-    plt.tight_layout(rect=[0, 0.12, 1, 1])
+    plt.subplots_adjust(bottom=0.34)
+    plt.tight_layout(rect=[0, 0.16, 1, 1])
 
     # Save the plot (include month-day and hour-minute, no year)
     out_path = OUT_PATH_TEMPLATE.format(ts=datetime.datetime.now().strftime("%m-%d_%H-%M"))
