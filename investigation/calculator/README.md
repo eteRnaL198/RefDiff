@@ -22,3 +22,9 @@ python3 -m pip install --user virtualenv
 
 venv/bin/pip install -r requirements.txt
 ```
+
+```bash
+venv/bin/python -m src.rq3.loc # default: use cache if exists
+venv/bin/python -m src.rq3.loc --rebuild-cache # rebuild cache and plot
+venv/bin/python -m src.rq3.loc --cache-only # calculate only
+```
