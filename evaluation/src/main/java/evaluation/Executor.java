@@ -123,7 +123,7 @@ public class Executor {
 
     private void runForEachCommit(RefDiff refDiff, Map<String, File> repoMap, String[] commitUrls, String outputFilePath) throws Exception {
         StringBuilder result = new StringBuilder();
-        result.append("url,repository,commit,type,before,after\n"); // header
+        result.append("url,repository,commit,type,before,after,similarity\n"); // header
         for (int i = 0; i < commitUrls.length; i++) {
             String commitUrl = commitUrls[i];
             String owner = CommitUrl.extractOwner(commitUrl);
@@ -152,7 +152,7 @@ public class Executor {
 
     private void runFromHead(RefDiff refDiff, Map<String, File> repoMap, String outputFilePath) throws Exception {
         StringBuilder result = new StringBuilder();
-        result.append("url,repository,commit,type,before,after\n"); // header
+        result.append("url,repository,commit,type,before,after,similarity\n"); // header
         for (String repoMapKey : repoMap.keySet()) {
             initCommitProcessingCount();
             File repo = repoMap.get(repoMapKey);
