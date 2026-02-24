@@ -79,7 +79,7 @@ public class Relationship {
 	}
 
 	public String getStandardDescriptionForCsv() {
-		return String.format("\"%s\",\"{%s}\",\"{%s})\"", this.type, formatWithLineNum(this.nodeBefore), formatWithLineNum(this.nodeAfter));
+		return String.format("\"%s\",\"{%s}\",\"{%s}\",\"%s\"", this.type, formatWithLineNum(this.nodeBefore), formatWithLineNum(this.nodeAfter), this.similarity != null ? String.format("%.3f", this.similarity) : "");
 	}
 
 	/**
