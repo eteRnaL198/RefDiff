@@ -8,8 +8,7 @@ import argparse
 from src.lib.load_csv import load_csv_files
 from src.lib.file_util import ensure_parent_dir
 
-OUT_PATH_BEFORE = './output/extract_loc_before_{ts}.pdf'
-OUT_PATH_AFTER = './output/extract_loc_after_{ts}.pdf'
+OUT_PATH = './output/extract_loc_{ts}.pdf'
 CACHE_PATH = './output/extract_loc_cache.csv'
 
 CACHE_COLUMNS = ['Lang', 'BeforeLOC', 'AfterLOC']
@@ -155,9 +154,8 @@ def main():
         'ytick.color': 'black',
     })
 
-    ts = datetime.datetime.now().strftime("%m%d_%H-%M")
-
-    fig_before, ax_before = plt.subplots(figsize=(9, 8))
+    # Before/After boxplots in one figure
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 8), sharey=False)
     before_order = (
         combined_extract_df
         .groupby('Lang', observed=False)['BeforeLOC']
@@ -174,20 +172,12 @@ def main():
         df_before['Lang'].astype(str),
     )
     df_before['LangLabel'] = pd.Categorical(df_before['LangLabel'], categories=before_order_labels, ordered=True)
-    df_before.boxplot(column='BeforeLOC', by='LangLabel', ax=ax_before, showfliers=False, showmeans=True)
-    ax_before.set_title('')
-    ax_before.set_xlabel('Language')
-    ax_before.set_ylabel('LOC')
+    df_before.boxplot(column='BeforeLOC', by='LangLabel', ax=ax1, showfliers=False, showmeans=True)
+    ax1.set_title('')
+    ax1.set_xlabel('Language')
+    ax1.set_ylabel('LOC')
     plt.suptitle('')
     plt.tight_layout()
-
-    out_path_before = OUT_PATH_BEFORE.format(ts=ts)
-    ensure_parent_dir(out_path_before)
-    fig_before.savefig(out_path_before)
-    print(f"Saved Before LOC boxplot to {out_path_before}")
-    plt.close(fig_before)
-
-    fig_after, ax_after = plt.subplots(figsize=(9, 8))
     after_order = (
         combined_extract_df
         .groupby('Lang', observed=False)['AfterLOC']
@@ -204,18 +194,19 @@ def main():
         df_after['Lang'].astype(str),
     )
     df_after['LangLabel'] = pd.Categorical(df_after['LangLabel'], categories=after_order_labels, ordered=True)
-    df_after.boxplot(column='AfterLOC', by='LangLabel', ax=ax_after, showfliers=False, showmeans=True)
-    ax_after.set_title('')
-    ax_after.set_xlabel('Language')
-    ax_after.set_ylabel('LOC')
+    df_after.boxplot(column='AfterLOC', by='LangLabel', ax=ax2, showfliers=False, showmeans=True)
+    ax2.set_title('')
+    ax2.set_xlabel('Language')
+    ax2.set_ylabel('LOC')
+    ax2.yaxis.set_label_position('right')
+    ax2.yaxis.tick_right()
     plt.suptitle('')
     plt.tight_layout()
-
-    out_path_after = OUT_PATH_AFTER.format(ts=ts)
-    ensure_parent_dir(out_path_after)
-    fig_after.savefig(out_path_after)
-    print(f"Saved After LOC boxplot to {out_path_after}")
-    plt.close(fig_after)
+    out_path = OUT_PATH.format(ts=datetime.datetime.now().strftime("%m%d_%H-%M"))
+    ensure_parent_dir(out_path)
+    plt.savefig(out_path)
+    print(f"Saved combined LOC boxplots to {out_path}")
+    plt.close(fig)
 
 
 if __name__ == '__main__':

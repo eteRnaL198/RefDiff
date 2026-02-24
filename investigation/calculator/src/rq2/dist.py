@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 import glob
 import os
@@ -129,6 +130,7 @@ def save_cache_df(df, cache_path):
 
 
 if __name__ == "__main__":
+    matplotlib.rc("pdf", fonttype=42)
     plt.rcParams.update({
         "font.size": 24,
         "axes.titlesize": 16,

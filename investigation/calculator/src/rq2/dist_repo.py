@@ -1,6 +1,6 @@
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
-import glob
 import os
 import datetime
 import numpy as np
@@ -9,7 +9,9 @@ import re
 from src.lib.load_csv import load_csv_files
 from src.lib.file_util import ensure_parent_dir
 
-OUT_PATH_TEMPLATE = './output/refactoring_dist_repo_{ts}.pdf'
+OUT_PATH_TEMPLATE = './output/dist_repo/refactoring_dist_repo_{lang}_{ts}.pdf'
+CACHE_PATH = './output/refactoring_dist_repo_cache.csv'
+CACHE_COLUMNS = ['Repo', 'Lang', 'RefactoringType', 'Percent', 'Count']
 
 ENTITY_NAMES_BY_LANG = {
     "java": ["Method"],
@@ -21,18 +23,35 @@ ENTITY_NAMES_BY_LANG = {
     "ruby": ["Method"],
 }
 
-if __name__ == '__main__':
-    df = load_csv_files("../result")
+REFACTORING_DISPLAY = {
+    "CHANGE_SIGNATURE": "Change\nSignature",
+    "EXTRACT": "Extract",
+    "EXTRACT_MOVE": "Extract &\nMove",
+    "INLINE": "Inline",
+    "MOVE": "Move",
+    "RENAME": "Rename",
+    "MOVE_RENAME": "Move &\nRename",
+}
 
-    # Step 1: Calculate percentages
-    all_counts = {}
+def build_cache_df():
+    df = load_csv_files("../result")
+    if df.empty:
+        print("No refactoring data found to plot.")
+        return pd.DataFrame()
+    required_columns = {'Repo', 'Lang', 'RefactoringType'}
+    missing_required = required_columns - set(df.columns)
+    if missing_required:
+        print(f"Missing required columns: {sorted(missing_required)}")
+        return pd.DataFrame()
+
     allowed_refactoring_types = ['CHANGE_SIGNATURE', 'EXTRACT', 'EXTRACT_MOVE', 'INLINE', 'MOVE', 'RENAME', 'MOVE_RENAME']
+    rows = []
 
     for repo, df_repo in df.groupby('Repo'):
         df_repo = df_repo.copy()
+        lang = df_repo['Lang'].iloc[0] if not df_repo.empty else None
         if 'RefactoringType' in df_repo.columns:
             if 'Before' in df_repo.columns:
-                lang = df_repo['Lang'].iloc[0] if 'Lang' in df_repo.columns and not df_repo.empty else None
                 entity_names = ENTITY_NAMES_BY_LANG.get(lang, []) if lang is not None else []
                 if entity_names:
                     pattern = r"^\{(?:%s)\b" % "|".join(
@@ -48,13 +67,75 @@ if __name__ == '__main__':
             # Filter to allowed refactoring types
             filtered_df = df_repo[df_repo['RefactoringType'].isin(allowed_refactoring_types)]
 
-            # Percentages per repo
+            # Percentages and counts per repo
             counts = filtered_df['RefactoringType'].value_counts(normalize=True) * 100
-            all_counts[repo] = counts
+            absolute_counts = filtered_df['RefactoringType'].value_counts()
+            for ref_type, percent in counts.items():
+                rows.append(
+                    {
+                        'Repo': repo,
+                        'Lang': lang,
+                        'RefactoringType': ref_type,
+                        'Percent': float(percent),
+                        'Count': int(absolute_counts.get(ref_type, 0)),
+                    }
+                )
 
+    if not rows:
+        print("No data available to plot.")
+        return pd.DataFrame()
+
+    return pd.DataFrame(rows, columns=CACHE_COLUMNS)
+
+
+def load_cache_df(cache_path):
+    if not os.path.exists(cache_path):
+        return None
+    try:
+        df = pd.read_csv(cache_path)
+    except Exception as e:
+        print(f"Failed to read cache {cache_path}: {e}")
+        return None
+    if df.empty:
+        return df
+    missing = [c for c in CACHE_COLUMNS if c not in df.columns]
+    if missing:
+        print(f"Cache {cache_path} is missing columns: {missing}")
+        return None
+    return df
+
+
+def save_cache_df(df, cache_path):
+    ensure_parent_dir(cache_path)
+    df.to_csv(cache_path, index=False)
+    print(f"Saved cache to {cache_path} ({len(df)} rows)")
+
+
+if __name__ == '__main__':
+    matplotlib.rc("pdf", fonttype=42)
+    plt.rcParams.update({
+        "font.size": 24,
+        "axes.titlesize": 16,
+        "axes.labelsize": 16,
+        "xtick.labelsize": 24,
+        "ytick.labelsize": 24,
+        "legend.fontsize": 16,
+    })
+
+    cache_df = load_cache_df(CACHE_PATH)
+    if cache_df is not None:
+        print(f"Loaded cache from {CACHE_PATH} ({len(cache_df)} rows)")
+    if cache_df is None:
+        cache_df = build_cache_df()
+        if cache_df.empty:
+            exit(0)
+        save_cache_df(cache_df, CACHE_PATH)
 
     # Prepare data for plotting
-    plot_data = pd.DataFrame(all_counts).fillna(0)
+    plot_data = (
+        cache_df.pivot(index='RefactoringType', columns='Repo', values='Percent')
+        .fillna(0)
+    )
 
     # Check if there is data to plot
     if plot_data.empty:
@@ -62,99 +143,86 @@ if __name__ == '__main__':
         exit(0)
 
     # order repos by language then repo name
-    repo_lang = df[['Repo', 'Lang']].drop_duplicates().set_index('Repo')['Lang'].to_dict()
+    repo_lang = cache_df[['Repo', 'Lang']].drop_duplicates().set_index('Repo')['Lang'].to_dict()
     lang_order = ['java', 'c', 'javascript', 'python', 'go', 'php', 'ruby']
     lang_rank = {lang: i for i, lang in enumerate(lang_order)}
     ordered_repos = sorted(repo_lang.keys(), key=lambda r: (lang_rank.get(repo_lang.get(r, ''), 999), r))
+    ordered_langs = sorted(
+        {repo_lang.get(repo, '') for repo in ordered_repos if repo_lang.get(repo, '')},
+        key=lambda l: lang_rank.get(l, 999)
+    )
 
-    # Rows: repos (ordered_repos), Columns: refactoring types
-    plot_df = plot_data.reindex(columns=ordered_repos).T.fillna(0)
+    ts = datetime.datetime.now().strftime("%m-%d_%H-%M")
+    saved_paths = []
 
-    # Base x positions with extra gap between language groups
-    base_positions = []
-    x = 0.0
-    gap = 0.6
-    for i, repo in enumerate(ordered_repos):
-        base_positions.append(x)
-        if i < len(ordered_repos) - 1 and repo_lang.get(ordered_repos[i + 1]) != repo_lang.get(repo):
-            x += 1 + gap
-        else:
-            x += 1
+    for lang in ordered_langs:
+        repos_in_lang = [repo for repo in ordered_repos if repo_lang.get(repo) == lang]
+        if not repos_in_lang:
+            continue
 
-    n_types = len(plot_df.columns)
-    if n_types == 0:
+        # Rows: repos in one language, Columns: refactoring types
+        plot_df = plot_data.reindex(columns=repos_in_lang).T.fillna(0)
+        n_types = len(plot_df.columns)
+        if n_types == 0:
+            continue
+
+        base_positions = list(range(len(repos_in_lang)))
+
+        fig, ax = plt.subplots(figsize=(11, 7.5))
+
+        # Stack bars manually for each repo
+        bottoms = np.zeros(len(repos_in_lang))
+        width = 0.8
+        for ref_type in plot_df.columns:
+            heights = plot_df[ref_type].values
+            bars = ax.bar(base_positions, heights, bottom=bottoms, width=width, label=ref_type)
+
+            # annotate with percentage inside each stacked segment
+            for rect, percentage in zip(bars, heights):
+                if percentage > 1:  # Use a threshold to avoid clutter
+                    ax.text(rect.get_x() + rect.get_width() / 2,
+                            rect.get_y() + rect.get_height() / 2,
+                            f"{percentage:.1f}", ha='center', va='center', color='white', fontweight='bold', fontsize=16)
+
+            bottoms += heights
+
+        # tighten x-limits without changing bar width
+        if base_positions:
+            pad = 0.2
+            ax.set_xlim(min(base_positions) - width / 2 - pad,
+                        max(base_positions) + width / 2 + pad)
+
+        # set x tick labels at base positions (repo only)
+        ax.set_xticks(base_positions)
+        ax.set_xticklabels(repos_in_lang, rotation=60, ha='center')
+
+        plt.title('')
+        plt.xlabel('Project')
+        plt.ylabel('Percentage (%)')
+
+        # Match dist.py legend layout/order
+        handles, labels = ax.get_legend_handles_labels()
+        labels = [REFACTORING_DISPLAY.get(l, l) for l in labels]
+        handles = list(reversed(handles))
+        labels = list(reversed(labels))
+        plt.legend(
+            handles,
+            labels,
+            loc='upper left',
+            bbox_to_anchor=(1.02, 1),
+        )
+        plt.tight_layout()
+        plt.subplots_adjust(right=0.78)
+
+        out_path = OUT_PATH_TEMPLATE.format(lang=lang, ts=ts)
+        ensure_parent_dir(out_path)
+        plt.savefig(out_path, bbox_inches='tight')
+        plt.close(fig)
+        saved_paths.append(out_path)
+
+    if not saved_paths:
         print("No refactoring types to plot.")
         exit(0)
 
-    fig, ax = plt.subplots(figsize=(28, 10))
-    ax.tick_params(axis='both', labelsize=14)
-
-    # Stack bars manually for each repo
-    bottoms = np.zeros(len(ordered_repos))
-    width = 0.8
-    for j, ref_type in enumerate(plot_df.columns):
-        heights = plot_df[ref_type].values
-        bars = ax.bar(base_positions, heights, bottom=bottoms, width=width, label=ref_type)
-
-        # annotate with percentage inside each stacked segment
-        for rect, percentage in zip(bars, heights):
-            if percentage > 1:  # Use a threshold to avoid clutter
-                ax.text(rect.get_x() + rect.get_width() / 2,
-                        rect.get_y() + rect.get_height() / 2,
-                        f"{percentage:.1f}", ha='center', va='center', color='white', fontweight='bold', fontsize=10)
-
-        bottoms += heights
-
-    # tighten x-limits without changing bar width
-    if base_positions:
-        pad = 0.2
-        ax.set_xlim(min(base_positions) - width / 2 - pad,
-                    max(base_positions) + width / 2 + pad)
-
-    # set x tick labels at base positions (repo only)
-    labels = [repo for repo in ordered_repos]
-    ax.set_xticks(base_positions)
-    ax.set_xticklabels(labels, rotation=60, ha='center')
-
-    # add language labels once per language group beneath the repo labels
-    group_start = 0
-    for i in range(1, len(ordered_repos) + 1):
-        is_boundary = (i == len(ordered_repos)) or (
-            repo_lang.get(ordered_repos[i]) != repo_lang.get(ordered_repos[i - 1])
-        )
-        if is_boundary:
-            group_end = i - 1
-            lang = repo_lang.get(ordered_repos[group_start], '')
-            center = (base_positions[group_start] + base_positions[group_end]) / 2
-            ax.text(
-                center,
-                -0.18,
-                lang,
-                ha='center',
-                va='top',
-                transform=ax.get_xaxis_transform(),
-                fontsize=14,
-                fontweight='bold'
-            )
-            group_start = i
-
-    plt.title('Distribution of Refactoring Types by Project', fontsize=18)
-    plt.xlabel('Project', fontsize=16)
-    plt.ylabel('Percentage (%)', fontsize=16)
-
-    # Place legend as a single horizontal row below the plot (use figure legend to avoid clipping)
-    ncol = max(1, len(plot_df.columns))
-    handles, labels = ax.get_legend_handles_labels()
-    fig.legend(handles, labels, title='Refactoring Type', ncol=ncol,
-               fontsize=14, title_fontsize=15,
-               loc='lower center', bbox_to_anchor=(0.5, -0.02), bbox_transform=fig.transFigure)
-    # Make room at the bottom for the legend and keep it from clipping
-    plt.subplots_adjust(bottom=0.34)
-    plt.tight_layout(rect=[0, 0.16, 1, 1])
-
-    # Save the plot (include month-day and hour-minute, no year)
-    out_path = OUT_PATH_TEMPLATE.format(ts=datetime.datetime.now().strftime("%m-%d_%H-%M"))
-    ensure_parent_dir(out_path)
-    plt.savefig(out_path, bbox_inches='tight')
-
-    print(f"Plot saved to {out_path}")
+    for out_path in saved_paths:
+        print(f"Plot saved to {out_path}")
