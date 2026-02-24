@@ -110,6 +110,7 @@ public class JavaPlugin extends BasePlugin {
           break;
         case "constructor_declaration":
           cstNode.setType(JavaNodeTypes.METHOD);
+          // String constructorName = NodeUtils.getNodeText(name, sourceBytes);
           String constructorName = "new";
           cstNode.setSimpleName(constructorName);
           List<Parameter> constructor_params = extractSignatureParameters(parameters, sourceBytes);
