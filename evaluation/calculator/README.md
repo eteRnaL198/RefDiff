@@ -18,5 +18,5 @@ python3 -m unittest
 To randomly sample from the merged result CSV file, use `random.py` which outputs a randomly sampled CSV file to `/calculator/sampled/sampled-{lang}-head-{date}-seed{seed}.csv`.
 
 ```bash
-venv/bin/python -m src.manual.random
+venv/bin/python -m src.manual.random --dir ../detection-result/javascript/head
 ```
