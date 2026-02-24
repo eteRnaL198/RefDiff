@@ -107,6 +107,7 @@ def join_table_c_recall(
     #     lambda row: create_commit_url(REPO_OWNER, row["repository"], row["commit"]),
     #     axis=1,
     # )
+    detected_df["Commit URL"] = "dummy"
 
     oracle_df["before"] = oracle_df.apply(
         lambda row: format_oracle_before_after(row["before"], row["type"]), axis=1

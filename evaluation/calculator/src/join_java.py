@@ -45,7 +45,7 @@ def join_table_java(oracle_df: DataFrame, detected_df: DataFrame, does_ignore_li
     conditions = [
         (merged_df["_merge"] == "both") & (merged_df["Expected?"] == "T"),
         (merged_df["_merge"] == "both") & (merged_df["Expected?"] == "F"),
-        (merged_df["_merge"] == "right_only"), # detected but not expected
+        (merged_df["_merge"] == "right_only"), # detected but not in oracle
         (merged_df["_merge"] == "left_only") & (merged_df["Expected?"] == "F"),
         (merged_df["_merge"] == "left_only") & (merged_df["Expected?"] == "T"),
     ]

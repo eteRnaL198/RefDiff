@@ -29,13 +29,21 @@ from src.calc_c import calc_c_precision_recall
 from src.calc_java import calc_java_precision_recall
 from src.calc_js import calc_js_precision_recall
 
+DEFAULT_LANGUAGE="java"
+DEFAULT_DETECTED_PATH = "../detection-result/java/java-0202-1418.csv"
+DEFAULT_METRIC="recall"
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Read and summarize a java.csv result file")
-    parser.add_argument("--language", "-l", default="java", choices=["java", "c", "js"], help="Programming language")
-    parser.add_argument("--metric", "-m", default="precision", choices=["precision", "recall"], help="Metric to calculate")
-    # parser.add_argument("--detected", "-d", default="../detection-result/java/java-0121-0453.csv", help="Relative path to detected results")
-    parser.add_argument("--detected", "-d", default="../detection-result/javascript/recall/javascript-recall-0121-0533.csv", help="Relative path to detected results")
+    parser.add_argument("--language", "-l", default=DEFAULT_LANGUAGE, choices=["java", "c", "js"], help="Programming language")
+    parser.add_argument("--metric", "-m", default=DEFAULT_METRIC, choices=["precision", "recall"], help="Metric to calculate")
+    parser.add_argument("--detected", "-d", default=DEFAULT_DETECTED_PATH, help="Relative path to detected results")
     args = parser.parse_args(argv)
+
+    # Ensure the detected path contains the requested language
+    if args.language not in args.detected:
+        print(f"Error: detected path '{args.detected}' does not contain language '{args.language}'", file=sys.stderr)
+        return 2
 
     detected_path = Path(args.detected)
     try:

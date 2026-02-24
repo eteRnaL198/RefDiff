@@ -37,6 +37,7 @@ result_java_schema = {
     "oracle index": int,
     "detected index": int,
     "note": str,
+    "similarity": float,
 }
 
 oracle_c_precision_schema = {
