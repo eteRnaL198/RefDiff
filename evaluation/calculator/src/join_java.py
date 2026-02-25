@@ -23,12 +23,14 @@ def join_table_java(oracle_df: DataFrame, detected_df: DataFrame, does_ignore_li
     )
 
     if does_ignore_line:
-        # Normalize 'before' and 'after' columns by stripping whitespace and removing line numbers (e.g., ":123" at the end).
-        # Because line numbers may differ between oracle and detected results depending on inclusions of comments and blank lines.
-        oracle_df["before"] = oracle_df["before"].str.replace(r":\d+", "", regex=True)
-        oracle_df["after"] = oracle_df["after"].str.replace(r":\d+", "", regex=True)
-        detected_df["before"] = detected_df["before"].str.replace(r":\d+", "", regex=True)
-        detected_df["after"] = detected_df["after"].str.replace(r":\d+", "", regex=True)
+        # Normalize node strings to make matching robust across output variants:
+        # - remove line numbers (":123")
+        # - trim whitespace
+        # - ignore trailing unmatched ')' (old detection/oracle format sometimes ends with "...})")
+        oracle_df["before"] = normalize_node_text(oracle_df["before"])
+        oracle_df["after"] = normalize_node_text(oracle_df["after"])
+        detected_df["before"] = normalize_node_text(detected_df["before"])
+        detected_df["after"] = normalize_node_text(detected_df["after"])
 
     oracle_df["join_key_type"] = oracle_df["Relationship Type"].str.upper()
     detected_df["join_key_type"] = detected_df["type"].str.upper()
@@ -84,3 +86,12 @@ def join_table_java(oracle_df: DataFrame, detected_df: DataFrame, does_ignore_li
 
 def create_commit_url(owner_name: str, repo_name: str, commit: str) -> str:
     return f"https://github.com/{owner_name}/{repo_name}/commit/{commit}"
+
+
+def normalize_node_text(series):
+    return (
+        series.astype(str)
+        .str.replace(r":\d+", "", regex=True)
+        .str.strip()
+        .str.replace(r"\)+$", "", regex=True)
+    )

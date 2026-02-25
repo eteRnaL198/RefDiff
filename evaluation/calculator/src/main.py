@@ -32,6 +32,7 @@ from src.calc_js import calc_js_precision_recall
 DEFAULT_LANGUAGE="java"
 DEFAULT_DETECTED_PATH = "../detection-result/java/java-0202-1418.csv"
 DEFAULT_METRIC="recall"
+DETECTED_REQUIRED_COLUMNS = ["url", "repository", "commit", "type", "before", "after"]
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Read and summarize a java.csv result file")
@@ -55,7 +56,9 @@ def main(argv: list[str] | None = None) -> int:
     except Exception as e:
         print(f"Error reading CSV: {e}", file=sys.stderr)
         return 2
-    detected_df = detected_df.dropna() # drop rows containing "Error processing commit" in csv
+    # Keep optional columns (e.g., similarity) from affecting row filtering.
+    # Only rows missing mandatory detection fields should be removed.
+    detected_df = detected_df.dropna(subset=DETECTED_REQUIRED_COLUMNS)
     oracle_df = read_oracle_csv(args.language, args.metric)
     result_df = join_table(oracle_df, detected_df, args.language, args.metric)
     # result_df = join_table(oracle_java_df, detected_reprod_java_df, REPO_OWNER_NAME, does_ignore_line=False)
@@ -67,16 +70,18 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         metrics = calc_metrics(result_df, args.language)
-        pprint(metrics, sort_dicts=False)
+        output_metrics = format_metrics_for_output(metrics, args.language)
+        pprint(output_metrics, sort_dicts=False)
         output_path = Path(f"result/{extract_filename(Path(args.detected))}-summary.txt")
         with open(output_path, "w", encoding="utf-8") as f:
-            for ref_type, vals in metrics.items():
+            for ref_type, vals in output_metrics.items():
                 f.write(f"{ref_type}:\n")
                 f.write(f"  TP: {vals.get('TP', 0)}\n")
                 f.write(f"  FP: {vals.get('FP', 0)}\n")
                 f.write(f"  FN: {vals.get('FN', 0)}\n")
                 f.write(f"  TN: {vals.get('TN', 0)}\n")
-                f.write(f"  Precision: {vals.get('precision', 0):.4f}\n")
+                if args.language != "java":
+                    f.write(f"  Precision: {vals.get('precision', 0):.4f}\n")
                 f.write(f"  Recall: {vals.get('recall', 0):.4f}\n\n")
     except Exception as e:
         print(f"Error calculating precision/recall: {e}", file=sys.stderr)
@@ -142,6 +147,18 @@ def calc_metrics(result_df: DataFrame, language: str) -> dict[str, dict[str, flo
 
 def extract_filename(path: Path) -> str:
     return path.stem.split(".")[0]
+
+
+def format_metrics_for_output(metrics: dict[str, dict], language: str) -> dict[str, dict]:
+    if language != "java":
+        return metrics
+
+    filtered = {}
+    for ref_type, vals in metrics.items():
+        copied = dict(vals)
+        copied.pop("precision", None)
+        filtered[ref_type] = copied
+    return filtered
 
 
 if __name__ == "__main__":

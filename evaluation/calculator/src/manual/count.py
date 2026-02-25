@@ -9,10 +9,11 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-DEFAULT_DIR = "./manually_assessment/sampled-java-seed42"
+# DEFAULT_DIR = "./manually_assessment/sampled-java-seed42"
+DEFAULT_DIR = "./sampled/sampled-java-seed42"
 DEFAULT_FILES = [
     "sampled-java-EXTRACT-Method-seed42.csv",
-    "sampled-java-INLINE-Method-seed42-0126.csv",
+    "sampled-java-INLINE-Method-seed42.csv",
     "sampled-java-MOVE-Method-seed42.csv",
     "sampled-java-RENAME-Method-seed42.csv",
 ]
